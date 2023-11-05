@@ -21,6 +21,7 @@ export default function Home({ allPostsData }) {
             </li>
           ))}
         </ul>
+        <Link href={"/auth/signup"}>SignUp</Link>
       </section>
     </Layout>
   );
