@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase"
+import { auth } from "../../utils/firebase"
+import { useRouter } from 'next/router'
+//import { getMongoDBCollection } from "../api/client"
 
 export default function Login() {
-
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -11,8 +13,8 @@ export default function Login() {
     const handleLogin = async () => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            console.log("sucess");
-            console.log(auth.currentUser.email);
+            console.log(auth.currentUser.uid)
+            router.push('../dashboard');
         } catch (error) {
             console.log("error");
             console.error(error.message);
