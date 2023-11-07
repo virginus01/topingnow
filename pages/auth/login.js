@@ -1,8 +1,9 @@
+import AuthLayout from '../../components/auth_layout';
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../utils/firebase"
 import { useRouter } from 'next/router'
-//import { getMongoDBCollection } from "../api/client"
+import { TextField, Button } from '@mui/material';
 
 export default function Login() {
     const router = useRouter();
@@ -13,7 +14,7 @@ export default function Login() {
     const handleLogin = async () => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            console.log(auth.currentUser.uid)
+
             router.push('../dashboard');
         } catch (error) {
             console.log("error");
@@ -22,21 +23,48 @@ export default function Login() {
     };
 
     return (
-        <div>
-            <h1>Login</h1>
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <button onClick={handleLogin}> Login</button>
-        </div>
+        <AuthLayout> <div className="bg-gray-100 h-screen flex items-center">
+
+            <div className="max-w-md mx-auto p-5 rounded-md bg-white">
+
+                <h1 className="text-3xl font-medium mb-6 font-color:red text-center">Login</h1>
+
+                <form>
+
+                    <TextField
+                        margin="normal"
+                        variant="outlined"
+                        label="Email"
+                        name="email"
+                        fullWidth
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+
+                    <TextField
+                        margin="normal"
+                        variant="outlined"
+                        label="Password"
+                        name="password"
+                        type="password"
+                        fullWidth
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-1 mt-2 rounded-lg w-full"
+                        onClick={handleLogin}
+                    >
+                        Login
+                    </Button>
+
+                </form>
+
+            </div>
+
+        </div></AuthLayout>
     );
+
 }

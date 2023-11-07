@@ -1,14 +1,21 @@
+import styles from './layout.module.css';
+import { auth } from '../utils/firebase';
+import { AuthContext } from '../context/AuthContext'
+import React, { useContext } from 'react'
 
 
-const name = 'user Virginus Alajekwu';
-export const siteTitle = 'my personal blog';
+export const user = auth;
 
-export default function UserLayout({ children, home }) {
+export default function UserLayout({ children }) {
+
     return (
-        <>
-
-            <main>{children}</main>
-
-        </>
-    )
+        <AuthContext.Provider value={{ user }}>
+            <header>
+                <title>ok {user?.email}</title>
+            </header>
+            <main>
+                {children}
+            </main>
+        </AuthContext.Provider>
+    );
 }

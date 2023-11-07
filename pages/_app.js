@@ -1,10 +1,18 @@
 import '../styles/global.css';
-import Layout from '../components/layout'
-
+import { StyledEngineProvider } from '@mui/styled-engine';
 
 export default function App({ Component, pageProps }) {
-    // Use the layout defined at the page level, if available
-    const getLayout = Component.getLayout || ((page) => page)
 
-    return getLayout(<Component {...pageProps} />)
+    const getLayout = Component.getLayout || ((page) => page);
+
+    return (
+        <StyledEngineProvider injectFirst>
+
+            {getLayout(
+                <Component {...pageProps} />
+            )}
+
+        </StyledEngineProvider>
+    )
+
 }
