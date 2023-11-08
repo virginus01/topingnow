@@ -1,8 +1,8 @@
 
-import Layout, { siteTitle } from '../components/layout';
+import Layout from '../components/layout';
 import utilStyles from '../styles/utils.module.css';
-import { getSortedPostsData } from '../lib/posts';
 import Link from 'next/link';
+import { getLatestPosts } from '../lib/repo/posts_repo';
 
 export default function Home({ allPostsData }) {
   return (
@@ -19,13 +19,12 @@ export default function Home({ allPostsData }) {
   );
 }
 
-
 export async function getServerSideProps({ req, res }) {
-  const allPostsData = await getSortedPostsData();
   res.setHeader(
     'Cache-Control',
     'public, s-maxage=120, stale-while-revalidate=59'
   )
+  const allPostsData = await getLatestPosts();
 
   return {
     props: {

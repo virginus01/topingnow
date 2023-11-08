@@ -1,38 +1,42 @@
 import Layout from '../../components/layout';
-import { getAllPostIds, getPostData } from '../../lib/posts';
 import Head from 'next/head';
-import Date from '../../components/date';
-import utilStyles from '../../styles/utils.module.css';
+import { getPostById } from '../../lib/repo/posts_repo';
+
 
 
 export default function Post({ postData }) {
-    console.log(postData);
+    const { title } = postData;
+
     return (
         <Layout>
             <Head>
-                <title>{postData.title}</title>
+                <title>{title}</title>
             </Head>
+
             <article>
-                <h1 className={utilStyles.headingXl}>{postData.title}</h1>
+                <h1>{title}</h1>
+                <div>{"kk"}</div>
             </article>
         </Layout>
     );
 }
 
+export async function getServerSideProps({ params }) {
 
-export async function getStaticPaths() {
-    const paths = await getAllPostIds();
-    return {
-        paths,
-        fallback: false,
-    };
-}
+    try {
 
-export async function getStaticProps({ params }) {
-    const postData = await getPostData(params.id);
-    return {
-        props: {
-            postData,
-        },
-    };
+        const { id } = params;
+        const postData = await getPostById(id);
+
+        return {
+            props: {
+                postData
+            }
+        };
+    } catch (err) {
+        console.error(err);
+        return {
+            props: {}
+        };
+    }
 }

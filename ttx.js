@@ -1,110 +1,43 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-import { remark } from 'remark';
-import html from 'remark-html';
 
-const postsDirectory = path.join(process.cwd(), 'posts');
+import Layout, { siteTitle } from '../components/layout';
+import utilStyles from '../styles/utils.module.css';
+import Link from 'next/link';
+import fetch from 'node-fetch';
 
-export function getSortedPostsData() {
-    // Get file names under /posts
-    const fileNames = fs.readdirSync(postsDirectory);
-    const allPostsData = fileNames.map((fileName) => {
-        // Remove ".md" from file name to get id
-        const id = fileName.replace(/\.md$/, '');
+export default function Home({ allPostsData }) {
+    const { posts } = allPostsData;
 
-        // Read markdown file as string
-        const fullPath = path.join(postsDirectory, fileName);
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-        // Use gray-matter to parse the post metadata section
-        const matterResult = matter(fileContents);
-
-        // Combine the data with the id
-        return {
-            id,
-            ...matterResult.data,
-        };
-    });
-    // Sort posts by date
-    return allPostsData.sort((a, b) => {
-        if (a.date < b.date) {
-            return 1;
-        } else {
-            return -1;
-        }
-    });
-}
-
-
-export function getAllPostIds() {
-    const fileNames = fs.readdirSync(postsDirectory);
-    return fileNames.map((fileName) => {
-        return {
-            params: {
-                id: fileName.replace(/\.md$/, ''),
-            },
-        };
-    });
-}
-
-
-export async function getPostData(id) {
-    const fullPath = path.join(postsDirectory, `${id}.md`);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-    // Use gray-matter to parse the post metadata section
-    const matterResult = matter(fileContents);
-
-    // Use remark to convert markdown into HTML string
-    const processedContent = await remark()
-        .use(html)
-        .process(matterResult.content);
-    const contentHtml = processedContent.toString();
-
-    // Combine the data with the id and contentHtml
-    return {
-        id,
-        contentHtml,
-        ...matterResult.data,
-    };
-}
-
-
-import Layout from '../../components/layout';
-import { getAllPostIds, getPostData } from '../../lib/posts';
-import Head from 'next/head';
-import Date from '../../components/date';
-import utilStyles from '../../styles/utils.module.css';
-
-
-export default function Post({ postData }) {
+    console.log(allPostsData);
     return (
-        <Layout>
-            <Head>
-                <title>{postData.title}</title>
-            </Head>
-            <article>
-                <h1 className={utilStyles.headingXl}>{postData.title}</h1>
-            </article>
+        <Layout home>
+            <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+                <h2 className="font-extrabold lg:mt-20">Top Trending List</h2>
+                {posts.map(({ _id, parent, slug, title }) => (
+                    <div className={utilStyles.listItem} key={_id}>
+                        <Link as={`/posts/${slug}`} href={`/posts/${_id}`}>{title}</Link>
+                    </div>
+                ))}
+            </section>
         </Layout>
     );
 }
 
 
-export async function getServerSidePaths() {
-    const paths = getAllPostIds();
-    return {
-        paths,
-        fallback: false,
-    };
-}
+export async function getServerSideProps({ req, res }) {
 
-export async function getServerSideProps({ params }) {
-    const postData = await getPostData(params.id);
+    // Fetch posts from API route
+    const response = await fetch("http://localhost:3000/api/mongodb/get_posts?limit=2");
+    const allPostsD = await response.json();
+    const allPostsData = allPostsD;
+    res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=120, stale-while-revalidate=59'
+    );
+
     return {
         props: {
-            postData,
+            allPostsData,
         },
     };
+
 }

@@ -1,4 +1,4 @@
-import { connectDB, getCollection } from '../../../utils/mongodb'
+import { connectDB } from '../../../utils/mongodb'
 
 export default async function handler(req, res) {
     const { email, uid, name } = req.body
@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     const client = await connectDB()
 
     // Get collection
-    const collection = await getCollection(client, 'users')
+    //const collection = await getCollection(client, 'users')
 
     // Create new item
     const newItem = {
