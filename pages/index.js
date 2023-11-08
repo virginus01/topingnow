@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getLatestPosts } from '../lib/repo/posts_repo';
 
 export default function Home({ allPostsData }) {
+
   return (
     <Layout home>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>

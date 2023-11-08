@@ -1,10 +1,15 @@
 import Layout from '../../components/layout';
 import Head from 'next/head';
 import { getPostById } from '../../lib/repo/posts_repo';
+import { notFound } from 'next/navigation';
 
 
 
 export default function Post({ postData }) {
+
+    if (!postData) {
+        notFound();
+    }
     const { title } = postData;
 
     return (
@@ -22,9 +27,7 @@ export default function Post({ postData }) {
 }
 
 export async function getServerSideProps({ params }) {
-
     try {
-
         const { id } = params;
         const postData = await getPostById(id);
 

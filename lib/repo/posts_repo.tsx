@@ -1,4 +1,5 @@
 import { apiClient } from "../../pages/api/api_client";
+import { notFound } from "next/navigation";
 
 export async function getLatestPosts() {
   try {
@@ -6,8 +7,9 @@ export async function getLatestPosts() {
     const response = await apiClient(url);
 
     if (response.status === 200) {
-      const { data } = await response.json();
-      return { data };
+      const posts = await response.json();
+      const postsData = posts.data;
+      return postsData;
     } else {
       return { error: "Failed to fetch latest posts" };
     }
@@ -22,10 +24,15 @@ export async function getPostById(id: string) {
     const response = await apiClient(url);
 
     if (response.status === 200) {
-      const { data } = await response.json();
-      return { data };
+      const post = await response.json();
+      if (!post.data) {
+        notFound();
+      } else {
+        const postsData = post.data;
+        return postsData;
+      }
     } else {
-      return { error: "Post not found" };
+      notFound();
     }
   } catch (error) {
     return { error: "An error occurred while fetching the post" };
