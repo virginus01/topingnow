@@ -7,6 +7,11 @@ import Layout from "../components/layout"
 
 
 export default function Home({ allPostsData }) {
+  if (allPostsData === null) {
+    // Return a loading message or component
+    return <p>Loading...</p>;
+  }
+
   return (
     <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
       <h2 className="font-extrabold lg:mt-20">Top Trending List</h2>
@@ -16,9 +21,9 @@ export default function Home({ allPostsData }) {
         </div>
       ))}
     </section>
-
   );
 }
+
 
 export async function getServerSideProps({ req, res }) {
   res.setHeader(

@@ -1,8 +1,4 @@
 import { MongoClient } from 'mongodb'
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 
 const MONGODB_URI = process.env.MONGODB_URL;
 const MONGODB_DB = process.env.MONGODB_DATABASE;
@@ -16,7 +12,7 @@ async function connectToDB() {
 
 async function connectDB() {
     const client = await connectToDB();
-    return client.db("topingnow");
+    return client.db(MONGODB_DB);
 }
 
 export { connectDB }

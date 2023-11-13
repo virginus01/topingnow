@@ -7,9 +7,7 @@ import { notFound } from 'next/navigation';
 
 export default function Post({ postData }) {
 
-    if (!postData) {
-        notFound();
-    }
+
     const { title } = postData;
 
     return (
@@ -25,11 +23,12 @@ export default function Post({ postData }) {
         </Layout>
     );
 }
-
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, res }) {
     try {
         const { id } = params;
         const postData = await getPostById(id);
+
+        res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
 
         return {
             props: {
@@ -38,6 +37,7 @@ export async function getServerSideProps({ params }) {
         };
     } catch (err) {
         console.error(err);
+
         return {
             props: {}
         };

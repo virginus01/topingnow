@@ -21,6 +21,7 @@ export async function getLatestPosts() {
 export async function getPostById(id: string) {
   try {
     const url = `${process.env.BASE_URL}${process.env.GET_POST}?id=${id}`;
+    console.log(url);
     const response = await apiClient(url);
 
     if (response.status === 200) {
