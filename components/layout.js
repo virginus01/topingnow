@@ -18,7 +18,7 @@ export default function Layout({ children }) {
                 <Navbar />
             </header>
 
-            <main className="container mx-auto p-4">
+            <main className='overflow-y-scroll'>
                 {children}
             </main>
 

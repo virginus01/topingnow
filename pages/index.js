@@ -7,6 +7,7 @@ import Layout from "../components/layout"
 
 
 export default function Home({ allPostsData }) {
+
   if (allPostsData === null) {
     // Return a loading message or component
     return <p>Loading...</p>;
@@ -26,11 +27,9 @@ export default function Home({ allPostsData }) {
 
 
 export async function getServerSideProps({ req, res }) {
-  res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=120, stale-while-revalidate=59'
-  )
+
   const allPostsData = await getLatestPosts();
+  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
 
   return {
     props: {
