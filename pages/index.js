@@ -18,7 +18,7 @@ export default function Home({ allPostsData }) {
       <h2 className="font-extrabold lg:mt-20">Top Trending List</h2>
       {allPostsData.map(({ _id, parent, slug, title }) => (
         <div className={utilStyles.listItem} key={_id}>
-          <Link as={`/posts/${slug}`} href={`/posts/${_id}`}>{title}</Link>
+          <Link href={`/posts/${slug}`}>{title}</Link>
         </div>
       ))}
     </section>
