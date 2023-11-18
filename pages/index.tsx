@@ -17,7 +17,7 @@ export default function Home({ tops }) {
       <h2 className="font-extrabold lg:mt-20">Top Trending List</h2>
       {tops.map(({ _id, parent, id, top_slug, name }) => (
         <div className={utilStyles.listItem} key={_id}>
-          <Link href={`/posts/${top_slug}`}>{name}</Link>
+          <Link href={`/${top_slug}`}>Top {name} Best Lists</Link>
           <hr />
 
           <Topics topId={id} />

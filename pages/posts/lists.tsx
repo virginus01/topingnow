@@ -30,7 +30,7 @@ export default function Lists({ topicData }) {
     <ul>
       {topics.map(({ id, name, slug }) => (
         <li key={id}>
-          <Link href={`/posts/${topicSlug}/${slug}`}>{name}</Link>
+          <Link href={`/${topicSlug}/${slug}`}>{name}</Link>
         </li>
       ))}
     </ul>

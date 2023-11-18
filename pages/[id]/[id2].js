@@ -1,11 +1,8 @@
 import React from 'react'
-import { getPostById } from '../../../lib/repo/posts_repo'
-import ListBody from '../list_body'
-import PopularPosts from '../popular_post'
-import RecentPosts from '../recent_posts'
-import Layout from '../../../components/layout'
-import { getListById } from '../../../lib/repo/lists_repo'
-import Lists from '../lists'
+import ListBody from '../posts/list_body'
+import SideBar from '../../components/sidebar'
+import Layout from '../../components/layout'
+import { getListById } from '../../lib/repo/lists_repo'
 
 
 
@@ -16,15 +13,12 @@ export default function ListView({ postData }) {
     }
     const { id, name } = postData;
 
-    const recentPosts = [
-        { id: 2, title: "Recent Post 1" },
-        { id: 3, title: "Recent Post 2" }
+    const sideBarItemList = [
+        { id: 4, title: "Popular Post 1", link: "#" },
+        { id: 5, title: "Popular Post 2", link: "#" }
     ]
 
-    const popularPosts = [
-        { id: 4, title: "Popular Post 1" },
-        { id: 5, title: "Popular Post 2" }
-    ]
+
 
 
     return (
@@ -33,19 +27,15 @@ export default function ListView({ postData }) {
                 <div className="flex flex-col md:flex-row">
 
                     <div className="w-full md:w-2/3 p-4">
-                        {/* Scrollable posts */}
+
                         <ListBody post={postData} />
 
                     </div>
 
-                    <div className="w-full md:w-1/6 sticky top-0 p-4">
-                        {/* Recent posts */}
-                        <RecentPosts posts={recentPosts} />
-                    </div>
 
-                    <div className="w-full md:w-1/6 sticky top-0 p-4">
-                        {/* Popular posts */}
-                        <PopularPosts posts={popularPosts} />
+                    <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-4 sm:pt-20 pt-5 overflow-y-auto mx-auto">
+
+                        <SideBar sideBarItems={sideBarItemList} />
                     </div>
 
                 </div>

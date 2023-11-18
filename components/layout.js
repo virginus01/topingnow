@@ -18,10 +18,9 @@ export default function Layout({ children }) {
                 <Navbar />
             </header>
 
-            <main className='overflow-y-scroll'>
+            <main className='pt-16 text-sm lg:text-lg md:text-md sm:text-sm text-gray-500'>
                 {children}
             </main>
-
 
 
         </>

@@ -24,7 +24,7 @@ export default function Topics({ topId }) {
     <ul>
       {topics.map(({ id, title, slug }) => (
         <li key={id}>
-          <Link href={`/posts/${slug}`}> {title}</Link>
+          <Link href={`/${slug}`}> {title}</Link>
         </li>
       ))}
     </ul>
