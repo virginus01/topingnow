@@ -1,22 +1,20 @@
 import React from 'react'
-import { getPostById } from '../../lib/repo/posts_repo'
-import PostBody from './post_body'
-import PopularPosts from './popular_post'
-import RecentPosts from './recent_posts'
-import Layout from '../../components/layout'
-import { getTopicById } from '../../lib/repo/topics_repo'
-import Lists from './lists'
+import { getPostById } from '../../../lib/repo/posts_repo'
+import ListBody from '../list_body'
+import PopularPosts from '../popular_post'
+import RecentPosts from '../recent_posts'
+import Layout from '../../../components/layout'
+import { getListById } from '../../../lib/repo/lists_repo'
+import Lists from '../lists'
 
 
-export default function Post({ postData }) {
+
+export default function ListView({ postData }) {
 
     if (postData === null) {
         return (<div>loading...</div>)
     }
-
-    if (postData.error) {
-        return (<div>error fetching data</div>)
-    }
+    const { id, name } = postData;
 
     const recentPosts = [
         { id: 2, title: "Recent Post 1" },
@@ -36,8 +34,8 @@ export default function Post({ postData }) {
 
                     <div className="w-full md:w-2/3 p-4">
                         {/* Scrollable posts */}
-                        <PostBody post={postData} />
-                        <Lists topicData={postData} />
+                        <ListBody post={postData} />
+
                     </div>
 
                     <div className="w-full md:w-1/6 sticky top-0 p-4">
@@ -57,9 +55,9 @@ export default function Post({ postData }) {
 }
 export async function getServerSideProps({ params, res }) {
     try {
-        const { id } = params;
+        const { id, id2 } = params;
 
-        const postData = await getTopicById(id);
+        const postData = await getListById(id2);
 
 
         res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');

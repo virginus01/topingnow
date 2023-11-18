@@ -7,7 +7,7 @@ export default async function handler(req, res) {
         case 'GET':
             const { id } = req.query;
 
-            const data = await getPost({ id });
+            const data = await getTopic({ id });
 
             if (!data) {
                 res.status(500).json({ error: 'Failed to fetch post data' })

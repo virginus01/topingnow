@@ -1,12 +1,13 @@
 export default function PostBody({ post }) {
-  if (!post) {
-    return <div>Loading...</div>;
+  if (post == null) {
+    return <div>Loading post...</div>;
   }
-  const { title } = post;
+  const { id, title, description } = post;
   return (
     <div className="post">
       <h2>{title}</h2>
-      <p>{title}</p>
+      <br />
+      <div dangerouslySetInnerHTML={{ __html: description }} />
     </div>
   );
 }

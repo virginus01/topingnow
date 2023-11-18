@@ -1,4 +1,4 @@
-import { getPosts } from './query';
+import { getTops } from './query';
 
 export default async function handler(req, res) {
 
@@ -7,10 +7,10 @@ export default async function handler(req, res) {
         case 'GET':
             const { limit } = req.query;
 
-            const data = await getPosts({ limit });
+            const data = await getTops({ limit });
 
             if (!data) {
-                res.status(500).json({ error: 'Failed to fetch posts' })
+                res.status(500).json({ error: 'Failed to fetch tops' })
             } else {
                 res.status(200).json({ data })
             }
