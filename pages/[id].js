@@ -23,6 +23,7 @@ export default function Post({ postData }) {
     ]
 
 
+
     return (
         <Layout>
             <div>

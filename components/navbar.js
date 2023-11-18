@@ -3,6 +3,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import SearchScreen from './search_screen'
+import Image from 'next/image'
 
 const navigation = [
     { name: 'Dashboard', href: '#', current: true },
@@ -38,10 +39,14 @@ export const Navbar = () => {
                             <div className="flex ml-10 flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                                 <div className="flex flex-shrink-0 items-center">
                                     <Link href="/">
-                                        <img
+                                        <Image
                                             className="h-8 w-auto"
-                                            src="/images/profile.jpg"
+                                            src="/images/logo.png"
                                             alt="Toping Now"
+                                            width={200}
+                                            height={50}
+                                            loading='lazy'
+
                                         />
                                     </Link>
                                 </div>
