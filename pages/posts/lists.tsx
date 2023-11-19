@@ -5,8 +5,11 @@ import Link from "next/link";
 
 export default function Lists({ topicData }) {
   const [topics, setTopics] = useState([]);
-
   const [loading, setLoading] = useState(true);
+
+  if (!topicData) {
+    return <>loading...</>;
+  }
   const { id, slug } = topicData;
 
   const topicSlug = slug;
