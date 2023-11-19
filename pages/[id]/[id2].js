@@ -49,10 +49,10 @@ export default function ListView({ postData }) {
 export async function getServerSideProps({ params, res }) {
     try {
         const { id, id2 } = params;
-
         const postData = await getListById(id2);
-
-
+        if (postData.error || !postData) {
+            return { props: {} };
+        }
         res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
 
         return {

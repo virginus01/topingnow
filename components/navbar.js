@@ -6,10 +6,10 @@ import SearchScreen from './search_screen'
 import Image from 'next/image'
 
 const navigation = [
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
+    { name: 'Home', href: '/', current: true },
+    { name: 'About Us', href: '#', current: false },
+    { name: 'Contect Us', href: '#', current: false },
+    { name: 'Policy', href: '#', current: false },
 ]
 
 function classNames(...classes) {

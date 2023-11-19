@@ -12,10 +12,6 @@ export default function Post({ postData }) {
         return (<div>loading...</div>)
     }
 
-    if (postData.error) {
-        return (<div>error fetching data</div>)
-    }
-
 
     const sideBarItemList = [
         { id: 4, title: "Popular Post 1", link: "#" },
@@ -57,8 +53,9 @@ export async function getServerSideProps({ params, res }) {
         const { id } = params;
 
         const postData = await getTopicById(id);
-
-
+        if (postData.error || !postData) {
+            return { props: {} };
+        }
         res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
 
         return {
@@ -66,6 +63,7 @@ export async function getServerSideProps({ params, res }) {
                 postData
             }
         };
+
     } catch (err) {
         console.error(err);
 

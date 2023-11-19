@@ -29,13 +29,13 @@ export async function getTopicById(id: string) {
       const post = await response.json();
 
       if (!post.data) {
-        notFound();
+        return { error: "not-found" };
       } else {
         const postsData = post.data;
         return postsData;
       }
     } else {
-      notFound();
+      return { error: "not-found" };
     }
   } catch (error) {
     return { error: "An error occurred while fetching the post" };
