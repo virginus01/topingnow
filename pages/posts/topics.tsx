@@ -21,10 +21,17 @@ export default function Topics({ topId }) {
   }
 
   return (
-    <ul>
-      {topics.map(({ id, title, slug }) => (
-        <li key={id}>
-          <Link href={`/${slug}`}> {title}</Link>
+    <ul className="ml-1 inline-block w-[500px]">
+      {topics.map(({ _id, id, title, slug }) => (
+        <li key={_id} className="py-2">
+          <Link href={`/${slug}`}>
+            <div className="flex items-center">
+              <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+              <div className="align-middle line-clamp-1 text-transform: lowercase">
+                {title}
+              </div>
+            </div>
+          </Link>
         </li>
       ))}
     </ul>

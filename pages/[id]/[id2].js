@@ -11,6 +11,9 @@ export default function ListView({ postData }) {
     if (postData === null) {
         return (<div>loading...</div>)
     }
+    if (postData.error) {
+        return (<div>error...</div>)
+    }
     const { id, name } = postData;
 
     const sideBarItemList = [

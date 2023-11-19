@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTops } from "../lib/repo/posts_repo";
 import Layout from "../components/layout";
 import Topics from "./posts/topics";
+import SideBar from "../components/sidebar";
 
 export default function Home({ tops }) {
   if (tops === undefined) {
@@ -12,17 +13,27 @@ export default function Home({ tops }) {
     return <p>error fecting topics</p>;
   }
 
-  return (
-    <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-      <h2 className="font-extrabold lg:mt-20">Top Trending List</h2>
-      {tops.map(({ _id, parent, id, top_slug, name }) => (
-        <div className={utilStyles.listItem} key={_id}>
-          <Link href={`/${top_slug}`}>Top {name} Best Lists</Link>
-          <hr />
+  const sideBarItemList = [
+    { id: 4, title: "Popular Post 1", link: "#" },
+    { id: 5, title: "Popular Post 2", link: "#" },
+  ];
 
-          <Topics topId={id} />
-        </div>
-      ))}
+  return (
+    <section className={`${utilStyles.section} mx-auto`}>
+      <div className="w-full">
+        <article className="flex flex-col md:flex-row flex-wrap">
+          {tops.map(({ _id, id, name }) => (
+            <div key={_id} className="flex-grow p-4">
+              <div className="bg-white p-6 shadow-xl rounded-lg">
+                <h3 className="text-lg font-medium">
+                  Top {name} Best List accross the world
+                </h3>
+                <Topics topId={id} />
+              </div>
+            </div>
+          ))}
+        </article>
+      </div>
     </section>
   );
 }

@@ -31,7 +31,6 @@ export default function Post({ postData }) {
                 <div className="flex flex-col md:flex-row">
 
                     <div className="w-full md:w-1/6 lg:fixed top-0 left-0 lg:h-screen p-4 sm:pt-20 pt-5 overflow-y-auto mx-auto">
-
                         <SideBar sideBarItems={sideBarItemList} />
                     </div>
 
