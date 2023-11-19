@@ -1,13 +1,25 @@
+import { useState } from "react";
+
 export default function ListBody({ post }) {
-  if (post == null) {
-    return <div>Loading post...</div>;
+  const [error, setError] = useState(null);
+
+  if (error) {
+    return <>loading..</>;
   }
-  const { id, name, details } = post;
+
+  if (!post) {
+    return <>loading..</>;
+  }
+
+  const { name, details } = post;
+
   return (
-    <div className="post">
-      <h2>{name}</h2>
-      <br />
-      <div dangerouslySetInnerHTML={{ __html: details }} />
+    <div className="max-w-3xl mx-auto p-5">
+      <h1 className="text-2xl font-bold text-center">{name}</h1>
+
+      <div className="mt-5 prose">
+        <div dangerouslySetInnerHTML={{ __html: details }} />
+      </div>
     </div>
   );
 }

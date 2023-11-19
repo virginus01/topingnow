@@ -10,18 +10,25 @@ export default function SideBar({ sideBarItems }) {
 
   return (
     <div className="relative flex sm:py-7">
-      <div className="relative bg-white px-1 pb-2 pt-2 shadow-xl ring-1 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-5">
-        <div className="mx-auto">
-          {sideBarItems.map(
-            (post: {
-              id: Key | null | undefined;
-              link: string | UrlObject;
-            }) => (
-              <Link key={post.id} href={post.link}>
-                {<PostListItem post={post} />}
-              </Link>
-            )
-          )}
+      <div className="relative bg-white px-1 pb-2 pt-2 sm:mx-auto sm:max-w-lg sm:px-2">
+        <div className="relative bg-white pb-3 shadow-xl ring-1 ring-gray-900/5 mb-10">
+          <div className="bg-gray-500 flex items-left justify-left gap-x-4 px-4 py-2 text-xs font-bold text-left text-white">
+            SideBar
+          </div>
+          <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
+            <div className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
+              {sideBarItems.map(
+                (post: {
+                  id: Key | null | undefined;
+                  link: string | UrlObject;
+                }) => (
+                  <Link key={post.id} href={post.link}>
+                    {<PostListItem post={post} />}
+                  </Link>
+                )
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

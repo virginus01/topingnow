@@ -8,21 +8,16 @@ import { getListById } from '../../lib/repo/lists_repo'
 
 export default function ListView({ postData }) {
 
-    if (postData === null) {
+    if (!postData) {
         return (<div>loading...</div>)
     }
-    if (postData.error) {
-        return (<div>error...</div>)
-    }
+
     const { id, name } = postData;
 
     const sideBarItemList = [
         { id: 4, title: "Popular Post 1", link: "#" },
-        { id: 5, title: "Popular Post 2", link: "#" }
+        { id: 5, title: "Popular Post 2 test but test still testing but is okay", link: "#" }
     ]
-
-
-
 
     return (
         <Layout>
@@ -30,17 +25,12 @@ export default function ListView({ postData }) {
                 <div className="flex flex-col md:flex-row">
 
                     <div className="w-full md:w-2/3 p-4">
-
                         <ListBody post={postData} />
-
                     </div>
-
-
                     <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-4 sm:pt-20 pt-5 overflow-y-auto mx-auto">
 
                         <SideBar sideBarItems={sideBarItemList} />
                     </div>
-
                 </div>
             </div>
         </Layout>
