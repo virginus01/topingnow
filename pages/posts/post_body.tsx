@@ -4,11 +4,6 @@ export default function PostBody({ post }) {
   }
   const { id, title, description } = post;
   return (
-    <div className="post">
-      <div
-        className="pt-10"
-        dangerouslySetInnerHTML={{ __html: description }}
-      />
-    </div>
+    <div className="mb-8" dangerouslySetInnerHTML={{ __html: description }} />
   );
 }

@@ -3,6 +3,7 @@ import ListBody from '../posts/list_body'
 import SideBar from '../../components/sidebar'
 import Layout from '../../components/layout'
 import { getListById } from '../../lib/repo/lists_repo'
+import PopularTopics from '../../components/popular_topics'
 
 
 
@@ -21,17 +22,21 @@ export default function ListView({ postData }) {
 
     return (
         <Layout>
-            <div>
-                <div className="flex flex-col md:flex-row">
 
-                    <div className="w-full md:w-2/3 p-4">
-                        <ListBody post={postData} />
-                    </div>
-                    <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-4 sm:pt-20 pt-5 overflow-y-auto mx-auto">
-
-                        <SideBar sideBarItems={sideBarItemList} />
-                    </div>
+            <div className="flex flex-col md:flex-row">
+                <div className="w-full md:w-2/3 p-4">
+                    <h1 className="text-2xl font-bold text-left pt-12 ml-2">{postData.name}</h1>
+                    <ListBody post={postData} />
                 </div>
+
+                <div className="w-full md:w-1/4">
+                    <SideBar sideBarItems={sideBarItemList} />
+                </div>
+
+                <div className="w-full md:w-1/4 mt-4 md:mt-0 md:ml-4">
+                    <PopularTopics />
+                </div>
+
             </div>
         </Layout>
     );

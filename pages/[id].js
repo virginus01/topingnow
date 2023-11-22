@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PostBody from './posts/post_body'
-import SideBar from '../components/sidebar'
+import PopularTopics from '../components/popular_topics'
 import Layout from '../components/layout'
 import { getTopicById } from '../lib/repo/topics_repo'
 import Lists from './posts/lists'
@@ -22,31 +22,31 @@ export default function Post({ postData, lists }) {
         { id: 5, title: "Popular Post 2", link: "#" }
     ]
 
-
-
     return (
-        <Layout>
+
+        <Layout
+            title={postData.title}
+            description={postData.short_title}
+            keywords="top, best"
+        >
             <React.Fragment>
+
+
                 <h1 className="text-2xl font-bold text-center pt-12">{postData.title}</h1>
                 <div className="flex flex-col md:flex-row">
-                    <div className="w-full md:w-1/6 lg:fixed top-0 left-0 lg:h-screen p-4 sm:pt-20 pt-5 overflow-y-auto mx-auto">
-                        <ListTable key="left" sideBarItems={lists} />
+                    <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-4 sm:pt-10 pt-5 overflow-y-auto mx-auto">
+                        <ListTable key="left" sideBarItems={lists} postData={postData} />
                     </div>
-
-                    <section className="w-full md:w-2/3 p-4 mx-auto">
+                    <section className="w-full md:w-2/4 p-4 mx-auto">
                         <article className='mb-10'>
                             <PostBody post={postData} />
-                        </article>
-                        <article className='mb-10'>
+
                             <Lists topicData={postData} lists={lists} />
                         </article>
                     </section>
-
-                    <div className="w-full md:w-1/6 lg:fixed top-0 right-0 lg:h-screen p-4 sm:pt-20 pt-5 overflow-y-auto mx-auto">
-
-                        <SideBar sideBarItems={sideBarItemList} />
+                    <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-4 sm:pt-10 pt-5 overflow-y-auto mx-auto">
+                        <PopularTopics />
                     </div>
-
                 </div>
             </React.Fragment>
         </Layout>

@@ -44,6 +44,15 @@ export async function getList({ listId }) {
     return result;
 }
 
+export async function getPopularTopics() {
+    const db = await connectDB();
+    const result = await db.collection("topics")
+        .find({}).sort({ list_count: -1 })
+        .limit(10)
+        .toArray();
+    return result;
+}
+
 export async function stat() {
 
     const db = await connectDB();
