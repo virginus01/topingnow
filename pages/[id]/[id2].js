@@ -21,7 +21,11 @@ export default function ListView({ postData }) {
     ]
 
     return (
-        <Layout>
+        <Layout
+            title={postData.name}
+            description={postData.name}
+            keywords="top, best"
+        >
 
             <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-2/3 p-4">

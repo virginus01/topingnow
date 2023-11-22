@@ -10,7 +10,7 @@ export default function ListTable({ sideBarItems, postData }) {
 
   return (
     <div className="relative flex sm:py-7">
-      <div className="relative bg-white px-1 pb-2 pt-2 sm:mx-auto w-full sm:px-2">
+      <div className="relative bg-white px-1 pb-2 pt-2 sm:mx-auto w-full">
         <div className="relative bg-white pb-3 shadow-xl ring-1 ring-gray-900/5 mb-10">
           <div className="bg-gray-500 flex items-left justify-left gap-x-4 px-4 py-2 text-xs font-bold text-left text-white">
             List of {postData.title}

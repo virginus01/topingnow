@@ -15,13 +15,6 @@ export default function Post({ postData, lists }) {
         return <div>loading...</div>;
     }
 
-    const { id } = postData;
-
-    const sideBarItemList = [
-        { id: 4, title: "Popular Post 1", link: "#" },
-        { id: 5, title: "Popular Post 2", link: "#" }
-    ]
-
     return (
 
         <Layout
@@ -30,21 +23,18 @@ export default function Post({ postData, lists }) {
             keywords="top, best"
         >
             <React.Fragment>
-
-
-                <h1 className="text-2xl font-bold text-center pt-12">{postData.title}</h1>
                 <div className="flex flex-col md:flex-row">
-                    <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-4 sm:pt-10 pt-5 overflow-y-auto mx-auto">
+                    <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
                         <ListTable key="left" sideBarItems={lists} postData={postData} />
                     </div>
                     <section className="w-full md:w-2/4 p-4 mx-auto">
+                        <h1 className="text-2xl font-bold text-center py-12">{postData.title}</h1>
                         <article className='mb-10'>
                             <PostBody post={postData} />
-
                             <Lists topicData={postData} lists={lists} />
                         </article>
                     </section>
-                    <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-4 sm:pt-10 pt-5 overflow-y-auto mx-auto">
+                    <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
                         <PopularTopics />
                     </div>
                 </div>
