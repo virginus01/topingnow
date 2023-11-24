@@ -9,13 +9,21 @@ export default async function handler(
   switch (req.method) {
     case "GET":
       const { top_id } = req.query;
-
       const data = await getTopics({ top_id });
-
       if (!data) {
-        res.status(500).json({ error: "Failed to fetch topics" });
+        res.status(500).json({
+          error: "Failed to fetch topics",
+        });
       } else {
-        res.status(200).json({ data });
+        res.status(200).send(
+          JSON.stringify(
+            {
+              data: data,
+            },
+            null,
+            2
+          )
+        );
       }
       break;
 

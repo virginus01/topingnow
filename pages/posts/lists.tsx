@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import PostListItem from "./post_lists_items";
-import { getLists } from "../../lib/repo/lists_repo";
 import Link from "next/link";
 
 export default function Lists({ topicData, lists }) {
