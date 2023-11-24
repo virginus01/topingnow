@@ -126,7 +126,7 @@ export const UserNavbar = () => {
                         </div>
                     </div>
                     <Disclosure.Panel className="sm:hidden">
-                        <div className="h-screen bg-gray-800 w-2/4">
+                        <div className="h-screen bg-gray-800 w-2/4 fixed">
                             {navigation.map((item) => (
                                 <Disclosure.Button
                                     key={item.name}
