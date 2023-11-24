@@ -3,6 +3,7 @@ import { auth } from '../utils/firebase';
 import { AuthContext } from '../context/AuthContext'
 import React, { useContext } from 'react'
 import { UserNavbar } from './user_navbar';
+import { Toaster } from 'sonner';
 
 
 export const user = auth;
@@ -20,6 +21,7 @@ export default function UserLayout({ children }) {
                         {children}
                     </div>
                 </div>
+                <Toaster position="bottom-right" visibleToasts={6} richColors />
             </main>
         </AuthContext.Provider>
     );
