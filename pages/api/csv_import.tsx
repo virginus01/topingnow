@@ -4,6 +4,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST");
+
   if (req.method === "POST") {
     const data = req.body;
 
