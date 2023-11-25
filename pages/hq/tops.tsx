@@ -27,7 +27,7 @@ export default function Import() {
     fileReader.readAsText(file);
 
     try {
-      const response = await fetch("/api/file/importCsv", {
+      const response = await fetch("/api/csv_import", {
         method: "POST",
         body: fileData,
       });
