@@ -1,6 +1,6 @@
 {
     "functions": {
-        "pages/api/**/*.tsx": {
+        "pages/api/file/importCsv.tsx": {
             "memory": 3008,
             "maxDuration": 10
         }
