@@ -28,7 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(405).json({ message: "can't upload empty file" });
     }
     // Write the data to the file
-    fs.writeFileSync(filePath, data);
+    // fs.writeFileSync(filePath, data);
 
     res.status(200).json({ message: "CSV uploaded successfully" });
   } else {
