@@ -1,7 +1,9 @@
+"use client";
 import fs from "fs";
+import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
-export default function handler(req, res) {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const data = req.body;
 
@@ -19,11 +21,14 @@ export default function handler(req, res) {
       `test_file_${currentTimestamp}_${randomString}.csv`
     );
 
+    if (!data || data == undefined) {
+      res.status(405).json({ message: "can't upload empty file" });
+    }
     // Write the data to the file
     fs.writeFileSync(filePath, data);
 
-    res.status(200).json({ message: "File uploaded successfully" });
+    res.status(200).json({ message: "CSV uploaded successfully" });
   } else {
-    res.status(405).json({ message: "Method Not Allowed" });
+    res.status(405).json({ message: "Ops Method Not Allowed" });
   }
-}
+};
