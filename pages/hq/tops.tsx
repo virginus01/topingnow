@@ -1,10 +1,11 @@
 import UserLayout from "@/components/user_layout";
-import { Button } from "@mui/material";
-import { useState } from "react";
+import { CustomButton } from "@/components/widgets/custom_designs";
+import { SetStateAction, useState } from "react";
 import { toast } from "sonner";
 
 export default function Import() {
   const [file, setFile] = useState<File | null>(null);
+  const [fileData, setFileData] = useState<string | ArrayBuffer | null>(null);
 
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
@@ -13,18 +14,22 @@ export default function Import() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const fileReader = new FileReader();
+
     if (!file) {
       toast.error("please select a csv file");
       return null;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
+    fileReader.onload = (e) => {
+      const text = e.target?.result;
+      setFileData(text as SetStateAction<null>);
+    };
+    fileReader.readAsText(file);
 
     try {
       const response = await fetch("/api/file/importCsv", {
         method: "POST",
-        body: formData,
+        body: fileData,
       });
 
       if (response.ok) {
@@ -44,18 +49,15 @@ export default function Import() {
           <input type="file" onChange={handleOnChange} />
         </div>
 
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-1 mt-2 rounded-lg w-full"
+        <div className="mt-10">
+          <CustomButton
+            color="blue"
             onClick={handleSubmit}
             disabled={false}
             type="submit"
           >
-            {false ? "logging in..." : "Login"}
-          </Button>
+            {false ? "Loading..." : "Login"}
+          </CustomButton>
         </div>
       </form>
     </UserLayout>

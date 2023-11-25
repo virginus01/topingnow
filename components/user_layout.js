@@ -12,7 +12,7 @@ export default function UserLayout({ children }) {
 
     return (
         <AuthContext.Provider value={{ user }}>
-            <header>
+            <header className='z-40'>
                 <UserNavbar />
             </header>
             <main>

@@ -1,9 +1,0 @@
-------WebKitFormBoundary7MN8lhBMnIPibUKc
-Content-Disposition: form-data; name="file"; filename="test file.csv"
-Content-Type: text/csv
-
-﻿name,link
-test 1,#
-test 2,#
-
-------WebKitFormBoundary7MN8lhBMnIPibUKc--

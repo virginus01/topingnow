@@ -128,7 +128,7 @@ export const UserNavbar = () => {
             </div>
           </div>
 
-          <div className="hidden sm:block">
+          <div className="hidden sm:block z-40">
             <div className="h-screen bg-gray-800 w-1/5 fixed">
               <div className="space-y-1 px-2 pb-3 pt-2">
                 {navigation.map((item) => (
