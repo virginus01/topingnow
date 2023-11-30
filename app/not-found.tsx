@@ -1,11 +1,15 @@
-import Link from 'next/link'
+import Link from "next/link";
+import Layout from "./[slug]/layout";
 
 export default function NotFound() {
-    return (
-        <div>
-            <h2>Not Found</h2>
-            <p>Could not find requested resource</p>
-            <Link href="/">Return Home</Link>
+  return (
+    <Layout>
+      <div className="flex h-screen">
+        <div className="m-auto text-center">
+          <h2>Not Found</h2>
+          <p>Could not find requested page</p>
         </div>
-    )
+      </div>
+    </Layout>
+  );
 }

@@ -33,7 +33,11 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/layout.tsx"
+    "components/layout.tsx",
+    "app/api/api_client/route.tsx",
+    "app/lib/route.ts",
+    "app/utils/mongodb.js",
+    "app/controllers/route.tsx"
   ],
   "exclude": [
     "node_modules"

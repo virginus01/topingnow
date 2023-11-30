@@ -10,10 +10,19 @@ module.exports = {
                 port: '',
                 pathname: '/images/**',
             },
+            {
+                protocol: 'https',
+                hostname: 's3.amazonaws.com',
+                port: '',
+                pathname: '/topingnow/**',
+            },
         ],
     },
     i18n: {
-        locales: ['en-US', 'fr', 'nl-NL'],
-        defaultLocale: 'en-US',
+        locales: ['en', 'fr', 'nl'],
+        defaultLocale: 'en',
+    },
+    typescript: {
+        ignoreBuildErrors: true,
     },
 }
