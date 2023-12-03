@@ -4,7 +4,6 @@ export async function getLists(topicID: string) {
   try {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_LISTS}?topicId=${topicID}`;
     const response = await fetch(url, {
-      cache: "force-cache",
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
       },
@@ -26,7 +25,6 @@ export async function getListById(id: string) {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_LIST}?listId=${id}`;
 
     const response = await fetch(url, {
-      cache: "force-cache",
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
       },

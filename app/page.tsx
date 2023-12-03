@@ -9,6 +9,7 @@ export default async function Page() {
     console.log(tops);
     return <div>loading...</div>;
   }
+
   return (
     <Layout>
       <div className="bg-white py-24 sm:py-32">
@@ -30,7 +31,7 @@ export default async function Page() {
                   </div>
                   <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
                     <div className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-                      <Topics topId={id} />
+                      <Topics topId={_id} />
                     </div>
                   </div>
                 </div>

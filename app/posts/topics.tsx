@@ -11,7 +11,7 @@ export default async function Topics({ topId }) {
 
   return (
     <ul className="ml-1 inline-block w-[500px]">
-      {topics.map(({ _id, id, title, slug }) => (
+      {topics.map(({ _id, title, slug }) => (
         <li key={_id} className="py-2">
           <Link href={`/${slug}`}>
             <div className="flex items-center">

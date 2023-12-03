@@ -6,9 +6,8 @@ import {
   getLists,
   getList,
   getUser,
-} from "../query";
-
-export const dynamic = "force-dynamic"; // defaults to force-static
+  getTop,
+} from "@/app/api/mongodb/query";
 
 export async function GET(
   request: any,
@@ -16,7 +15,7 @@ export async function GET(
 ) {
   const { searchParams } = new URL(request.url);
   let limit = searchParams.get("limit");
-  let top_id = searchParams.get("top_id");
+  let topId = searchParams.get("topId");
   let id = searchParams.get("id");
   let topicId = searchParams.get("topicId");
   let listId = searchParams.get("listId");
@@ -27,15 +26,23 @@ export async function GET(
     limit = "10";
   }
 
+  //...............GET........................
+
   //fetching tops
   if (action == "get_tops") {
     const { data } = await fetchTops(limit);
     return new Response(JSON.stringify({ data }), { status: 200 });
   }
 
+  //fetching a top
+  if (action == "get_top") {
+    const { data } = await fetchTop(id);
+    return new Response(JSON.stringify({ data }), { status: 200 });
+  }
+
   //fetching topics
   if (action == "get_topics") {
-    const { data } = await fetchTopics(top_id, limit);
+    const { data } = await fetchTopics(topId, limit);
     return new Response(JSON.stringify({ data }), { status: 200 });
   }
 
@@ -69,6 +76,8 @@ export async function GET(
     return new Response(JSON.stringify({ data }), { status: 200 });
   }
 
+  //.....................PUT.......................
+
   //return info
   return new Response(JSON.stringify({ data: "please define action" }), {
     status: 400,
@@ -85,13 +94,25 @@ async function fetchTops(limit: string | number | null) {
   return { data };
 }
 
+async function fetchTop(id: any) {
+  let data = [];
+
+  //console.log(id);
+  try {
+    data = await getTop(id);
+  } catch {
+    return { data: "error" };
+  }
+  return { data };
+}
+
 async function fetchTopics(
-  top_id: string | number | null,
+  topId: string | number | null,
   limit: string | number | null
 ) {
   let data = [];
   try {
-    data = await getTopics(top_id, limit);
+    data = await getTopics(topId, limit);
   } catch {
     return { data: "error" };
   }

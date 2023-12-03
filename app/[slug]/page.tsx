@@ -4,7 +4,6 @@ import { getTopicById } from "@/app/lib/repo/topics_repo";
 import ListTable from "@/app/components/list_table";
 import { Suspense } from "react";
 import Lists from "../posts/lists";
-import { NotFound } from "@aws-sdk/client-s3";
 import { notFound } from "next/navigation";
 
 export default async function Post({ params }: { params: { slug: string } }) {

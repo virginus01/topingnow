@@ -6,6 +6,7 @@ import "../styles/global.css";
 export const metadata: Metadata = {
   title: "Toping Now",
   description: "This is topingnow",
+  robots: "noindex",
 };
 
 export default function RootLayout({
@@ -15,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <html lang="en">
+      <html lang="en" prefix="og: https://ogp.me/ns#">
         <body className={inter.className}>{children}</body>
       </html>
     </>

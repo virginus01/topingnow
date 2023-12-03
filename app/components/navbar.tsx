@@ -10,7 +10,6 @@ import {
 import Link from "next/link";
 import SearchScreen from "./search_screen";
 import Image from "next/image";
-import { UserAuth } from "@/app/context/auth_context/route";
 
 const navigation = [
   { name: "Home", href: "/", current: false },

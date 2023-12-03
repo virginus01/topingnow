@@ -14,6 +14,9 @@ export default function AuthLayout({
 }) {
   return (
     <>
+      <header>
+        <Navbar />
+      </header>
       <main className="min-h-screen flex flex-col">
         <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
           <Image
@@ -30,6 +33,7 @@ export default function AuthLayout({
         </div>
         <Toaster position="bottom-right" visibleToasts={6} richColors />
       </main>
+      <Footer />
     </>
   );
 }

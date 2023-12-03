@@ -15,7 +15,7 @@ export default function UserLayout({ children }) {
       </header>
       <main>
         <div className="flex flex-col">
-          <div className="md:w-2/4 mt-8 md:mx-auto mx-2">{children}</div>
+          <div className="mt-12 ml-4 mr-2 lg:ml-96 md:ml-5">{children}</div>
         </div>
         <Toaster position="bottom-right" visibleToasts={6} richColors />
       </main>

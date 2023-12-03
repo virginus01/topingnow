@@ -37,7 +37,8 @@
     "app/api/api_client/route.tsx",
     "app/lib/route.ts",
     "app/utils/mongodb.js",
-    "app/controllers/route.tsx"
+    "app/controllers/route.tsx",
+    "app/dashboard/tops/add/[top_id]/topics_import.tsx"
   ],
   "exclude": [
     "node_modules"

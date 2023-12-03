@@ -1,4 +1,5 @@
 import { connectDB } from '@/app/utils/mongodb'
+import { ObjectId } from 'mongodb';
 
 export async function getTops(limit) {
     const db = await connectDB();
@@ -12,14 +13,14 @@ export async function getTops(limit) {
 }
 
 
-export async function getTopics(top_id, limit) {
+export async function getTopics(topId, limit) {
 
     const db = await connectDB();
     let findQuery = {};
     let defaultLimit = 10;
 
-    if (top_id) {
-        findQuery = { top_id };
+    if (topId) {
+        findQuery = { topId };
     }
 
     try {
@@ -88,6 +89,20 @@ export async function getTopic(id) {
     return topic;
 }
 
+export async function getTop(id) {
+    const db = await connectDB();
+    let top = await db.collection("tops").findOne({
+        slug: id
+    });
+
+    if (!top) {
+        top = await db.collection("tops").findOne({
+            _id: new ObjectId(id)
+        });
+    }
+    return top;
+}
+
 export async function getPost(id) {
     const db = await connectDB();
     const post = await db
@@ -103,4 +118,36 @@ export async function getUser(uid) {
         .collection("users")
         .findOne({ uid: uid })
     return user;
+}
+
+
+//POST
+
+export async function addTopic(data) {
+    const _id = new ObjectId();
+    data._id = _id;
+    const db = await connectDB();
+    await db.collection("topics").insertOne(data);
+    return _id;
+}
+
+export async function addTopics(data) {
+
+    const db = await connectDB();
+
+    const result = await db.collection("topics").insertMany(data);
+
+    return result.insertedIds;
+
+}
+
+export async function updateATopic(id, data) {
+    const _id = new ObjectId(id);
+    const db = await connectDB();
+
+    await db.collection("topics")
+        .updateOne({ _id: _id }, { $set: data });
+
+    return true;
+
 }
