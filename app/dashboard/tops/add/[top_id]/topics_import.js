@@ -56,7 +56,8 @@ const TopicsImport = (top_id) => {
         description: t.description,
         topId: top_id.top_id,
         slug: t.title,
-        isDuplicate: isDuplicate
+        isDuplicate: isDuplicate,
+        _id: ""
       };
 
 
@@ -79,9 +80,9 @@ const TopicsImport = (top_id) => {
       return;
     }
 
-    console.log(topics)
-    const result = await postTopics(topics);
 
+
+    const result = await postTopics(topics);
 
     setValuesEmpty(true)
 

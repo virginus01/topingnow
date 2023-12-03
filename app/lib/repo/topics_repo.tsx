@@ -1,3 +1,5 @@
+import { customSlugify } from "@/app/utils/custom_slugify";
+
 export async function getTopics(topId: string, page = null) {
   try {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_TOPICS}?topId=${topId}`;
@@ -73,6 +75,17 @@ export async function getTopicById(id: string) {
 
 export async function postTopics(tData: any) {
   try {
+    const slugs = tData.map((t) => customSlugify(t.slug));
+
+    const topics = await Promise.all(slugs.map(getTopicById));
+
+    tData.forEach((t, i) => {
+      const exists = Boolean(topics[i]);
+      t.isDuplicate = exists;
+      t._id = exists ? topics[i]._id : null;
+    });
+
+    console.log(tData);
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_POST_TOPICS}`;
 
     let formData = new FormData();

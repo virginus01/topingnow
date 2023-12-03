@@ -85,6 +85,7 @@ async function postTopics(formData: any) {
   const postData = JSON.parse(formData.get("postData"));
 
   const data: TopicModel[] = new Array();
+  console.log(postData);
 
   postData.map(
     async (post: {
@@ -92,9 +93,10 @@ async function postTopics(formData: any) {
       description: any | null;
       topId: any | null;
       slug: string;
+      isDuplicate: boolean | null;
+      _id: any;
     }) => {
       let postSlug = customSlugify(post.slug);
-      // const aT = await getTopicById(postSlug);
 
       const tData: TopicModel = {
         title: post.title,
@@ -110,7 +112,19 @@ async function postTopics(formData: any) {
         metaDescriptio: "",
         metaTitle: "",
       };
-      data.push(tData);
+
+      if (post.isDuplicate) {
+        const formData = new FormData();
+        formData.append("_id", post._id);
+        formData.append("updateData", JSON.stringify(tData));
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_UPDATE_TOPIC}`;
+        const response = await fetch(url, {
+          method: "POST",
+          body: formData,
+        });
+      } else {
+        data.push(tData);
+      }
     }
   );
 
