@@ -12,45 +12,81 @@ export async function getTops(limit) {
     return tops;
 }
 
+export async function getTopics(topId, page = 1, perPage = 10) {
 
-export async function getTopics(topId, limit) {
+    const skip = (page - 1) * perPage;
 
     const db = await connectDB();
-    let findQuery = {};
-    let defaultLimit = 10;
 
-    if (topId) {
-        findQuery = { topId };
-    }
+    const filter = topId ? { topId } : {};
 
-    try {
-        limit = parseInt(limit, 10) || defaultLimit;
-    } catch {
-        limit = defaultLimit;
-    }
+    const [result, total] = await Promise.all([
+        db.collection("topics").find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
 
-    const tops = await db
-        .collection("topics")
-        .find(findQuery)
-        .sort({ metacritic: -1 })
-        .limit(limit)
-        .toArray();
+        db.collection("topics")
+            .estimatedDocumentCount(filter)
+    ]);
 
-    return tops;
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+
+    return {
+        data: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
+
 }
 
 
 
 
-export async function getLists(topicId, limit) {
+export async function getLists(topicId, page = 1, perPage = 10) {
+
+
+    const skip = (page - 1) * perPage;
+
     const db = await connectDB();
-    const lists = await db
-        .collection("lists")
-        .find({ "topic_id": topicId })
-        .sort({ metacritic: -1 })
-        .limit(parseInt(limit, 10))
-        .toArray();
-    return lists;
+
+    const filter = topicId ? { topicId } : {};
+
+    const [result, total] = await Promise.all([
+        db.collection("lists").find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
+
+        db.collection("lists")
+            .estimatedDocumentCount(filter)
+    ]);
+
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+
+    return {
+        data: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
 }
 
 export async function getList(listId) {
@@ -81,9 +117,10 @@ export async function getTopic(id) {
     let topic = await db.collection("topics").findOne({
         slug: id
     });
+
     if (!topic) {
         topic = await db.collection("topics").findOne({
-            _id: id
+            _id: new ObjectId(id)
         });
     }
     return topic;
@@ -141,6 +178,16 @@ export async function addTopics(data) {
 
 }
 
+export async function addLists(data) {
+
+    const db = await connectDB();
+
+    const result = await db.collection("lists").insertMany(data);
+
+    return result.insertedIds;
+
+}
+
 export async function updateATopic(id, data) {
     const _id = new ObjectId(id);
     const db = await connectDB();
@@ -150,4 +197,12 @@ export async function updateATopic(id, data) {
 
     return true;
 
+}
+
+export async function updateAList(id, data) {
+    const _id = new ObjectId(id);
+    const db = await connectDB();
+    await db.collection("lists")
+        .updateOne({ _id: _id }, { $set: data });
+    return true;
 }

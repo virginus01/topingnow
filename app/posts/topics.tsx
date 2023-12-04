@@ -2,7 +2,8 @@ import { getTopics } from "@/app/lib/repo/topics_repo";
 import Link from "next/link";
 
 export default async function Topics({ topId }) {
-  const topics = await getTopics(topId);
+  const result = await getTopics(topId, 1, 10);
+  const topics = result.data;
 
   if (!topics || !Array.isArray(topics)) {
     console.log(topics);

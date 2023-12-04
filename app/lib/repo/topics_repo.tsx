@@ -1,8 +1,12 @@
 import { customSlugify } from "@/app/utils/custom_slugify";
 
-export async function getTopics(topId: string, page = null) {
+export async function getTopics(
+  topId: any | "",
+  page: number,
+  perPage: any | ""
+) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_TOPICS}?topId=${topId}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
 
     console.log(url);
     const response = await fetch(url, {
@@ -85,7 +89,6 @@ export async function postTopics(tData: any) {
       t._id = exists ? topics[i]._id : null;
     });
 
-    console.log(tData);
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_POST_TOPICS}`;
 
     let formData = new FormData();

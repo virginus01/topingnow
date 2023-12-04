@@ -6,20 +6,21 @@ export default async function Lists({ topicData }) {
     return <>loading...</>;
   }
 
-  const lists = await getLists(topicData.id);
+  const result = await getLists(topicData._id, 1, 10);
+  const lists = result.data;
 
   if (!lists || !Array.isArray(lists)) {
     console.log(lists);
     return <>loading...</>;
   }
 
-  const { id, slug, title } = topicData;
+  const { slug, title } = topicData;
 
   const topicSlug = slug;
 
   return (
     <ul>
-      {lists.map(({ _id, id, name, details, slug }: any, index: number) => (
+      {lists.map(({ _id, name, description, slug }: any, index: number) => (
         <li key={_id} id={slug}>
           <div className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded-md">
             <div className="bg-gray-500 flex items-left justify-left gap-x-4 px-2 py-2 text-xs font-bold text-left text-white">
@@ -35,7 +36,7 @@ export default async function Lists({ topicData }) {
                     {name}
                   </Link>{" "}
                   is {index + 1} in the list of {title}.
-                  <div dangerouslySetInnerHTML={{ __html: details }} />
+                  <div dangerouslySetInnerHTML={{ __html: description }} />
                 </span>
               </div>
             </div>

@@ -1,25 +1,31 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import TopicsImport from "./topics_import";
 import { useRouter } from "next/navigation";
-import { getTop } from "@/app/lib/repo/tops_repo";
+import { getTopicById } from "@/app/lib/repo/topics_repo";
 import Loading from "@/app/dashboard/loading";
-import { TopModel } from "@/app/models/top_model";
-import TopicsView from "@/app/dashboard/topics/topics_view";
+import { TopicModel } from "@/app/models/topic_model";
+import ListsImport from "@/app/dashboard/topics/add/[topic_id]/list_import";
+import { toast } from "sonner";
+import ListsView from "@/app/dashboard/lists/lists_view";
 
-export default function FromTop({ params }: { params: { top_id: string } }) {
+export default function FromTopic({
+  params,
+}: {
+  params: { topic_id: string };
+}) {
   const router = useRouter();
-  const [topData, setTopData] = useState<TopModel | null>(null);
+  const [topicData, setTopicData] = useState<TopicModel | null>(null);
 
   useEffect(() => {
-    getTop(params.top_id).then((data) => {
+    getTopicById(params.topic_id).then((data) => {
       if (!data) {
-        router.replace("/dashboard/tops");
+        toast.error("topic not found");
+        router.replace("/dashboard/topics");
       } else {
-        setTopData(data);
+        setTopicData(data);
       }
     });
-  }, [params.top_id]);
+  }, [params.topic_id]);
 
   const [activeTab, setActiveTab] = useState(1);
 
@@ -27,13 +33,13 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
     setActiveTab(tabNumber);
   };
 
-  if (!topData) {
+  if (!topicData) {
     return <Loading />;
   }
 
   return (
     <div className="container mx-auto mt-12">
-      <p className="my-10">Top {topData.name}</p>
+      <p className="my-10">Top {topicData.title}</p>
       <div className="flex justify-between">
         <div className="flex space-x-4">
           <button
@@ -44,7 +50,7 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
             }`}
             onClick={() => handleTabClick(1)}
           >
-            Published Topics
+            Published Lists
           </button>
 
           <button
@@ -55,7 +61,7 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
             }`}
             onClick={() => handleTabClick(2)}
           >
-            Tab 2
+            Draft Lists
           </button>
         </div>
         <div className="flex space-x-4">
@@ -76,13 +82,13 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
       {/* Content for each tab */}
       {activeTab === 1 && (
         <div className="mt-10">
-          <TopicsView topId={params.top_id} />
+          <ListsView topicId={params.topic_id} />
         </div>
       )}
       {activeTab === 2 && <div className="mt-10">Content for Tab 2</div>}
       {activeTab === 3 && (
         <div className="mt-10">
-          <TopicsImport top_id={params.top_id} />
+          <ListsImport topic_id={params.topic_id} />
         </div>
       )}
     </div>

@@ -20,11 +20,11 @@ export async function GET(
   let topicId = searchParams.get("topicId");
   let listId = searchParams.get("listId");
   let uid = searchParams.get("uid");
+  let page = parseInt(searchParams.get("page") as string, 10);
+  let perPage = parseInt(searchParams.get("perPage") as string, 10);
   let action = params.action;
 
-  if (!limit) {
-    limit = "10";
-  }
+  limit = "10";
 
   //...............GET........................
 
@@ -42,7 +42,7 @@ export async function GET(
 
   //fetching topics
   if (action == "get_topics") {
-    const { data } = await fetchTopics(topId, limit);
+    const data = await fetchTopics(topId, page, perPage);
     return new Response(JSON.stringify({ data }), { status: 200 });
   }
 
@@ -60,7 +60,7 @@ export async function GET(
 
   //fetching lists
   if (action == "get_lists") {
-    const { data } = await fetchLists(topicId, limit);
+    const { data } = await fetchLists(topicId, page, perPage);
     return new Response(JSON.stringify({ data }), { status: 200 });
   }
 
@@ -108,11 +108,12 @@ async function fetchTop(id: any) {
 
 async function fetchTopics(
   topId: string | number | null,
-  limit: string | number | null
+  page: number,
+  perPage: number
 ) {
   let data = [];
   try {
-    data = await getTopics(topId, limit);
+    return await getTopics(topId, page, perPage);
   } catch {
     return { data: "error" };
   }
@@ -141,11 +142,12 @@ async function fetchPopularTopics(limit: number | string | null) {
 
 async function fetchLists(
   topicId: string | number | null,
-  limit: string | number | null
+  page: number,
+  perPage: number
 ) {
   let data = [];
   try {
-    data = await getLists(topicId, limit);
+    return await getLists(topicId, page, perPage);
   } catch {
     return { data: "error" };
   }

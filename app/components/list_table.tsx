@@ -9,7 +9,8 @@ export default async function ListTable({ topicData }) {
     return <>loading...</>;
   }
 
-  const lists = await getLists(topicData.id);
+  const result = await getLists(topicData._id, 1, 10);
+  const lists = result.data;
 
   if (!lists || !Array.isArray(lists)) {
     console.log(lists);
@@ -27,15 +28,15 @@ export default async function ListTable({ topicData }) {
             <div className="line-clamp-1 text-sm leading-6 text-gray-600">
               {lists.map(
                 (post: {
-                  name: any;
-                  id: Key | null | undefined;
+                  title: any;
+                  _id: Key | null | undefined;
                   slug: string | UrlObject;
                 }) => (
-                  <a key={post.id} href={`#${post.slug}`}>
+                  <a key={post._id} href={`#${post.slug}`}>
                     <div className="flex items-center pt-3">
                       <div className="bg-red-900 w-1 h-1 mr-2 text-sm"></div>
                       <div className="align-middle line-clamp-1 text-transform: lowercase">
-                        {post.name}
+                        {post.title}
                       </div>
                     </div>
                   </a>
