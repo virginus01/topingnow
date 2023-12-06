@@ -33,7 +33,7 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
 
   return (
     <div className="container mx-auto mt-12">
-      <p className="my-10">Top {topData.name}</p>
+      <p className="my-10">Top: Top {topData.name}</p>
       <div className="flex justify-between">
         <div className="flex space-x-4">
           <button

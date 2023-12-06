@@ -38,7 +38,7 @@
     "app/lib/route.ts",
     "app/utils/mongodb.js",
     "app/controllers/route.tsx",
-    "app/dashboard/tops/add/[top_id]/topics_import.tsx"
+    "app/dashboard/tops/add/[top_id]/topics_import.js"
   ],
   "exclude": [
     "node_modules"

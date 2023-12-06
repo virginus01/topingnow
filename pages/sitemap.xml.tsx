@@ -56,10 +56,10 @@ function SiteMap() {
 export async function getServerSideProps({ params, res }) {
   try {
     const sitemap = generateSiteMapIndex();
-    const data = await getTopics("3");
+    // const data = await getTopics("65570f96fd5ef324149f2355", 1, 1000);
 
-    const sitemapTopics = generateSiteMap(data);
-    writeFileSync("public/sitemap/topics.xml", sitemapTopics);
+    //  const sitemapTopics = generateSiteMap(data.data);
+    //  writeFileSync("public/sitemap/topics.xml", sitemapTopics);
 
     res.setHeader("Content-Type", "text/xml");
     res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");

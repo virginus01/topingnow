@@ -61,12 +61,15 @@ export async function postLists(lData: any) {
 
     const topics = await Promise.all(slugs.map(getListById));
 
+    // Assign isDuplicate and id
     lData.forEach((t, i) => {
-      const exists = Boolean(topics[i]);
-      t.isDuplicate = exists;
-      t._id = exists ? topics[i]._id : null;
+      lData[i].isUpdated = false;
+      if (topics[i] != "not_found") {
+        lData[i].isDuplicate = true;
+        lData[i]._id = topics[i]._id ? topics[i]._id : null;
+        lData[i].isUpdated = true;
+      }
     });
-
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_POST_LISTS}`;
 
     let formData = new FormData();
@@ -80,9 +83,9 @@ export async function postLists(lData: any) {
     if (response.status === 200) {
       return await response.json();
     } else {
-      return { error: "Failed to fetch topics" };
+      return { error: "Failed to fetch lists" };
     }
   } catch (error) {
-    return { error: "An error occurred while fetching topics" };
+    return { error: "An error occurred while fetching lists" };
   }
 }

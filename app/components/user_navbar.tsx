@@ -9,7 +9,8 @@ const navigation = [
   { name: "Dashboard", href: "/hq/page", current: true },
   { name: "Tops", href: "/dashboard/tops", current: false },
   { name: "Topics", href: "/dashboard/topics", current: false },
-  { name: "Calendar", href: "#", current: false },
+  { name: "Lists", href: "/dashboard/lists", current: false },
+  { name: "Imports", href: "/dashboard/imports", current: false },
 ];
 
 function classNames(...classes) {

@@ -63,13 +63,14 @@ export default function ListsView({ topicId }) {
                   </div>
                 </div>
               </td>
+
               <td className="pl-16">
                 <a
                   href={`/dashboard/lists/add/${_id}`}
                   className="flex items-center text-green-600"
                 >
                   <PlusIcon className="w-4 h-4" />
-                  <span className="ml-1">lists</span>
+                  <span className="ml-1">list Q&A</span>
                 </a>
               </td>
               <td>

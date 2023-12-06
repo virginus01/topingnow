@@ -50,6 +50,37 @@ export async function getTopics(topId, page = 1, perPage = 10) {
 }
 
 
+export async function fetchImports(page = 1, perPage = 10) {
+
+    const skip = (page - 1) * perPage;
+
+    const db = await connectDB();
+
+    const [result, total] = await Promise.all([
+        db.collection("imports").find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
+        db.collection("imports").estimatedDocumentCount()
+    ]);
+
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+    return {
+        data: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
+
+}
 
 
 export async function getLists(topicId, page = 1, perPage = 10) {
@@ -113,6 +144,7 @@ export async function stat() {
 }
 
 export async function getTopic(id) {
+
     const db = await connectDB();
     let topic = await db.collection("topics").findOne({
         slug: id
@@ -123,6 +155,7 @@ export async function getTopic(id) {
             _id: new ObjectId(id)
         });
     }
+
     return topic;
 }
 
@@ -169,13 +202,11 @@ export async function addTopic(data) {
 }
 
 export async function addTopics(data) {
-
     const db = await connectDB();
 
     const result = await db.collection("topics").insertMany(data);
 
     return result.insertedIds;
-
 }
 
 export async function addLists(data) {
@@ -202,7 +233,53 @@ export async function updateATopic(id, data) {
 export async function updateAList(id, data) {
     const _id = new ObjectId(id);
     const db = await connectDB();
+
     await db.collection("lists")
         .updateOne({ _id: _id }, { $set: data });
+
     return true;
+
+}
+
+
+
+export async function addImport(data) {
+    const _id = new ObjectId();
+    data._id = _id;
+    const db = await connectDB();
+    await db.collection("imports").insertOne(data);
+    return _id;
+}
+
+//DELETE
+
+export async function deleteImportedTopics(importId) {
+
+    const db = await connectDB();
+
+    const filter = {
+        importId: importId
+    };
+
+    const result = await db.collection("topics").deleteMany(filter);
+
+    try { deleteImport(importId) } catch (e) { }
+
+    return result.deletedCount;
+}
+
+
+export async function deleteImport(importId) {
+
+    const db = await connectDB();
+
+
+    const filter = {
+        _id: new ObjectId(importId)
+    };
+
+    const result = await db.collection("imports").deleteMany(filter);
+
+
+    return result.deletedCount;
 }

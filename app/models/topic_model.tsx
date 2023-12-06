@@ -13,4 +13,5 @@ export type TopicModel = {
   image?: string | null;
   metaTitle?: string | null;
   metaDescriptio?: string | null;
+  importId?: string | null;
 };

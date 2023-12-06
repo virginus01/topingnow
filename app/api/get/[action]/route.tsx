@@ -7,6 +7,7 @@ import {
   getList,
   getUser,
   getTop,
+  fetchImports,
 } from "@/app/api/mongodb/query";
 
 export async function GET(
@@ -76,6 +77,12 @@ export async function GET(
     return new Response(JSON.stringify({ data }), { status: 200 });
   }
 
+  //fetching a user
+  if (action == "get_imports") {
+    const { data } = await getImports();
+    return new Response(JSON.stringify({ data }), { status: 200 });
+  }
+
   //.....................PUT.......................
 
   //return info
@@ -89,7 +96,7 @@ async function fetchTops(limit: string | number | null) {
   try {
     data = await getTops(limit);
   } catch {
-    return { data: "error" };
+    return { data: "839847 error" };
   }
   return { data };
 }
@@ -97,11 +104,10 @@ async function fetchTops(limit: string | number | null) {
 async function fetchTop(id: any) {
   let data = [];
 
-  //console.log(id);
   try {
     data = await getTop(id);
   } catch {
-    return { data: "error" };
+    return { data: "746466 error" };
   }
   return { data };
 }
@@ -115,9 +121,8 @@ async function fetchTopics(
   try {
     return await getTopics(topId, page, perPage);
   } catch {
-    return { data: "error" };
+    return { data: "84746 error" };
   }
-  return { data };
 }
 
 async function fetchTopic(id: string | number | null) {
@@ -125,7 +130,7 @@ async function fetchTopic(id: string | number | null) {
   try {
     data = await getTopic(id);
   } catch {
-    return { data: "error" };
+    return { data: "not_found" };
   }
   return { data };
 }
@@ -135,7 +140,7 @@ async function fetchPopularTopics(limit: number | string | null) {
   try {
     data = await getPopularTopics(limit);
   } catch {
-    return { data: "error" };
+    return { data: "87476 error" };
   }
   return { data };
 }
@@ -149,7 +154,7 @@ async function fetchLists(
   try {
     return await getLists(topicId, page, perPage);
   } catch {
-    return { data: "error" };
+    return { data: "74746 error" };
   }
   return { data };
 }
@@ -159,7 +164,7 @@ async function fetchList(listId: string | number | null) {
   try {
     data = await getList(listId);
   } catch {
-    return { data: "error" };
+    return { data: "8474747 error" };
   }
   return { data };
 }
@@ -169,7 +174,17 @@ async function fetchUser(uid: string | number | null) {
   try {
     data = await getUser(uid);
   } catch {
-    return { data: "error" };
+    return { data: "8474747 error" };
+  }
+  return { data };
+}
+
+async function getImports() {
+  let data = [];
+  try {
+    return await fetchImports();
+  } catch {
+    return { data: "8474747 error" };
   }
   return { data };
 }

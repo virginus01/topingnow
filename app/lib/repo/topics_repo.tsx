@@ -1,3 +1,4 @@
+"use server";
 import { customSlugify } from "@/app/utils/custom_slugify";
 
 export async function getTopics(
@@ -24,7 +25,7 @@ export async function getTopics(
       return { error: "Failed to fetch topics" };
     }
   } catch (error) {
-    return { error: "An error occurred while fetching topics" };
+    return { error: "An error occurred while fetching topic" };
   }
 }
 
@@ -72,7 +73,7 @@ export async function getTopicById(id: string) {
     console.error(error);
 
     return {
-      error: error.message || "Failed to fetch data",
+      error: error.message || "Failed to fetch topic",
     };
   }
 }
@@ -81,12 +82,17 @@ export async function postTopics(tData: any) {
   try {
     const slugs = tData.map((t) => customSlugify(t.slug));
 
+    // Fetch existing topics by slug
     const topics = await Promise.all(slugs.map(getTopicById));
 
+    // Assign isDuplicate and id
     tData.forEach((t, i) => {
-      const exists = Boolean(topics[i]);
-      t.isDuplicate = exists;
-      t._id = exists ? topics[i]._id : null;
+      tData[i].isUpdated = false;
+      if (topics[i] != "not_found") {
+        tData[i].isDuplicate = true;
+        tData[i]._id = topics[i]._id ? topics[i]._id : null;
+        tData[i].isUpdated = true;
+      }
     });
 
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_POST_TOPICS}`;
@@ -94,17 +100,18 @@ export async function postTopics(tData: any) {
     let formData = new FormData();
     formData.append("postData", JSON.stringify(tData));
 
-    const response = await fetch(url, {
+    const result = await fetch(url, {
       method: "POST",
       body: formData,
     });
 
-    if (response.status === 200) {
-      return await response.json();
+    if (result.status === 200) {
+      return await result.json();
     } else {
       return { error: "Failed to fetch topics" };
     }
   } catch (error) {
-    return { error: "An error occurred while fetching topics" };
+    console.log(error);
+    return { error: "An error occurred while posting topics" };
   }
 }

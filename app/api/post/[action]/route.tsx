@@ -4,6 +4,7 @@ import {
   updateATopic,
   addLists,
   updateAList,
+  addImport,
 } from "@/app/api/mongodb/query";
 import { getTopicById } from "@/app/lib/repo/topics_repo";
 import { TopicModel } from "@/app/models/topic_model";
@@ -57,6 +58,14 @@ export async function POST(
     });
   }
 
+  //updating list
+  if (action == "create_import") {
+    const response = await createImport(formData);
+    return new Response(JSON.stringify({ response }), {
+      status: 200,
+    });
+  }
+
   // Default response for invalid actions
   return new Response(JSON.stringify({ data: "Invalid action" }), {
     status: 400,
@@ -74,7 +83,7 @@ async function postTopic(formData: any) {
   try {
     return await addTopic(data);
   } catch {
-    return "error";
+    return "8484774 error";
   }
 }
 
@@ -100,7 +109,7 @@ async function updateTopic(formData: any) {
     await updateATopic(_id, uData);
     return { seccess: true };
   } catch {
-    return "error";
+    return "47747 error";
   }
 }
 
@@ -112,7 +121,7 @@ async function updateList(formData: any) {
     title: updateData.title,
     description: updateData.description,
     updatedAt: new Date(),
-    topicId: updateData.topId,
+    topicId: updateData.topicId,
     body: "",
     status: "",
     subTitle: "",
@@ -126,11 +135,26 @@ async function updateList(formData: any) {
     await updateAList(_id, uData);
     return { seccess: true };
   } catch {
-    return "error";
+    return "489747 error";
+  }
+}
+
+async function createImport(formData: any) {
+  const title = formData.get("title");
+
+  const data = {
+    title: title,
+    createdAt: new Date(),
+  };
+  try {
+    return await addImport(data);
+  } catch {
+    return "8764664 error";
   }
 }
 
 async function postTopics(formData: any) {
+  "use server";
   const postData = JSON.parse(formData.get("postData"));
 
   const data: TopicModel[] = new Array();
@@ -159,6 +183,7 @@ async function postTopics(formData: any) {
         image: "",
         metaDescriptio: "",
         metaTitle: "",
+        importId: "",
       };
 
       if (post.isDuplicate) {
@@ -177,9 +202,26 @@ async function postTopics(formData: any) {
   );
 
   try {
-    return await addTopics(data);
+    if (Array.isArray(data) && data !== null && data.length > 0) {
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_CREATE_IMPORT}`;
+
+      let formData = new FormData();
+      formData.append("title", "topic:");
+
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      data.map((d, i) => {
+        data[i].importId = result.response;
+      });
+
+      await addTopics(data);
+    }
+    return postData;
   } catch {
-    return "error";
+    return "474646 error";
   }
 }
 
@@ -187,6 +229,7 @@ async function postLists(formData: any) {
   const postData = JSON.parse(formData.get("postData"));
 
   const data: ListsModel[] = new Array();
+  console.log(postData);
 
   postData.map(
     async (post: {
@@ -230,8 +273,25 @@ async function postLists(formData: any) {
   );
 
   try {
-    return await addLists(data);
+    if (Array.isArray(data) && data !== null && data.length > 0) {
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_CREATE_IMPORT}`;
+
+      let formData = new FormData();
+      formData.append("title", "list:");
+
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      data.map((d, i) => {
+        data[i].importId = result.response;
+      });
+
+      await addLists(data);
+    }
+    return postData;
   } catch {
-    return "error";
+    return "484646 error";
   }
 }

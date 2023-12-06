@@ -35,6 +35,7 @@ export async function POST(request) {
       return NextResponse.json({ msg: "file is required" }, { status: 400 });
     }
 
+    console.log()
     const buffer = Buffer.from(await file.arrayBuffer());
     const fileName = await uploadFileToS3(buffer, file.name);
 

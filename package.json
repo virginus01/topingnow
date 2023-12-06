@@ -18,6 +18,7 @@
     "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
     "firebase": "^10.5.2",
+    "fs": "^0.0.1-security",
     "gray-matter": "^4.0.3",
     "iron-session": "^8.0.1",
     "mongodb": "^6.2.0",
@@ -52,5 +53,10 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "5.2.2"
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
   }
 }
