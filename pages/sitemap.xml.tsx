@@ -1,6 +1,7 @@
 import { getTopicById, getTopics } from "@/app/lib/repo/topics_repo";
 import { writeFileSync } from "fs";
 import { formatISO } from "date-fns";
+import { getTops } from "@/app/lib/repo/tops_repo";
 
 function toSitemapDate(createdAt) {
   // Parse date
@@ -16,10 +17,10 @@ function generateSiteMap(data) {
      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       
        ${data
-         .map(({ id, slug, created_at }) => {
+         .map(({ top_slug, created_at }) => {
            return `
          <url>
-             <loc>${`${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`}</loc>
+             <loc>${`${process.env.NEXT_PUBLIC_BASE_URL}/${top_slug}`}</loc>
              <lastmod>${toSitemapDate(created_at)}</lastmod>
          </url>
        `;
@@ -37,7 +38,7 @@ function generateSiteMapIndex() {
      <loc>${process.env.NEXT_PUBLIC_BASE_URL}</loc>
       </url>
          <url>
-             <loc>${process.env.NEXT_PUBLIC_BASE_URL}/tops</loc>
+             <loc>${process.env.NEXT_PUBLIC_BASE_URL}/sitemap/tops.xml</loc>
          </url>
          <url>
          <loc>${process.env.NEXT_PUBLIC_BASE_URL}/sitemap/topics.xml</loc>
@@ -45,6 +46,7 @@ function generateSiteMapIndex() {
      <url>
      <loc>${process.env.NEXT_PUBLIC_BASE_URL}/lists</loc>
  </url>
+ 
      </urlset>
    `;
 }
@@ -56,13 +58,11 @@ function SiteMap() {
 export async function getServerSideProps({ params, res }) {
   try {
     const sitemap = generateSiteMapIndex();
-    // const data = await getTopics("65570f96fd5ef324149f2355", 1, 1000);
 
-    //  const sitemapTopics = generateSiteMap(data.data);
-    //  writeFileSync("public/sitemap/topics.xml", sitemapTopics);
-
+    const data = await getTops();
+    const sitemapTopics = generateSiteMap(data);
+    writeFileSync("public/sitemap/tops.xml", sitemapTopics);
     res.setHeader("Content-Type", "text/xml");
-    res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
 
     // we send the XML to the browser
     res.write(sitemap);

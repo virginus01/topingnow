@@ -14,6 +14,10 @@ export async function GET(
   request: any,
   { params }: { params: { action: string } }
 ) {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+  };
+
   const { searchParams } = new URL(request.url);
   let limit = searchParams.get("limit");
   let topId = searchParams.get("topId");
@@ -32,55 +36,55 @@ export async function GET(
   //fetching tops
   if (action == "get_tops") {
     const { data } = await fetchTops(limit);
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //fetching a top
   if (action == "get_top") {
     const { data } = await fetchTop(id);
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //fetching topics
   if (action == "get_topics") {
     const data = await fetchTopics(topId, page, perPage);
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //fetching topic info
   if (action == "get_topic") {
     const { data } = await fetchTopic(id);
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //fetching popular topic
   if (action == "get_popular_topics") {
     const { data } = await fetchPopularTopics(limit);
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //fetching lists
   if (action == "get_lists") {
     const { data } = await fetchLists(topicId, page, perPage);
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //fetching list info
   if (action == "get_list") {
     const { data } = await fetchList(listId);
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //fetching a user
   if (action == "get_user") {
     const { data } = await fetchUser(uid);
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //fetching a user
   if (action == "get_imports") {
     const { data } = await getImports();
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return new Response(JSON.stringify({ data }), { status: 200, headers });
   }
 
   //.....................PUT.......................
