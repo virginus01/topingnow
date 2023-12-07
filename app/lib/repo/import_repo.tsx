@@ -26,7 +26,7 @@ export async function deleteTopicsByImports(_id: string) {
     console.log(url);
 
     const formData = new FormData();
-    formData.append("_id", JSON.stringify(_id));
+    formData.append("deleteData", JSON.stringify({ _id }));
 
     const response = await fetch(url, {
       method: "DELETE",

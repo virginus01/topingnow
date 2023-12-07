@@ -59,17 +59,18 @@ export async function postLists(lData: any) {
   try {
     const slugs = lData.map((t) => customSlugify(t.slug));
 
-    const topics = await Promise.all(slugs.map(getListById));
+    const lists = await Promise.all(slugs.map(getListById));
 
     // Assign isDuplicate and id
     lData.forEach((t, i) => {
       lData[i].isUpdated = false;
-      if (topics[i] != "not_found") {
+      if (lists[i] != "not_found") {
         lData[i].isDuplicate = true;
-        lData[i]._id = topics[i]._id ? topics[i]._id : null;
+        lData[i]._id = lists[i]._id ? lists[i]._id : null;
         lData[i].isUpdated = true;
       }
     });
+
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_POST_LISTS}`;
 
     let formData = new FormData();

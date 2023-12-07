@@ -16,6 +16,8 @@ export async function GET(
 ) {
   const headers = {
     "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
 
   const { searchParams } = new URL(request.url);
@@ -36,55 +38,80 @@ export async function GET(
   //fetching tops
   if (action == "get_tops") {
     const { data } = await fetchTops(limit);
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
 
   //fetching a top
   if (action == "get_top") {
     const { data } = await fetchTop(id);
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
 
   //fetching topics
   if (action == "get_topics") {
     const data = await fetchTopics(topId, page, perPage);
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
 
   //fetching topic info
   if (action == "get_topic") {
     const { data } = await fetchTopic(id);
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
 
   //fetching popular topic
   if (action == "get_popular_topics") {
     const { data } = await fetchPopularTopics(limit);
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
-
   //fetching lists
   if (action == "get_lists") {
     const { data } = await fetchLists(topicId, page, perPage);
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
-
   //fetching list info
   if (action == "get_list") {
     const { data } = await fetchList(listId);
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
 
   //fetching a user
   if (action == "get_user") {
     const { data } = await fetchUser(uid);
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
 
   //fetching a user
   if (action == "get_imports") {
     const { data } = await getImports();
-    return new Response(JSON.stringify({ data }), { status: 200, headers });
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
   }
 
   //.....................PUT.......................
@@ -92,6 +119,7 @@ export async function GET(
   //return info
   return new Response(JSON.stringify({ data: "please define action" }), {
     status: 400,
+    headers: headers,
   });
 }
 
@@ -168,7 +196,7 @@ async function fetchList(listId: string | number | null) {
   try {
     data = await getList(listId);
   } catch {
-    return { data: "8474747 error" };
+    return { data: "not_found" };
   }
   return { data };
 }

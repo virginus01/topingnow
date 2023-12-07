@@ -6,13 +6,9 @@ export default function ProgressBar(props: { progress: any; values: any }) {
   }
 
   const valueLength = values.length - 1;
-  let animate = "animate-pulse";
-  if (valueLength !== progress) {
-    animate = "";
-  }
 
   return (
-    <div className={`${animate} py-4`}>
+    <div className={`animate-pulse py-4`}>
       <div className="w-full bg-gray-200 rounded-md h-4 overflow-hidden">
         <div
           className="bg-blue-600 h-4 rounded-md"

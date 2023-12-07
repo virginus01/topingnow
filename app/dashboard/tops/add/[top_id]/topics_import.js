@@ -85,6 +85,10 @@ const TopicsImport = (top_id) => {
   };
 
   const handleFileChange = (e) => {
+    setData([]);
+    setColumn([]);
+    setValues([]);
+
     Papa.parse(e.target.files[0], {
       header: true,
       skipEmptyLines: true,

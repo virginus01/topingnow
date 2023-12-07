@@ -122,10 +122,17 @@ export async function getLists(topicId, page = 1, perPage = 10) {
 
 export async function getList(listId) {
     const db = await connectDB();
-    const result = await db
-        .collection("lists")
-        .findOne({ slug: listId })
-    return result;
+    let topic = await db.collection("lists").findOne({
+        slug: listId
+    });
+
+    if (!topic) {
+        topic = await db.collection("lists").findOne({
+            _id: new ObjectId(listId)
+        });
+    }
+
+    return topic;
 }
 
 export async function getPopularTopics(limit) {
@@ -261,11 +268,19 @@ export async function deleteImportedTopics(importId) {
         importId: importId
     };
 
-    const result = await db.collection("topics").deleteMany(filter);
+    let result = 0;
+    let result2 = 0;
 
-    try { deleteImport(importId) } catch (e) { }
+    try {
+        result = await db.collection("topics").deleteMany(filter);
+        result2 = await db.collection("lists").deleteMany(filter);
+        const imResult = await deleteImport(importId)
 
-    return result.deletedCount;
+    } catch (e) {
+        console.log("error 8575775")
+    }
+
+    return result.deletedCount + result2.deletedCount;
 }
 
 
@@ -273,13 +288,18 @@ export async function deleteImport(importId) {
 
     const db = await connectDB();
 
-
     const filter = {
         _id: new ObjectId(importId)
     };
 
-    const result = await db.collection("imports").deleteMany(filter);
 
+    try {
+        const result = await db.collection("imports").deleteMany(filter);
+
+    } catch (e) {
+        console.log("error 7575775")
+    }
 
     return result.deletedCount;
 }
+

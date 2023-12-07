@@ -88,7 +88,7 @@ export default function FromTopic({
       {activeTab === 2 && <div className="mt-10">Content for Tab 2</div>}
       {activeTab === 3 && (
         <div className="mt-10">
-          <ListsImport topic_id={params.topic_id} />
+          <ListsImport topicId={params.topic_id} />
         </div>
       )}
     </div>

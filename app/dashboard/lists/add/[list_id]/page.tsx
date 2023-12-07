@@ -39,7 +39,7 @@ export default function FromTopic({
 
   return (
     <div className="container mx-auto mt-12">
-      <p className="my-10">Topic: {topicData.title}</p>
+      <p className="my-10">List: {topicData.title}</p>
       <div className="flex justify-between">
         <div className="flex space-x-4">
           <button
@@ -88,7 +88,7 @@ export default function FromTopic({
       {activeTab === 2 && <div className="mt-10">Content for Tab 2</div>}
       {activeTab === 3 && (
         <div className="mt-10">
-          <ListsImport topic_id={params.topic_id} />
+          <ListsImport topicId={params.topic_id} />
         </div>
       )}
     </div>

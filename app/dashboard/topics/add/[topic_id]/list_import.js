@@ -10,7 +10,7 @@ import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
 import { postLists } from "@/app/lib/repo/lists_repo";
 
 
-const ListsImport = (topic_id) => {
+const ListsImport = (topicId) => {
     const [file, setFile] = useState(null);
     const [data, setData] = useState([]);
     const [columnArray, setColumn] = useState([]);
@@ -46,7 +46,7 @@ const ListsImport = (topic_id) => {
             const topicsD = {
                 title: t.title,
                 description: t.description,
-                topicId: topic_id.topic_id,
+                topicId: topicId.topicId,
                 slug: t.title,
                 isDuplicate: isDuplicate,
                 _id: "",
@@ -86,6 +86,9 @@ const ListsImport = (topic_id) => {
     };
 
     const handleFileChange = (e) => {
+        setData([]);
+        setColumn([]);
+        setValues([]);
         Papa.parse(e.target.files[0], {
             header: true,
             skipEmptyLines: true,

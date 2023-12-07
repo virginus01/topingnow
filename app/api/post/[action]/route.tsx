@@ -15,6 +15,12 @@ export async function POST(
   request: Request,
   { params }: { params: { action: string } }
 ) {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+
   let action = params.action;
   const formData = await request.formData();
 
@@ -23,6 +29,7 @@ export async function POST(
     //   const response = await postTopic(formData);
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
+      headers: headers,
     });
   }
 
@@ -31,6 +38,7 @@ export async function POST(
     const response = await postTopics(formData);
     return new Response(JSON.stringify({ response }), {
       status: 200,
+      headers: headers,
     });
   }
 
@@ -39,6 +47,7 @@ export async function POST(
     const response = await updateTopic(formData);
     return new Response(JSON.stringify({ response }), {
       status: 200,
+      headers: headers,
     });
   }
 
@@ -47,6 +56,7 @@ export async function POST(
     const response = await postLists(formData);
     return new Response(JSON.stringify({ response }), {
       status: 200,
+      headers: headers,
     });
   }
 
@@ -55,6 +65,7 @@ export async function POST(
     const response = await updateList(formData);
     return new Response(JSON.stringify({ response }), {
       status: 200,
+      headers: headers,
     });
   }
 
@@ -63,12 +74,22 @@ export async function POST(
     const response = await createImport(formData);
     return new Response(JSON.stringify({ response }), {
       status: 200,
+      headers: headers,
+    });
+  }
+
+  if (action == "test") {
+    console.log("test");
+    return new Response(JSON.stringify({ msg: "test" }), {
+      status: 200,
+      headers: headers,
     });
   }
 
   // Default response for invalid actions
   return new Response(JSON.stringify({ data: "Invalid action" }), {
     status: 400,
+    headers: headers,
   });
 }
 
@@ -229,7 +250,6 @@ async function postLists(formData: any) {
   const postData = JSON.parse(formData.get("postData"));
 
   const data: ListsModel[] = new Array();
-  console.log(postData);
 
   postData.map(
     async (post: {
@@ -255,6 +275,7 @@ async function postLists(formData: any) {
         image: "",
         metaDescriptio: "",
         metaTitle: "",
+        importId: "",
       };
 
       if (post.isDuplicate) {
@@ -290,6 +311,7 @@ async function postLists(formData: any) {
 
       await addLists(data);
     }
+
     return postData;
   } catch {
     return "484646 error";

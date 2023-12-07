@@ -111,33 +111,27 @@ export default function ImportsView() {
   async function deleteImport(_id: string) {
     setIsOpen(false);
     const result = await deleteTopicsByImports(_id);
-    const im = await getImports(1, 100);
-    console.log(im);
-    setData(im);
-    toast.success(`${result} items deleted`);
+    function removeById(data, id) {
+      return data.filter((item) => item._id !== id);
+    }
+    const updatedImports = removeById(data, _id);
+    setData(updatedImports);
+    toast.success(`${result.data} items deleted`);
   }
 
   function Buttons(_id: any) {
     return (
       <div>
-        <button className="text-red-500 hover:bg-green-600 p-1 rounded mx-1">
-          <TrashIcon className="w-4 h-4" />
-        </button>
-
-        <button className="text-blue-500 hover:bg-green-600 p-1 rounded mx-1">
-          <PencilIcon className="w-4 h-4" />
-        </button>
-
         <button
           onClick={() => setIsOpen(true)}
-          className="text-green-500 hover:bg-green-600 p-1 rounded mx-1"
+          className="text-red-500 hover:bg-white p-1 rounded mx-1"
         >
-          <EyeIcon className="w-4 h-4" />
+          <TrashIcon className="w-4 h-4" />
         </button>
 
         <ConfirmAction
           isOpen={isOpen}
-          onConfirm={() => deleteImport(_id)}
+          onConfirm={() => deleteImport(_id._id)}
           onCancel={() => setIsOpen(false)}
           confirmButtonText={"Proceed"}
         />

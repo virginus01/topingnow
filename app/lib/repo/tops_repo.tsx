@@ -1,6 +1,9 @@
+import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
+
 export async function getTops() {
+  console.log(NEXT_PUBLIC_GET_TOPS);
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_TOPS}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPS}`;
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
