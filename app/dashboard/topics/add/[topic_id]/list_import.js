@@ -41,14 +41,13 @@ const ListsImport = (topicId) => {
         let topics = new Array();
 
         data.map(async (t, i) => {
-            let isDuplicate = false;
 
             const topicsD = {
                 title: t.title,
                 description: t.description,
                 topicId: topicId.topicId,
                 slug: t.title,
-                isDuplicate: isDuplicate,
+                isDuplicate: true,
                 _id: "",
             };
 

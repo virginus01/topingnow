@@ -24,9 +24,7 @@ export async function getTopics(
 
     if (response.status === 200) {
       const posts = await response.json();
-      const postsData = posts.data;
-
-      return postsData;
+      return posts;
     } else {
       return { error: "Failed to fetch topics" };
     }
@@ -57,10 +55,11 @@ export async function getPopularTopics() {
   }
 }
 
-export async function getTopicById(id: string) {
+export async function getTopicById(topicId: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPIC}?id=${id}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}`;
 
+    console.log(url);
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -93,14 +92,15 @@ export async function postTopics(tData: any) {
 
     // Assign isDuplicate and id
     tData.forEach((t, i) => {
-      tData[i].isUpdated = false;
-      if (topics[i] != "not_found") {
-        tData[i].isDuplicate = true;
+      tData[i].isUpdated = true;
+      tData[i]._id = topics[i]._id ? topics[i]._id : null;
+
+      if (topics[i] === "not_found" || topics[i] === "undefined") {
+        tData[i].isDuplicate = false;
         tData[i]._id = topics[i]._id ? topics[i]._id : null;
-        tData[i].isUpdated = true;
+        tData[i].isUpdated = false;
       }
     });
-
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_POST_TOPICS}`;
 
     let formData = new FormData();
@@ -115,7 +115,7 @@ export async function postTopics(tData: any) {
     if (result.status === 200) {
       return await result.json();
     } else {
-      return { error: "Failed to fetch topics" };
+      return { error: "Failed to fetch topic" };
     }
   } catch (error) {
     console.log(error);

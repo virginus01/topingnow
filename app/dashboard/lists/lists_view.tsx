@@ -17,28 +17,31 @@ export default function ListsView({ topicId }) {
   const [page, setPage] = useState(1);
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [not_found, setNotFound] = useState(false);
   const perPage = 10;
 
   useEffect(() => {
     setLoading(true);
     getLists(topicId, 1, 1000).then((result) => {
-      if (!result) {
+      const { data } = result;
+
+      if (!result || result == "not_found" || data.result.length === 0) {
+        setNotFound(true);
       } else {
-        setLists(result.data);
+        setLists(data.result);
 
         setLoading(false);
       }
     });
   }, [topicId, 1, 1000]);
 
-  if (loading) {
-    return <Loading />;
-  }
-  if (!lists || lists == undefined || !Array.isArray(lists)) {
-    console.log(lists);
-    return <div>loading...</div>;
+  if (not_found) {
+    return <div>No List found</div>;
   }
 
+  if (loading || !lists || lists == undefined || !Array.isArray(lists)) {
+    return <Loading />;
+  }
   // Slice topics array for current page
   const paginatedTopics = usePagination(lists, page, perPage);
 

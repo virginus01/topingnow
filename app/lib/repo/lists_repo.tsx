@@ -1,3 +1,4 @@
+"use server";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_GET_LIST,
@@ -37,6 +38,7 @@ export async function getListById(id: string) {
   try {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_LIST}?listId=${id}`;
 
+    console.log(url);
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -66,13 +68,13 @@ export async function postLists(lData: any) {
 
     const lists = await Promise.all(slugs.map(getListById));
 
-    // Assign isDuplicate and id
     lData.forEach((t, i) => {
-      lData[i].isUpdated = false;
-      if (lists[i] != "not_found") {
-        lData[i].isDuplicate = true;
+      lData[i].isUpdated = true;
+      lData[i]._id = lists[i]._id ? lists[i]._id : null;
+      if (lists[i] === "not_found" || lists[i] === "undefined") {
+        lData[i].isDuplicate = false;
         lData[i]._id = lists[i]._id ? lists[i]._id : null;
-        lData[i].isUpdated = true;
+        lData[i].isUpdated = false;
       }
     });
 

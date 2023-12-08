@@ -17,26 +17,29 @@ export default function TopicsView({ topId }) {
   const [page, setPage] = useState(1);
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [not_found, setNotFound] = useState(false);
   const perPage = 10;
 
   useEffect(() => {
     setLoading(true);
     getTopics(topId, 1, 1000).then((result) => {
-      if (!result) {
-      } else {
-        setTopics(result.data);
+      const { data } = result;
 
+      if (!result || result == "not_found" || data.result.length === 0) {
+        setNotFound(true);
+      } else {
+        setTopics(data.result);
         setLoading(false);
       }
     });
   }, [topId, 1, 1000]);
 
-  if (loading) {
-    return <Loading />;
+  if (not_found) {
+    return <div>No Topic found</div>;
   }
-  if (!topics || topics == undefined || !Array.isArray(topics)) {
-    console.log(topics);
-    return <div>loading...</div>;
+
+  if (loading || !topics || topics == undefined || !Array.isArray(topics)) {
+    return <Loading />;
   }
 
   // Slice topics array for current page

@@ -21,25 +21,34 @@ export default function ImportsView() {
   const [data, setData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [not_found, setNotFound] = useState(false);
   const perPage = 10;
 
   useEffect(() => {
     setLoading(true);
     getImports(1, 1000).then((result) => {
-      if (!result) {
+      const { data } = result;
+
+      if (!result || result == "not_found" || data.result.length === 0) {
+        setNotFound(true);
       } else {
-        setData(result.data);
+        setData(data.result);
         setLoading(false);
       }
     });
   }, [1, 1000]);
 
+  if (not_found) {
+    return <div>No Import found</div>;
+  }
+
   if (loading) {
     return <Loading />;
   }
+
   if (!data || data == undefined || !Array.isArray(data)) {
     console.log(data);
-    return <div>loading...</div>;
+    return <div className="animate-pulse">loading imports...</div>;
   }
 
   const paginatedData = usePagination(data, page, perPage);

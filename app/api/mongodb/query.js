@@ -35,9 +35,13 @@ export async function getTopics(topId, page = 1, perPage = 10) {
     const hasNextPage = page < numPages;
     const hasPrevPage = page > 1;
 
+    if (!result) {
+        return "not_found";
+    }
+
 
     return {
-        data: result,
+        result: result,
         metadata: {
             total,
             page,
@@ -52,36 +56,50 @@ export async function getTopics(topId, page = 1, perPage = 10) {
 
 export async function fetchImports(page = 1, perPage = 10) {
 
-    const skip = (page - 1) * perPage;
+    try {
 
-    const db = await connectDB();
+        const skip = (page - 1) * perPage;
 
-    const [result, total] = await Promise.all([
-        db.collection("imports").find()
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(perPage)
-            .toArray(),
-        db.collection("imports").estimatedDocumentCount()
-    ]);
+        const db = await connectDB();
 
-    const numPages = Math.ceil(total / perPage);
-    const hasNextPage = page < numPages;
-    const hasPrevPage = page > 1;
+        const [result, total] = await Promise.all([
+            db.collection("imports").find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
+            db.collection("imports").estimatedDocumentCount()
+        ]);
 
-    return {
-        data: result,
-        metadata: {
-            total,
-            page,
-            perPage,
-            hasNextPage,
-            hasPrevPage
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
+
+
+
+        if (!result) {
+            return "not_found";
         }
-    };
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+
+    } catch (error) {
+
+        console.log("Error in fetchImports", error);
+        return "not_found";
+
+    }
 
 }
-
 
 export async function getLists(topicId, page = 1, perPage = 10) {
 
@@ -107,9 +125,12 @@ export async function getLists(topicId, page = 1, perPage = 10) {
     const hasNextPage = page < numPages;
     const hasPrevPage = page > 1;
 
+    if (!result) {
+        return "not_found";
+    }
 
     return {
-        data: result,
+        result: result,
         metadata: {
             total,
             page,
@@ -121,18 +142,32 @@ export async function getLists(topicId, page = 1, perPage = 10) {
 }
 
 export async function getList(listId) {
-    const db = await connectDB();
-    let topic = await db.collection("lists").findOne({
-        slug: listId
-    });
 
-    if (!topic) {
-        topic = await db.collection("lists").findOne({
-            _id: new ObjectId(listId)
+    try {
+
+        const db = await connectDB();
+
+        let topic = await db.collection("lists").findOne({
+            slug: listId
         });
+
+        if (!topic && isValidObjectId(listId)) {
+            topic = await db.collection("lists").findOne({
+                _id: new ObjectId(listId)
+            });
+        }
+
+        if (!topic) {
+            return "not_found";
+        }
+
+        return topic;
+
+    } catch (error) {
+        console.log("Error in getList", error);
+        return "not_found";
     }
 
-    return topic;
 }
 
 export async function getPopularTopics(limit) {
@@ -152,18 +187,31 @@ export async function stat() {
 
 export async function getTopic(id) {
 
-    const db = await connectDB();
-    let topic = await db.collection("topics").findOne({
-        slug: id
-    });
+    try {
 
-    if (!topic) {
-        topic = await db.collection("topics").findOne({
-            _id: new ObjectId(id)
+        const db = await connectDB();
+
+        let topic = await db.collection("topics").findOne({
+            slug: id
         });
+
+        if (!topic && isValidObjectId(id)) {
+            topic = await db.collection("topics").findOne({
+                _id: new ObjectId(id)
+            });
+        }
+
+        if (!topic) {
+            return "not_found";
+        }
+
+        return topic;
+
+    } catch (error) {
+        console.log("Error in getTopic", error);
+        return "not_found";
     }
 
-    return topic;
 }
 
 export async function getTop(id) {
@@ -180,14 +228,6 @@ export async function getTop(id) {
     return top;
 }
 
-export async function getPost(id) {
-    const db = await connectDB();
-    const post = await db
-        .collection("level-1")
-        .findOne({ slug: id })
-
-    return post;
-}
 
 export async function getUser(uid) {
     const db = await connectDB();
@@ -227,15 +267,18 @@ export async function addLists(data) {
 }
 
 export async function updateATopic(id, data) {
-    const _id = new ObjectId(id);
-    const db = await connectDB();
-
-    await db.collection("topics")
-        .updateOne({ _id: _id }, { $set: data });
-
-    return true;
-
+    try {
+        const _id = new ObjectId(id);
+        const db = await connectDB();
+        await db.collection("topics")
+            .updateOne({ _id: _id }, { $set: data });
+        return true;
+    } catch (error) {
+        console.log("Error updating topic", error);
+        return false;
+    }
 }
+
 
 export async function updateAList(id, data) {
     const _id = new ObjectId(id);
@@ -277,7 +320,7 @@ export async function deleteImportedTopics(importId) {
         const imResult = await deleteImport(importId)
 
     } catch (e) {
-        console.log("error 8575775")
+        console.log(`${e} error 8575775`)
     }
 
     return result.deletedCount + result2.deletedCount;
@@ -303,3 +346,8 @@ export async function deleteImport(importId) {
     return result.deletedCount;
 }
 
+
+
+function isValidObjectId(id) {
+    return ObjectId.isValid(id);
+}

@@ -64,7 +64,7 @@ export async function GET(
 
   //fetching topic info
   if (action == "get_topic") {
-    const { data } = await fetchTopic(id);
+    const data = await fetchTopic(topicId);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -81,7 +81,7 @@ export async function GET(
   }
   //fetching lists
   if (action == "get_lists") {
-    const { data } = await fetchLists(topicId, page, perPage);
+    const data = await fetchLists(topicId, page, perPage);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -89,7 +89,7 @@ export async function GET(
   }
   //fetching list info
   if (action == "get_list") {
-    const { data } = await fetchList(listId);
+    const data = await fetchList(listId);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -107,7 +107,7 @@ export async function GET(
 
   //fetching a user
   if (action == "get_imports") {
-    const { data } = await getImports();
+    const data = await getImports();
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -149,22 +149,20 @@ async function fetchTopics(
   page: number,
   perPage: number
 ) {
-  let data = [];
   try {
     return await getTopics(topId, page, perPage);
   } catch {
-    return { data: "84746 error" };
+    return { msg: "84746 error" };
   }
 }
 
 async function fetchTopic(id: string | number | null) {
-  let data = [];
   try {
-    data = await getTopic(id);
+    return await getTopic(id);
   } catch {
-    return { data: "not_found" };
+    console.log("error: 8475775");
+    return "not_found";
   }
-  return { data };
 }
 
 async function fetchPopularTopics(limit: number | string | null) {
@@ -182,41 +180,33 @@ async function fetchLists(
   page: number,
   perPage: number
 ) {
-  let data = [];
   try {
     return await getLists(topicId, page, perPage);
   } catch {
-    return { data: "74746 error" };
+    return { msg: "74746 error" };
   }
-  return { data };
 }
 
 async function fetchList(listId: string | number | null) {
-  let data = [];
   try {
-    data = await getList(listId);
+    return await getList(listId);
   } catch {
-    return { data: "not_found" };
+    return { msg: "error: 6454554" };
   }
-  return { data };
 }
 
 async function fetchUser(uid: string | number | null) {
-  let data = [];
   try {
-    data = await getUser(uid);
+    return await getUser(uid);
   } catch {
     return { data: "8474747 error" };
   }
-  return { data };
 }
 
 async function getImports() {
-  let data = [];
   try {
     return await fetchImports();
   } catch {
-    return { data: "8474747 error" };
+    return { msg: "8474747 error" };
   }
-  return { data };
 }

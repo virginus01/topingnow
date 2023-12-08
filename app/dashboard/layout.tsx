@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "This is topingnow",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function UserLayout({ children }) {
   return (
     <>

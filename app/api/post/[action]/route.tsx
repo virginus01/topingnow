@@ -31,8 +31,8 @@ export async function POST(
 
   //creating topic
   if (action == "post_topic") {
-    //   const response = await postTopic(formData);
-    return new Response(JSON.stringify({ success: true }), {
+    const response = await postTopic(formData);
+    return new Response(JSON.stringify({ response }), {
       status: 200,
       headers: headers,
     });
@@ -83,14 +83,6 @@ export async function POST(
     });
   }
 
-  if (action == "test") {
-    console.log("test");
-    return new Response(JSON.stringify({ msg: "test" }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
   // Default response for invalid actions
   return new Response(JSON.stringify({ data: "Invalid action" }), {
     status: 400,
@@ -115,7 +107,6 @@ async function postTopic(formData: any) {
 
 async function updateTopic(formData: any) {
   const updateData = JSON.parse(formData.get("updateData"));
-  const _id = formData.get("_id");
 
   const uData: TopicModel = {
     title: updateData.title,
@@ -132,7 +123,7 @@ async function updateTopic(formData: any) {
   };
 
   try {
-    await updateATopic(_id, uData);
+    await updateATopic(updateData._id, uData);
     return { seccess: true };
   } catch {
     return "47747 error";
@@ -180,7 +171,6 @@ async function createImport(formData: any) {
 }
 
 async function postTopics(formData: any) {
-  "use server";
   const postData = JSON.parse(formData.get("postData"));
 
   const data: TopicModel[] = new Array();
@@ -212,16 +202,21 @@ async function postTopics(formData: any) {
         importId: "",
       };
 
-      if (post.isDuplicate) {
+      if (post.isDuplicate === true) {
         const formData = new FormData();
-        formData.append("_id", post._id);
+        tData._id = post._id;
         formData.append("updateData", JSON.stringify(tData));
         const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_UPDATE_TOPIC}`;
-        const response = await fetch(url, {
-          cache: "no-store",
-          method: "POST",
-          body: formData,
-        });
+        try {
+          const response = await fetch(url, {
+            cache: "no-store",
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+        } catch (error) {
+          console.log("error 7464664");
+        }
       } else {
         data.push(tData);
       }
