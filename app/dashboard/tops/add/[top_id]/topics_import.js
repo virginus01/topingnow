@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
 
+export const dynamic = 'force-dynamic'
 
 const TopicsImport = (top_id) => {
   const [file, setFile] = useState(null);
@@ -85,6 +86,9 @@ const TopicsImport = (top_id) => {
   };
 
   const handleFileChange = (e) => {
+    e.preventDefault();
+
+    console.log("file change")
     setData([]);
     setColumn([]);
     setValues([]);

@@ -18,3 +18,9 @@ export const NEXT_PUBLIC_CREATE_IMPORT = "/api/post/create_import";
 // Endpoints delete
 export const NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS =
   "/api/delete/delete_topics_by_import";
+
+// User
+export const NEXT_PUBLIC_GET_USER = "/api/get/get_user";
+
+// Routing
+export const NEXT_PUBLIC_DASHBOARD_LINK = "/dashboard";

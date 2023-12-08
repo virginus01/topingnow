@@ -48,7 +48,7 @@ export default async function PopularTopics() {
     <Suspense fallback={<Shimmer />}>
       <div className="relative flex sm:py-7">
         <div className="relative px-1 pb-2 pt-2 sm:mx-auto w-full sm:px-2">
-          <div className="relative bg-white pb-3 shadow-xl ring-1 ring-gray-900/5 mb-10 rounded-md">
+          <div className="relative bg-white pb-3 shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
             <div className="bg-gray-500 flex items-left justify-left gap-x-4 px-4 py-2 text-xs font-bold text-left text-white">
               Popular Topics
             </div>

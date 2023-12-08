@@ -107,6 +107,7 @@ export const UserNavbar = () => {
                             e.preventDefault();
                             try {
                               await fetch("/api/auth/logout", {
+                                cache: "no-store",
                                 method: "POST",
                               });
                             } catch (error) {

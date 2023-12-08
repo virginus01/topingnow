@@ -1,5 +1,11 @@
 "use server";
 import { customSlugify } from "@/app/utils/custom_slugify";
+import {
+  NEXT_PUBLIC_GET_POPULAR_TOPICS,
+  NEXT_PUBLIC_GET_TOPIC,
+  NEXT_PUBLIC_GET_TOPICS,
+  NEXT_PUBLIC_POST_TOPICS,
+} from "@/constants";
 
 export async function getTopics(
   topId: any | "",
@@ -7,7 +13,7 @@ export async function getTopics(
   perPage: any | ""
 ) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
 
     console.log(url);
     const response = await fetch(url, {
@@ -31,7 +37,7 @@ export async function getTopics(
 
 export async function getPopularTopics() {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_POPULAR_TOPICS}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_POPULAR_TOPICS}`;
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -53,7 +59,7 @@ export async function getPopularTopics() {
 
 export async function getTopicById(id: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_TOPIC}?id=${id}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPIC}?id=${id}`;
 
     const res = await fetch(url, {
       next: {
@@ -95,12 +101,13 @@ export async function postTopics(tData: any) {
       }
     });
 
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_POST_TOPICS}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_POST_TOPICS}`;
 
     let formData = new FormData();
     formData.append("postData", JSON.stringify(tData));
 
     const result = await fetch(url, {
+      cache: "no-store",
       method: "POST",
       body: formData,
     });

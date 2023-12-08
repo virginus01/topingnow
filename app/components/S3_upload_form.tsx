@@ -15,6 +15,7 @@ const UploadForm = () => {
 
     try {
       const response = await fetch("/api/s3_uploader", {
+        cache: "no-store",
         method: "POST",
         body: formData,
       });

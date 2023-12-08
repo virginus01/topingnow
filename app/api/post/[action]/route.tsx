@@ -10,6 +10,11 @@ import { getTopicById } from "@/app/lib/repo/topics_repo";
 import { TopicModel } from "@/app/models/topic_model";
 import { ListsModel } from "@/app/models/lists_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
+import {
+  NEXT_PUBLIC_CREATE_IMPORT,
+  NEXT_PUBLIC_UPDATE_LIST,
+  NEXT_PUBLIC_UPDATE_TOPIC,
+} from "@/constants";
 
 export async function POST(
   request: Request,
@@ -211,8 +216,9 @@ async function postTopics(formData: any) {
         const formData = new FormData();
         formData.append("_id", post._id);
         formData.append("updateData", JSON.stringify(tData));
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_UPDATE_TOPIC}`;
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_UPDATE_TOPIC}`;
         const response = await fetch(url, {
+          cache: "no-store",
           method: "POST",
           body: formData,
         });
@@ -224,12 +230,13 @@ async function postTopics(formData: any) {
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_CREATE_IMPORT}`;
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
 
       let formData = new FormData();
-      formData.append("title", "topic:");
+      formData.append("title", `topic: ${postData.title}`);
 
       const response = await fetch(url, {
+        cache: "no-store",
         method: "POST",
         body: formData,
       });
@@ -282,8 +289,9 @@ async function postLists(formData: any) {
         const formData = new FormData();
         formData.append("_id", post._id);
         formData.append("updateData", JSON.stringify(tData));
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_UPDATE_LIST}`;
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_UPDATE_LIST}`;
         const response = await fetch(url, {
+          cache: "no-store",
           method: "POST",
           body: formData,
         });
@@ -295,12 +303,13 @@ async function postLists(formData: any) {
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_CREATE_IMPORT}`;
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
 
       let formData = new FormData();
-      formData.append("title", "list:");
+      formData.append("title", `list: ${postData.topicId}`);
 
       const response = await fetch(url, {
+        cache: "no-store",
         method: "POST",
         body: formData,
       });

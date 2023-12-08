@@ -1,6 +1,11 @@
+import {
+  NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS,
+  NEXT_PUBLIC_GET_IMPORTS,
+} from "@/constants";
+
 export async function getImports(page: number, perPage: any | "") {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_IMPORTS}?page=${page}&perPage=${perPage}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_IMPORTS}?page=${page}&perPage=${perPage}`;
 
     console.log(url);
     const response = await fetch(url, {
@@ -21,7 +26,7 @@ export async function getImports(page: number, perPage: any | "") {
 
 export async function deleteTopicsByImports(_id: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS}`;
 
     console.log(url);
 

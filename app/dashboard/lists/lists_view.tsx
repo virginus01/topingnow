@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import Loading from "../loading";
 import { getLists } from "@/app/lib/repo/lists_repo";
 
+export const dynamic = "force-dynamic";
+
 export default function ListsView({ topicId }) {
   const [page, setPage] = useState(1);
   const [lists, setLists] = useState([]);

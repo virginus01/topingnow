@@ -1,4 +1,9 @@
 import { customSlugify } from "@/app/utils/custom_slugify";
+import {
+  NEXT_PUBLIC_GET_LIST,
+  NEXT_PUBLIC_GET_LISTS,
+  NEXT_PUBLIC_POST_LISTS,
+} from "@/constants";
 
 export async function getLists(
   topicId: any | "",
@@ -6,7 +11,7 @@ export async function getLists(
   perPage: any | ""
 ) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}`;
 
     console.log(url);
 
@@ -30,7 +35,7 @@ export async function getLists(
 
 export async function getListById(id: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_GET_LIST}?listId=${id}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_LIST}?listId=${id}`;
 
     const res = await fetch(url, {
       next: {
@@ -71,12 +76,13 @@ export async function postLists(lData: any) {
       }
     });
 
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_POST_LISTS}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_POST_LISTS}`;
 
     let formData = new FormData();
     formData.append("postData", JSON.stringify(lData));
 
     const response = await fetch(url, {
+      cache: "no-store",
       method: "POST",
       body: formData,
     });

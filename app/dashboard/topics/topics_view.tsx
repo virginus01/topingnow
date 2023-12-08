@@ -11,6 +11,8 @@ import { getTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import Loading from "../loading";
 
+export const dynamic = "force-dynamic";
+
 export default function TopicsView({ topId }) {
   const [page, setPage] = useState(1);
   const [topics, setTopics] = useState([]);

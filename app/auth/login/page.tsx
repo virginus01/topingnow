@@ -7,6 +7,7 @@ import Link from "next/link";
 import { LoginSession } from "@/app/controllers/route";
 import { toast } from "sonner";
 import { redirect, useRouter } from "next/navigation";
+import { NEXT_PUBLIC_DASHBOARD_LINK } from "@/constants";
 
 const UploadForm = () => {
   const router = useRouter();
@@ -37,7 +38,7 @@ const UploadForm = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       await LoginSession(uid);
-      router.push(process.env.NEXT_PUBLIC_DASHBOARD_LINK as string);
+      router.push(NEXT_PUBLIC_DASHBOARD_LINK as string);
     } catch (error) {
       console.log(error.code);
       if (error.code === "auth/invalid-email") {

@@ -40,6 +40,7 @@ export default function SignUp() {
 
       if (user) {
         fetch("../../api/user/route", {
+          cache: "no-store",
           method: "POST",
           body: JSON.stringify({
             uid: user.uid,
