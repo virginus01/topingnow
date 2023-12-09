@@ -3,6 +3,7 @@ import { NEXT_PUBLIC_GET_TOP, NEXT_PUBLIC_GET_TOPS } from "@/constants";
 export async function getTops() {
   try {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPS}`;
+    console.log(url);
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),

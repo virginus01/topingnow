@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-const inter = Inter({ subsets: ["latin"] });
+//import { Inter } from "next/font/google";
 import "../styles/global.css";
-import ConfirmAction from "./components/widgets/confirm";
 
+//const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Toping Now",
   description: "This is topingnow",
@@ -18,7 +17,7 @@ export default function RootLayout({
   return (
     <>
       <html lang="en" prefix="og: https://ogp.me/ns#">
-        <body className={inter.className}>{children}</body>
+        <body>{children}</body>
       </html>
     </>
   );

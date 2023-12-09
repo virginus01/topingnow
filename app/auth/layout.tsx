@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+////import { Inter } from "next/font/google";
 import { Navbar } from "@/app/components/navbar";
 import Footer from "@/app/components/footer";
 import Image from "next/image";
 import { Toaster } from "sonner";
 
-const inter = Inter({ subsets: ["latin"] });
+//const inter = Inter({ subsets: ["latin"] });
 
 export default function AuthLayout({
   children,

@@ -22,8 +22,6 @@ export async function getSession(shouldSleep = true) {
 }
 
 export async function LoginSession(uid: string | null) {
-  "use server";
-
   const session = await getSession();
   session.uid = (uid as string) ?? "";
   session.isLoggedIn = true;
@@ -34,8 +32,6 @@ export async function LoginSession(uid: string | null) {
 }
 
 export async function logout() {
-  "use server";
-
   // false => no db call for logout
   const session = await getSession(false);
   session.destroy();
