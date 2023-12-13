@@ -6,7 +6,6 @@ export default async function Topics({ topId }) {
   const topics = result.data;
 
   if (!topics || !Array.isArray(topics)) {
-    console.log(topics);
     return <p>Loading...</p>;
   }
 
