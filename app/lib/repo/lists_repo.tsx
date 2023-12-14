@@ -58,7 +58,7 @@ export async function getListById(id: string) {
     console.error(error);
 
     return {
-      error: error.message || `Failed to fetch list ${id}`,
+      error: error.message || `Failed to fetch list ${id} 874664`,
     };
   }
 }
