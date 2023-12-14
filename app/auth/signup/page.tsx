@@ -31,8 +31,6 @@ export default function SignUp() {
   useEffect(setupFirebaseAuthListener, []);
 
   const handleSignUp = async () => {
-    const router = useRouter();
-
     try {
       setLoading(true);
 
@@ -51,7 +49,7 @@ export default function SignUp() {
 
         // Introduce a delay of 500 milliseconds before navigating
         setTimeout(() => {
-          router.push("../auth/login");
+          //  router.push("../auth/login");
         }, 500);
       }
     } catch (error) {

@@ -16,6 +16,12 @@ import ConfirmAction from "@/app/components/widgets/confirm";
 
 export let isOpen = false;
 
+// Custom hook to handle pagination
+function usePagination(data, page, perPage) {
+  const startIndex = (page - 1) * perPage;
+  return data.slice(startIndex, startIndex + perPage);
+}
+
 export default function ImportsView() {
   const [page, setPage] = useState(1);
   const [data, setData] = useState([]);
@@ -23,6 +29,7 @@ export default function ImportsView() {
   const [loading, setLoading] = useState(false);
   const [not_found, setNotFound] = useState(false);
   const perPage = 10;
+  const paginatedData = usePagination(data, page, perPage);
 
   useEffect(() => {
     setLoading(true);
@@ -36,7 +43,7 @@ export default function ImportsView() {
         setLoading(false);
       }
     });
-  }, [1, 1000]);
+  }, []);
 
   if (not_found) {
     return <div>No Import found</div>;
@@ -50,8 +57,6 @@ export default function ImportsView() {
     console.log(data);
     return <div className="animate-pulse">loading imports...</div>;
   }
-
-  const paginatedData = usePagination(data, page, perPage);
 
   return (
     <>
@@ -110,12 +115,6 @@ export default function ImportsView() {
       />
     </>
   );
-
-  // Custom hook to handle pagination
-  function usePagination(data, page, perPage) {
-    const startIndex = (page - 1) * perPage;
-    return data.slice(startIndex, startIndex + perPage);
-  }
 
   async function deleteImport(_id: string) {
     setIsOpen(false);

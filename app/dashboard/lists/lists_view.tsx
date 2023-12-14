@@ -13,12 +13,20 @@ import { getLists } from "@/app/lib/repo/lists_repo";
 
 export const dynamic = "force-dynamic";
 
+// Custom hook to handle pagination
+function usePagination(data, page, perPage) {
+  const startIndex = (page - 1) * perPage;
+  return data.slice(startIndex, startIndex + perPage);
+}
+
 export default function ListsView({ topicId }) {
   const [page, setPage] = useState(1);
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(false);
   const [not_found, setNotFound] = useState(false);
   const perPage = 10;
+  // Slice topics array for current page
+  const paginatedTopics = usePagination(lists, page, perPage);
 
   useEffect(() => {
     setLoading(true);
@@ -33,7 +41,7 @@ export default function ListsView({ topicId }) {
         setLoading(false);
       }
     });
-  }, [topicId, 1, 1000]);
+  }, [topicId]);
 
   if (not_found) {
     return <div>No List found</div>;
@@ -42,8 +50,6 @@ export default function ListsView({ topicId }) {
   if (loading || !lists || lists == undefined || !Array.isArray(lists)) {
     return <Loading />;
   }
-  // Slice topics array for current page
-  const paginatedTopics = usePagination(lists, page, perPage);
 
   return (
     <>
@@ -103,12 +109,6 @@ export default function ListsView({ topicId }) {
       />
     </>
   );
-}
-
-// Custom hook to handle pagination
-function usePagination(data, page, perPage) {
-  const startIndex = (page - 1) * perPage;
-  return data.slice(startIndex, startIndex + perPage);
 }
 
 function Buttons() {

@@ -24,7 +24,8 @@ export default async function getUserData() {
     });
 
     if (!res.ok) {
-      throw new Error("Fetch failed");
+      console.log("Fetch failed");
+      return { error: res.statusText };
     }
 
     const result = await res.json();

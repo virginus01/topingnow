@@ -19,7 +19,7 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
         setTopData(data);
       }
     });
-  }, [params.top_id]);
+  }, [params.top_id, router]);
 
   const [activeTab, setActiveTab] = useState(1);
 

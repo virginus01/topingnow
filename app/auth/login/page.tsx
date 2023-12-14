@@ -1,4 +1,5 @@
 "use client";
+
 import { Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { auth } from "@/app/utils/firebase";
@@ -15,6 +16,7 @@ const UploadForm = () => {
   const [password, setPassword] = useState("");
   const [loading, setloading] = useState(false);
   const [uid, setUID] = useState(null);
+
   function setupFirebaseAuthListener() {
     const unsubscribe = onAuthStateChanged(auth, async (authUser: any) => {
       if (authUser) {
@@ -22,7 +24,6 @@ const UploadForm = () => {
         setUID(uid);
       }
     });
-
     return () => unsubscribe();
   }
 
@@ -31,6 +32,7 @@ const UploadForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setloading(true);
+
     const formData = new FormData();
     formData.append("email", email);
     formData.append("password", password);
@@ -96,11 +98,11 @@ const UploadForm = () => {
               </Button>
             </form>
           </div>
+
           <div className="pt-8 text-base font-semibold leading-7 text-right">
-            dont't have account?
+            {" dont't have account?"}
             <Link href="signup" className="text-sky-500 hover:text-sky-600">
-              {" "}
-              register &rarr;
+              {"   register"} &rarr;
             </Link>
           </div>
         </div>

@@ -25,7 +25,7 @@ export default function FromTopic({
         setTopicData(data);
       }
     });
-  }, [params.topic_id]);
+  }, [params.topic_id, router]);
 
   const [activeTab, setActiveTab] = useState(1);
 

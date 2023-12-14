@@ -7,11 +7,7 @@ import {
   NEXT_PUBLIC_POST_TOPICS,
 } from "@/constants";
 
-export async function getTopics(
-  topId: any | "",
-  page: number,
-  perPage: any | ""
-) {
+export async function getTopics(topId: any | "", page: any, perPage: any | "") {
   try {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
 
@@ -43,7 +39,8 @@ export async function getPopularTopics() {
     });
 
     if (!res.ok) {
-      throw new Error("Fetch failed");
+      console.log("Fetch failed");
+      return { error: res.statusText };
     }
     const result = await res.json();
 
@@ -67,7 +64,8 @@ export async function getTopicById(topicId: string) {
     });
 
     if (!res.ok) {
-      throw new Error("Fetch failed");
+      console.log("Fetch failed");
+      return { error: res.statusText };
     }
 
     const result = await res.json();

@@ -13,16 +13,23 @@ import Loading from "../loading";
 
 export const dynamic = "force-dynamic";
 
+function usePagination(data, page, perPage) {
+  const startIndex = (page - 1) * perPage;
+  return data.slice(startIndex, startIndex + perPage);
+}
+
 export default function TopicsView({ topId }) {
   const [page, setPage] = useState(1);
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(false);
   const [not_found, setNotFound] = useState(false);
   const perPage = 10;
+  // Slice topics array for current page
+  const paginatedTopics = usePagination(topics, page, perPage);
 
   useEffect(() => {
     setLoading(true);
-    getTopics(topId, 1, 1000).then((result) => {
+    getTopics(topId, "1", "1000").then((result) => {
       const { data } = result;
 
       if (!result || result == "not_found" || data.result.length === 0) {
@@ -32,7 +39,7 @@ export default function TopicsView({ topId }) {
         setLoading(false);
       }
     });
-  }, [topId, 1, 1000]);
+  }, [topId]);
 
   if (not_found) {
     return <div>No Topic found</div>;
@@ -41,9 +48,6 @@ export default function TopicsView({ topId }) {
   if (loading || !topics || topics == undefined || !Array.isArray(topics)) {
     return <Loading />;
   }
-
-  // Slice topics array for current page
-  const paginatedTopics = usePagination(topics, page, perPage);
 
   return (
     <>
@@ -111,12 +115,6 @@ export default function TopicsView({ topId }) {
       />
     </>
   );
-}
-
-// Custom hook to handle pagination
-function usePagination(data, page, perPage) {
-  const startIndex = (page - 1) * perPage;
-  return data.slice(startIndex, startIndex + perPage);
 }
 
 function Buttons() {
