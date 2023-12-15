@@ -55,6 +55,8 @@ export const Navbar = () => {
                       width={200}
                       height={50}
                       priority
+                      placeholder="blur"
+                      blurDataURL={"/images/logo.png"}
                     />
                   </Link>
                 </div>
