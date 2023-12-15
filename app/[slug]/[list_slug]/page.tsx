@@ -56,7 +56,7 @@ export default function ListView({
         </div>
 
         <div className="w-full lg:w-1/5 lg:h-screen lg:mt-12 mt-2 top-0 right-0 lg:fixed">
-          <PopularTopics />
+          <PopularTopics _id={data._id} />
         </div>
       </div>
     </>

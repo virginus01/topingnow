@@ -198,12 +198,12 @@ export async function getList(listId) {
 
 }
 
-export async function getPopularTopics(page = 1, perPage = 10) {
+export async function getPopularTopics(excludeId = '', page = 1, perPage = 10) {
     const skip = (page - 1) * perPage;
 
     const db = await connectDB();
 
-    const filter = {};
+    const filter = excludeId ? { _id: { $ne: new ObjectId(excludeId) } } : {};
 
     const [result, total] = await Promise.all([
         db.collection("topics").find(filter)

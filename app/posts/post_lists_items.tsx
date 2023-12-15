@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function dataListItem({ data }) {
+  if (typeof window !== "undefined") {
+    const router = useRouter();
+    router.prefetch(`${process.env.NEXT_PUBLIC_BASE_URL}/${data.slug}`);
+  }
   return (
     <>
       <li key={data._id} className="py-2">

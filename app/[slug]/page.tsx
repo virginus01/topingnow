@@ -40,7 +40,7 @@ export default function Post({ params }: { params: { slug: string } }) {
           <Lists topicData={data} />
         </section>
         <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
-          <PopularTopics />
+          <PopularTopics _id={data._id} />
         </div>
       </div>
     </>

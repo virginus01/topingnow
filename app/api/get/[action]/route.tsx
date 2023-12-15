@@ -24,6 +24,7 @@ export async function GET(
   let limit = searchParams.get("limit");
   let topId = searchParams.get("topId");
   let id = searchParams.get("id");
+  let _id = searchParams.get("_id");
   let topicId = searchParams.get("topicId");
   let listId = searchParams.get("listId");
   let uid = searchParams.get("uid");
@@ -73,7 +74,7 @@ export async function GET(
 
   //fetching popular topic
   if (action == "get_popular_topics") {
-    const data = await fetchPopularTopics(page, perPage);
+    const data = await fetchPopularTopics(_id, page, perPage);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -163,9 +164,9 @@ async function fetchTopic(id: string | number | null) {
   }
 }
 
-async function fetchPopularTopics(page: number, perPage: number) {
+async function fetchPopularTopics(_id: any, page: number, perPage: number) {
   try {
-    return await getPopularTopics(page, perPage);
+    return await getPopularTopics(_id, page, perPage);
   } catch {
     return { data: "87476 error" };
   }

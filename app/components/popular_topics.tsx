@@ -5,12 +5,12 @@ import { NEXT_PUBLIC_GET_POPULAR_TOPICS } from "@/constants";
 import { usePaginatedSWR } from "../utils/fetcher";
 import Shimmer from "./shimmer";
 
-export default function PopularTopics() {
+export default function PopularTopics(_id: any | null) {
   const perPage = 3;
   const page = 1;
   let [data, setData] = useState(Shimmer(perPage));
 
-  const url = `${NEXT_PUBLIC_GET_POPULAR_TOPICS}?page=${page}&perPage=${perPage}`;
+  const url = `${NEXT_PUBLIC_GET_POPULAR_TOPICS}?_id=${_id._id}&page=${page}&perPage=${perPage}`;
 
   // Slice topics array for current page
   const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
@@ -35,7 +35,7 @@ export default function PopularTopics() {
                 {data.map((post: { _id; title; slug; extraClass }) => {
                   const modifiedPost = {
                     ...post,
-                    slug: `${post.slug}?ref=${"sideBar"}`,
+                    slug: `${post.slug}`,
                   };
                   return <PostListItem data={modifiedPost} key={post._id} />;
                 })}

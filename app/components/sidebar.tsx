@@ -1,6 +1,4 @@
-import { Key } from "react";
 import PostListItem from "@/app/posts/post_lists_items";
-import { UrlObject } from "url";
 
 export default function SideBar({ data }) {
   return (
