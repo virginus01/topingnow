@@ -37,7 +37,7 @@ export async function GET(
 
   //fetching tops
   if (action == "get_tops") {
-    const { data } = await fetchTops(limit);
+    const data = await fetchTops(page, perPage);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -73,7 +73,7 @@ export async function GET(
 
   //fetching popular topic
   if (action == "get_popular_topics") {
-    const { data } = await fetchPopularTopics(limit);
+    const data = await fetchPopularTopics(page, perPage);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -123,14 +123,12 @@ export async function GET(
   });
 }
 
-async function fetchTops(limit: string | number | null) {
-  let data = [];
+async function fetchTops(page: number, perPage: number) {
   try {
-    data = await getTops(limit);
-  } catch {
+    return await getTops(page, perPage);
+  } catch (e) {
     return { data: "839847 error" };
   }
-  return { data };
 }
 
 async function fetchTop(id: any) {
@@ -165,14 +163,12 @@ async function fetchTopic(id: string | number | null) {
   }
 }
 
-async function fetchPopularTopics(limit: number | string | null) {
-  let data = [];
+async function fetchPopularTopics(page: number, perPage: number) {
   try {
-    data = await getPopularTopics(limit);
+    return await getPopularTopics(page, perPage);
   } catch {
     return { data: "87476 error" };
   }
-  return { data };
 }
 
 async function fetchLists(

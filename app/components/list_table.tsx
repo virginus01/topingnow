@@ -1,27 +1,27 @@
 "use client";
-import { Key } from "react";
+import { Key, useState } from "react";
 import { UrlObject } from "url";
 import { NEXT_PUBLIC_GET_LISTS } from "@/constants";
 import { usePaginatedSWR } from "../utils/fetcher";
 import Shimmer from "./shimmer";
+import PostListItem from "@/app/posts/post_lists_items";
 
 export default function ListTable({ topicData }) {
-  const perPage = 10;
+  const perPage = 3;
   const page = 1;
+  let [data, setData] = useState(Shimmer(perPage));
+
   const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicData._id}&page=${page}&perPage=${perPage}`;
 
   // Slice topics array for current page
   const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
 
-  if (loading || !Array.isArray(paginatedData)) {
-    return <Shimmer />;
+  if (!loading) {
+    data = paginatedData;
   }
-
-  if (!paginatedData) {
-    return <div>No Topic found</div>;
+  if (data.length == 0) {
+    data = Shimmer(perPage);
   }
-
-  const lists = paginatedData;
 
   return (
     <div className="relative flex sm:py-7">
@@ -32,22 +32,15 @@ export default function ListTable({ topicData }) {
           </div>
           <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
             <div className="line-clamp-1 text-sm leading-6 text-gray-600">
-              {lists.map(
-                (post: {
-                  title: any;
-                  _id: Key | null | undefined;
-                  slug: string | UrlObject;
-                }) => (
-                  <a key={post._id} href={`#${post.slug}`}>
-                    <div className="flex items-center pt-3">
-                      <div className="bg-red-900 w-1 h-1 mr-2 text-sm"></div>
-                      <div className="align-middle line-clamp-1 text-transform: lowercase">
-                        {post.title}
-                      </div>
-                    </div>
-                  </a>
-                )
-              )}
+              <ul className="ml-1 inline-block w-[500px]">
+                {data.map((post: { _id; title; slug; extraClass }) => {
+                  const modifiedPost = {
+                    ...post,
+                    slug: `${topicData.slug}#${post.slug}`,
+                  };
+                  return <PostListItem data={modifiedPost} key={post._id} />;
+                })}
+              </ul>
             </div>
           </div>
         </div>

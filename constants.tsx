@@ -1,4 +1,4 @@
-export const NEXT_PUBLIC_GET_TOPS = "/api/get/get_tops";
+export const NEXT_PUBLIC_GET_TOPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_tops`;
 export const NEXT_PUBLIC_GET_TOP = "/api/get/get_top";
 export const NEXT_PUBLIC_GET_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topics`;
 export const NEXT_PUBLIC_GET_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic`;

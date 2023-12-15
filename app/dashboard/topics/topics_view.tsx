@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Loading from "../loading";
 import { NEXT_PUBLIC_GET_TOPICS } from "@/constants";
-import { usePaginatedSWR } from "@/app/utils/fetcher";
+import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +20,7 @@ export default function TopicsView({ topId }) {
   const url = `${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
 
   // Slice topics array for current page
-  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
+  const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
 
   if (loading || !Array.isArray(paginatedData)) {
     return <Loading />;

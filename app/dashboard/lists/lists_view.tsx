@@ -7,11 +7,9 @@ import {
   EyeIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import { toast } from "sonner";
 import Loading from "../loading";
-import { getLists } from "@/app/lib/repo/lists_repo";
 import { NEXT_PUBLIC_GET_LISTS } from "@/constants";
-import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
+import { usePaginatedSWR } from "@/app/utils/fetcher";
 
 export const dynamic = "force-dynamic";
 
@@ -19,14 +17,10 @@ export default function ListsView({ topicId }) {
   const [page, setPage] = useState(1);
   const perPage = 10;
 
-  const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}&isAdmin=yes`;
+  const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}`;
 
   // Slice topics array for current page
-  const { paginatedData, loading, data } = usePaginatedSWRAdmin(
-    url,
-    page,
-    perPage
-  );
+  const { paginatedData, loading, data } = usePaginatedSWR(url, page, perPage);
 
   if (loading || !Array.isArray(paginatedData)) {
     return <Loading />;

@@ -1,15 +1,43 @@
 import { connectDB } from '@/app/utils/mongodb'
 import { ObjectId } from 'mongodb';
 
-export async function getTops(limit) {
+export async function getTops(page = 1, perPage = 10) {
+    const skip = (page - 1) * perPage;
+
     const db = await connectDB();
-    const tops = await db
-        .collection("tops")
-        .find({})
-        .sort({ metacritic: -1 })
-        .limit(parseInt(limit, 10))
-        .toArray();
-    return tops;
+
+    const filter = {};
+
+    const [result, total] = await Promise.all([
+        db.collection("tops").find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
+
+        db.collection("tops")
+            .estimatedDocumentCount(filter)
+    ]);
+
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+    if (!result) {
+        return "not_found";
+    }
+
+
+    return {
+        result: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
 }
 
 export async function getTopics(topId, page = 1, perPage = 10) {
@@ -170,13 +198,44 @@ export async function getList(listId) {
 
 }
 
-export async function getPopularTopics(limit) {
+export async function getPopularTopics(page = 1, perPage = 10) {
+    const skip = (page - 1) * perPage;
+
     const db = await connectDB();
-    const result = await db.collection("topics")
-        .find({}).sort({ list_count: -1 })
-        .limit(parseInt(limit, 10))
-        .toArray();
-    return result;
+
+    const filter = {};
+
+    const [result, total] = await Promise.all([
+        db.collection("topics").find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
+
+        db.collection("topics")
+            .estimatedDocumentCount(filter)
+    ]);
+
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+    if (!result) {
+        return "not_found";
+    }
+
+
+    return {
+        result: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
+
 }
 
 export async function stat() {
