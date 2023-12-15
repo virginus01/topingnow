@@ -16,10 +16,11 @@ export default function Lists({ topicData }) {
   // Slice topics array for current page
   const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
 
-  if (!loading) {
+  if (paginatedData && paginatedData.length > 0) {
     data = paginatedData;
   }
-  if (data.length == 0) {
+
+  if (paginatedData.length == 0) {
     data = Shimmer(perPage);
   }
 
@@ -42,7 +43,6 @@ export default function Lists({ topicData }) {
                 >
                   <span>
                     <Link
-                      as={`${topicSlug}/${slug}`}
                       href={`${topicSlug}/${slug}`}
                       className="text-red-900 font-medium"
                     >

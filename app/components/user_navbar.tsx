@@ -142,7 +142,7 @@ export const UserNavbar = () => {
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
-                    as={item.href}
+                  
                     href={item.href}
                     className={classNames(
                       item.current

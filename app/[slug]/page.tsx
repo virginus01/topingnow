@@ -18,12 +18,12 @@ export default function Post({ params }: { params: { slug: string } }) {
   // Slice topics array for current page
   const { result, loading } = useSingleSWR(url);
 
-  if (!loading && !result) {
-    notFound();
+  if (result) {
+    data = result;
   }
 
-  if (!loading) {
-    data = result;
+  if (!loading && !result) {
+    notFound();
   }
 
   return (
