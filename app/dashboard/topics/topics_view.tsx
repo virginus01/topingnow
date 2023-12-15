@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Pagination from "rc-pagination";
 import {
   TrashIcon,
@@ -7,53 +7,34 @@ import {
   EyeIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import { getTopics } from "@/app/lib/repo/topics_repo";
-import { toast } from "sonner";
 import Loading from "../loading";
+import { NEXT_PUBLIC_GET_TOPICS } from "@/constants";
+import { usePaginatedSWR } from "@/app/utils/fetcher";
 
 export const dynamic = "force-dynamic";
 
-function usePagination(data, page, perPage) {
-  const startIndex = (page - 1) * perPage;
-  return data.slice(startIndex, startIndex + perPage);
-}
-
 export default function TopicsView({ topId }) {
   const [page, setPage] = useState(1);
-  const [topics, setTopics] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [not_found, setNotFound] = useState(false);
+
   const perPage = 10;
+  const url = `${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
+
   // Slice topics array for current page
-  const paginatedTopics = usePagination(topics, page, perPage);
+  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
 
-  useEffect(() => {
-    setLoading(true);
-    getTopics(topId, "1", "1000").then((result) => {
-      const { data } = result;
-
-      if (!result || result == "not_found" || data.result.length === 0) {
-        setNotFound(true);
-      } else {
-        setTopics(data.result);
-        setLoading(false);
-      }
-    });
-  }, [topId]);
-
-  if (not_found) {
-    return <div>No Topic found</div>;
+  if (loading || !Array.isArray(paginatedData)) {
+    return <Loading />;
   }
 
-  if (loading || !topics || topics == undefined || !Array.isArray(topics)) {
-    return <Loading />;
+  if (!paginatedData) {
+    return <div>No Topic found</div>;
   }
 
   return (
     <>
       <table className="w-full whitespace-nowrap">
         <tbody>
-          {paginatedTopics.map(({ id, title, _id }) => (
+          {paginatedData.map(({ id, title, _id }) => (
             <tr key={_id} className="text-sm leading-none text-gray-600 h-16">
               <td className="w-1/2">
                 <div className="flex items-center">
@@ -104,11 +85,11 @@ export default function TopicsView({ topId }) {
         className="pagination"
         current={page} // use current instead of page
         onChange={setPage}
-        total={topics.length}
+        total={paginatedData.length}
         pageSize={perPage}
         showPrevNextJumpers={true}
-        prevIcon={"«"}
-        nextIcon={"»"}
+        prevIcon={"Â«"}
+        nextIcon={"Â»"}
         showTitle={false}
         hideOnSinglePage={true}
         showLessItems={true}

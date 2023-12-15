@@ -1,3 +1,4 @@
+"use client";
 import PostBody from "@/app/posts/post_body";
 import PopularTopics from "@/app/components/popular_topics";
 import { getTopicById } from "@/app/lib/repo/topics_repo";
@@ -5,9 +6,26 @@ import ListTable from "@/app/components/list_table";
 import { Suspense } from "react";
 import Lists from "../posts/lists";
 import { notFound } from "next/navigation";
+import { useSingleSWR } from "../utils/fetcher";
+import Loading from "../dashboard/loading";
+import { NEXT_PUBLIC_GET_TOPIC } from "@/constants";
+import Shimmer from "../components/shimmer";
 
-export default async function Post({ params }: { params: { slug: string } }) {
-  const topicData = await getTopicById(params.slug);
+export default function Post({ params }: { params: { slug: string } }) {
+  const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${params.slug}`;
+
+  // Slice topics array for current page
+  const { result, loading } = useSingleSWR(url);
+
+  if (loading) {
+    return <Shimmer />;
+  }
+
+  if (!result) {
+    return <div>No Topic found</div>;
+  }
+
+  const topicData = result;
 
   if (!topicData || topicData === undefined) {
     notFound();

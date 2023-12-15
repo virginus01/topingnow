@@ -1,20 +1,29 @@
+"use client";
 import Link from "next/link";
 import { getLists } from "@/app/lib/repo/lists_repo";
 import DOMPurify from "isomorphic-dompurify";
+import { NEXT_PUBLIC_GET_LISTS } from "@/constants";
+import Loading from "../dashboard/loading";
+import { usePaginatedSWR } from "../utils/fetcher";
+import Shimmer from "../components/shimmer";
 
-export default async function Lists({ topicData }) {
-  if (!topicData) {
-    return <>loading...</>;
+export default function Lists({ topicData }) {
+  const perPage = 10;
+  const page = 1;
+  const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicData._id}&page=${page}&perPage=${perPage}`;
+
+  // Slice topics array for current page
+  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
+
+  if (loading || !Array.isArray(paginatedData)) {
+    return <Shimmer />;
   }
 
-  const result = await getLists(topicData._id, 1, 10);
-  const lists = result.data;
-
-  if (!lists || !Array.isArray(lists)) {
-    console.log(lists);
-    return <>loading...</>;
+  if (!paginatedData) {
+    return <div>No Topic found</div>;
   }
 
+  const lists = paginatedData;
   const { slug } = topicData;
 
   const topicSlug = slug;

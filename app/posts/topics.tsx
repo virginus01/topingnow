@@ -1,17 +1,28 @@
-import { getTopics } from "@/app/lib/repo/topics_repo";
+"use client";
+import { NEXT_PUBLIC_GET_TOPICS } from "@/constants";
 import Link from "next/link";
+import { usePaginatedSWR } from "@/app/utils/fetcher";
+import Shimmer from "../components/shimmer";
 
-export default async function Topics({ topId }) {
-  const result = await getTopics(topId, 1, 10);
-  const topics = result.data;
+export default function Topics({ topId }) {
+  const perPage = 10;
+  const page = 1;
+  const url = `${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
 
-  if (!topics || !Array.isArray(topics)) {
-    return <p>Loading...</p>;
+  // Slice topics array for current page
+  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
+
+  if (loading || !Array.isArray(paginatedData)) {
+    return <Shimmer />;
+  }
+
+  if (!paginatedData) {
+    return <div>No Topic found</div>;
   }
 
   return (
     <ul className="ml-1 inline-block w-[500px]">
-      {topics.map(({ _id, title, slug }) => (
+      {paginatedData.map(({ _id, title, slug }) => (
         <li key={_id} className="py-2">
           <Link href={`/${slug}`}>
             <div className="flex items-center">

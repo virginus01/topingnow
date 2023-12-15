@@ -1,21 +1,27 @@
+"use client";
 import { Key } from "react";
-
 import { UrlObject } from "url";
-import { getLists } from "@/app/lib/repo/lists_repo";
+import { NEXT_PUBLIC_GET_LISTS } from "@/constants";
+import { usePaginatedSWR } from "../utils/fetcher";
+import Shimmer from "./shimmer";
 
-export default async function ListTable({ topicData }) {
-  if (!topicData) {
-    console.log(topicData);
-    return <>loading...</>;
+export default function ListTable({ topicData }) {
+  const perPage = 10;
+  const page = 1;
+  const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicData._id}&page=${page}&perPage=${perPage}`;
+
+  // Slice topics array for current page
+  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
+
+  if (loading || !Array.isArray(paginatedData)) {
+    return <Shimmer />;
   }
 
-  const result = await getLists(topicData._id, 1, 10);
-  const lists = result.data;
-
-  if (!lists || !Array.isArray(lists)) {
-    console.log(lists);
-    return <>loading...</>;
+  if (!paginatedData) {
+    return <div>No Topic found</div>;
   }
+
+  const lists = paginatedData;
 
   return (
     <div className="relative flex sm:py-7">
