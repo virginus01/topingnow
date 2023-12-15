@@ -27,7 +27,7 @@ export default function Topics({ topId }) {
     <ul className="ml-1 inline-block w-[500px]">
       {data.map(({ _id, title, slug, extraClass }) => (
         <li key={_id} className="py-2">
-          <Link href={`/${slug}`}>
+          <Link as={`/${slug}`} href={`/${slug}`}>
             <div className={`flex items-center ${extraClass}`}>
               <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
               <div className="align-middle line-clamp-1 text-transform: lowercase">

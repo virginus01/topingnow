@@ -19,7 +19,7 @@ export default function Post({ params }: { params: { slug: string } }) {
   const { result, loading } = useSingleSWR(url);
 
   if (!loading && !result) {
-    notFound;
+    notFound();
   }
 
   if (!loading) {
@@ -37,9 +37,7 @@ export default function Post({ params }: { params: { slug: string } }) {
           <article className={`mb-5 ${data.extraClass}`}>
             <PostBody post={data} />
           </article>
-          <article className="mb-10">
-            <Lists topicData={data} />
-          </article>
+          <Lists topicData={data} />
         </section>
         <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
           <PopularTopics />

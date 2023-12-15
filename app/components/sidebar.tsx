@@ -1,14 +1,8 @@
 import { Key } from "react";
 import PostListItem from "@/app/posts/post_lists_items";
-import Link from "next/link";
 import { UrlObject } from "url";
 
-export default function SideBar({ sideBarItems }) {
-  if (!sideBarItems || !Array.isArray(sideBarItems)) {
-    console.log(sideBarItems);
-    return <div>Loading...</div>;
-  }
-
+export default function SideBar({ data }) {
   return (
     <div className="relative flex sm:py-7">
       <div className="relative px-1 pb-2 pt-2 sm:mx-auto w-full sm:px-2">
@@ -18,16 +12,15 @@ export default function SideBar({ sideBarItems }) {
           </div>
           <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
             <div className="line-clamp-1 text-sm leading-6 text-gray-600">
-              {sideBarItems.map(
-                (post: {
-                  id: Key | null | undefined;
-                  link: string | UrlObject;
-                }) => (
-                  <Link key={post.id} href={post.link}>
-                    {<PostListItem post={post} />}
-                  </Link>
-                )
-              )}
+              <ul className="ml-1 inline-block w-[500px]">
+                {data.map((post: { _id; title; slug; extraClass }) => {
+                  const modifiedPost = {
+                    ...post,
+                    slug: `${post.slug}`,
+                  };
+                  return <PostListItem data={modifiedPost} key={post._id} />;
+                })}
+              </ul>
             </div>
           </div>
         </div>
