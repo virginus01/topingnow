@@ -1,11 +1,7 @@
 "use client";
 import useSWR from "swr";
 import httpsFetch from "./fetch";
-
-function usePagination(data, page, perPage) {
-  const startIndex = (page - 1) * perPage;
-  return data.slice(startIndex, startIndex + perPage);
-}
+import usePagination from "./pagination";
 
 export function usePaginatedSWR(url, page, perPage) {
   const { data } = useSWR(url, httpsFetch, {
@@ -36,6 +32,7 @@ export function useSingleSWR(url) {
     keepPreviousData: true, // Maintain stale data while fetching new
   });
   const result = data?.data ?? {};
+
   return {
     result,
     data,

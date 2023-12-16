@@ -1,4 +1,3 @@
-"use client";
 import Topics from "@/app/posts/topics";
 import Layout from "./[slug]/layout";
 import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
@@ -6,23 +5,22 @@ import { usePaginatedSWR } from "./utils/fetcher";
 import Loading from "./dashboard/loading";
 import Shimmer from "./components/shimmer";
 import { useState } from "react";
+import { getTop, getTops } from "./lib/repo/tops_repo";
+import usePagination from "./utils/pagination";
 
-export default function Page() {
+export default async function Page() {
   const perPage = 5;
   const page = 1;
-  let [data, setData] = useState(Shimmer(perPage));
+
   const url = `${NEXT_PUBLIC_GET_TOPS}`;
+  let data = Shimmer(perPage);
 
-  // Slice topics array for current page
-  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
-
-  if (!loading) {
-    data = paginatedData;
+  const res = await getTops();
+  if (res) {
+    data = res.result;
   }
 
-  if (data.length == 0) {
-    data = Shimmer(perPage);
-  }
+  const paginatedData = usePagination(data, page, perPage);
 
   return (
     <Layout>
@@ -34,7 +32,7 @@ export default function Page() {
             </h2>
           </div>
           <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-            {data.map(({ name, _id, extraClass }) => (
+            {paginatedData.map(({ name, _id, extraClass }, i) => (
               <article
                 key={_id}
                 className="flex max-w-xl flex-col items-start justify-between "
@@ -47,7 +45,7 @@ export default function Page() {
                   </div>
                   <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
                     <div className="mt-1 line-clamp-3 text-sm leading-6 text-gray-600">
-                      <Topics topId={_id} />
+                      <Topics topId={_id} topicData={paginatedData[i]} />
                     </div>
                   </div>
                 </div>

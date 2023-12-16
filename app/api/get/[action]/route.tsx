@@ -8,6 +8,7 @@ import {
   getUser,
   getTop,
   fetchImports,
+  getTopicWithEssentials,
 } from "@/app/api/mongodb/query";
 
 export async function GET(
@@ -66,6 +67,15 @@ export async function GET(
   //fetching topic info
   if (action == "get_topic") {
     const data = await fetchTopic(topicId);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  //fetching topic info
+  if (action == "get_topic_with_essentials") {
+    const data = await fetchTopicWithEssentials(topicId, page);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -155,9 +165,18 @@ async function fetchTopics(
   }
 }
 
-async function fetchTopic(id: string | number | null) {
+async function fetchTopic(id: any) {
   try {
     return await getTopic(id);
+  } catch {
+    console.log("error: 8475775");
+    return "not_found";
+  }
+}
+
+async function fetchTopicWithEssentials(id: any, page: any) {
+  try {
+    return await getTopicWithEssentials(id, page);
   } catch {
     console.log("error: 8475775");
     return "not_found";

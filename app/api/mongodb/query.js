@@ -8,7 +8,7 @@ export async function getTops(page = 1, perPage = 10) {
 
     const filter = {};
 
-    const [result, total] = await Promise.all([
+    let [result, total] = await Promise.all([
         db.collection("tops").find(filter)
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -27,6 +27,16 @@ export async function getTops(page = 1, perPage = 10) {
         return "not_found";
     }
 
+    const topTopicsPromises = result.map(async (data) => {
+        const tTopics = await getTopics(String(data._id), 1, 10);
+        return {
+            ...data,
+            topTopics: tTopics
+        };
+    });
+
+    result = await Promise.all(topTopicsPromises);
+
 
     return {
         result: result,
@@ -39,6 +49,9 @@ export async function getTops(page = 1, perPage = 10) {
         }
     };
 }
+
+
+
 
 export async function getTopics(topId, page = 1, perPage = 10) {
 
@@ -82,6 +95,19 @@ export async function getTopics(topId, page = 1, perPage = 10) {
 }
 
 
+export async function getTopicsWithLists(topId, page = 1, perPage = 10) {
+
+
+
+    result.map(async (data) => {
+        const tLists = await getLists(data._id, page = 1, perPage = 10)
+        result.lists = tLists;
+    })
+
+
+}
+
+
 export async function fetchImports(page = 1, perPage = 10) {
 
     try {
@@ -108,6 +134,8 @@ export async function fetchImports(page = 1, perPage = 10) {
         if (!result) {
             return "not_found";
         }
+
+
 
         return {
             result: result,
@@ -156,6 +184,7 @@ export async function getLists(topicId, page = 1, perPage = 10) {
     if (!result) {
         return "not_found";
     }
+
 
     return {
         result: result,
@@ -272,6 +301,43 @@ export async function getTopic(id) {
     }
 
 }
+
+export async function getTopicWithEssentials(id, page = 1) {
+
+    try {
+
+        const db = await connectDB();
+
+        let topic = await db.collection("topics").findOne({
+            slug: id
+        });
+
+        if (!topic && isValidObjectId(id)) {
+            topic = await db.collection("topics").findOne({
+                _id: new ObjectId(id)
+            });
+        }
+
+        if (!topic) {
+            return "not_found";
+        }
+
+        const tTop = await getTop(String(topic.topId))
+        topic.topicTop = tTop;
+
+        const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10))
+        topic.lists = tLists;
+
+        return topic;
+
+    } catch (error) {
+        console.log("Error in getTopic", error);
+        return "not_found";
+    }
+
+
+}
+
 
 export async function getTop(id) {
     const db = await connectDB();

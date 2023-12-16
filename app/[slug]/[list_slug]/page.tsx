@@ -44,7 +44,7 @@ export default function ListView({
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-left pt-12 ml-5">{data.name}</h1>
+      <h1 className="text-2xl font-bold text-left pt-12 ml-5">{data.title}</h1>
 
       <div className="flex flex-col md:flex-row">
         <div className="w-full lg:w-3/5">

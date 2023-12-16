@@ -4,12 +4,13 @@ import {
   NEXT_PUBLIC_GET_POPULAR_TOPICS,
   NEXT_PUBLIC_GET_TOPIC,
   NEXT_PUBLIC_GET_TOPICS,
+  NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS,
   NEXT_PUBLIC_POST_TOPICS,
 } from "@/constants";
 
 export async function getTopics(topId: any | "", page: any, perPage: any | "") {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
+    const url = `${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
 
     console.log(url);
     const response = await fetch(url, {
@@ -55,6 +56,35 @@ export async function getPopularTopics() {
 export async function getTopicById(topicId: string) {
   try {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}`;
+
+    console.log(url);
+    const res = await fetch(url, {
+      next: {
+        revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
+      },
+    });
+
+    if (!res.ok) {
+      console.log("Fetch failed");
+      return { error: res.statusText };
+    }
+
+    const result = await res.json();
+    const { data } = result;
+
+    return data;
+  } catch (error) {
+    console.error(error);
+
+    return {
+      error: error.message || "Failed to fetch topic",
+    };
+  }
+}
+
+export async function justGetTopicWithEssentials(topicId: string, page = 1) {
+  try {
+    const url = `${NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS}?topicId=${topicId}&page=${page}`;
 
     console.log(url);
     const res = await fetch(url, {

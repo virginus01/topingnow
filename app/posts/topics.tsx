@@ -4,39 +4,40 @@ import Link from "next/link";
 import { usePaginatedSWR } from "@/app/utils/fetcher";
 import { useState } from "react";
 import Shimmer from "../components/shimmer";
+import { getTopics } from "../lib/repo/topics_repo";
+import usePagination from "../utils/pagination";
 
-export default function Topics({ topId }) {
+export default function Topics({ topId, topicData }) {
   const perPage = 3;
   const page = 1;
   let [data, setData] = useState(Shimmer(perPage));
 
-  const url = `${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
-
-  // Slice topics array for current page
-  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
-
-  if (!loading) {
-    data = paginatedData;
+  if (
+    topicData.topTopics !== undefined &&
+    Array.isArray(topicData.topTopics.result) &&
+    topicData.topTopics.result.length > 0
+  ) {
+    data = topicData.topTopics.result;
   }
 
-  if (data.length == 0) {
-    data = Shimmer(perPage);
-  }
+  const paginatedData = usePagination(data, page, perPage);
 
   return (
     <ul className="ml-1 inline-block w-[500px]">
-      {data.map(({ _id, title, slug, extraClass }) => (
-        <li key={_id} className="py-2">
-          <Link href={`/${slug}`}>
-            <div className={`flex items-center ${extraClass}`}>
-              <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-              <div className="align-middle line-clamp-1 text-transform: lowercase">
-                {title}
+      {paginatedData.map(({ _id, title, slug, extraClass }) => {
+        return (
+          <li key={_id} className="py-2">
+            <Link prefetch={true} href={`/${slug}`}>
+              <div className={`flex items-center ${extraClass}`}>
+                <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                <div className="align-middle line-clamp-1 text-transform: lowercase">
+                  {title}
+                </div>
               </div>
-            </div>
-          </Link>
-        </li>
-      ))}
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }

@@ -1,34 +1,27 @@
 "use client";
 import Link from "next/link";
 import DOMPurify from "isomorphic-dompurify";
-import { NEXT_PUBLIC_GET_LISTS } from "@/constants";
 import { usePaginatedSWR } from "../utils/fetcher";
 import Shimmer from "../components/shimmer";
 import { useState } from "react";
+import usePagination from "../utils/pagination";
 
 export default function Lists({ topicData }) {
-  const perPage = 3;
+  const perPage = 5;
   const page = 1;
   let [data, setData] = useState(Shimmer(perPage));
 
-  const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicData._id}&page=${page}&perPage=${perPage}`;
-
-  // Slice topics array for current page
-  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
-
-  if (paginatedData && paginatedData.length > 0) {
-    data = paginatedData;
+  if (topicData.lists !== undefined && Array.isArray(topicData.lists.result)) {
+    data = topicData.lists.result;
   }
 
-  if (paginatedData.length == 0) {
-    data = Shimmer(perPage);
-  }
+  const paginatedData = usePagination(data, page, perPage);
 
   const topicSlug = topicData.slug;
 
   return (
     <ul>
-      {data.map(
+      {paginatedData.map(
         ({ _id, title, description, slug, extraClass }: any, index: number) => (
           <li key={_id} id={slug}>
             <article className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
@@ -43,6 +36,7 @@ export default function Lists({ topicData }) {
                 >
                   <span>
                     <Link
+                      prefetch={true}
                       href={`${topicSlug}/${slug}`}
                       className="text-red-900 font-medium"
                     >
