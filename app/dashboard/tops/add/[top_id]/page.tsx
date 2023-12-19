@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import TopicsImport from "./topics_import";
+import TopicsImport from "../../../topics/topics_import";
 import { useRouter } from "next/navigation";
 import { getTop } from "@/app/lib/repo/tops_repo";
 import Loading from "@/app/dashboard/loading";
 import { TopModel } from "@/app/models/top_model";
 import TopicsView from "@/app/dashboard/topics/topics_view";
+import CreateTopic from "@/app/dashboard/topics/create_topic";
 
 export default function FromTop({ params }: { params: { top_id: string } }) {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
 
   return (
     <div className="container mx-auto mt-12">
-      <p className="my-10">Top: Top {topData.name}</p>
+      <p className="my-10 font-extrabold">Top: Top {topData.name}</p>
       <div className="flex justify-between">
         <div className="flex space-x-4">
           <button
@@ -44,7 +45,7 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
             }`}
             onClick={() => handleTabClick(1)}
           >
-            Published Topics
+            Live Topics
           </button>
 
           <button
@@ -55,21 +56,36 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
             }`}
             onClick={() => handleTabClick(2)}
           >
-            Tab 2
+            Draft Topics
           </button>
         </div>
         <div className="flex space-x-4">
           <div className="float-right">
-            <button
-              className={`px-2 py-1.5 text-sm rounded-sm ${
-                activeTab === 3
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-800"
-              }`}
-              onClick={() => handleTabClick(3)}
-            >
-              Imported Topics
-            </button>
+            <div className="flex justify-between">
+              <div className="flex space-x-4">
+                <button
+                  className={`px-2 py-1.5 text-sm rounded-sm ${
+                    activeTab === 3
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                  onClick={() => handleTabClick(3)}
+                >
+                  Create Topics
+                </button>
+
+                <button
+                  className={`px-2 py-1.5 text-sm rounded-sm ${
+                    activeTab === 4
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                  onClick={() => handleTabClick(4)}
+                >
+                  Import Topics
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -81,6 +97,12 @@ export default function FromTop({ params }: { params: { top_id: string } }) {
       )}
       {activeTab === 2 && <div className="mt-10">Content for Tab 2</div>}
       {activeTab === 3 && (
+        <div className="mt-10">
+          <CreateTopic topData={topData} />
+        </div>
+      )}
+
+      {activeTab === 4 && (
         <div className="mt-10">
           <TopicsImport top_id={params.top_id} />
         </div>

@@ -5,6 +5,7 @@ import {
   addLists,
   updateAList,
   addImport,
+  addList,
 } from "@/app/api/mongodb/query";
 import { getTopicById } from "@/app/lib/repo/topics_repo";
 import { TopicModel } from "@/app/models/topic_model";
@@ -15,6 +16,7 @@ import {
   NEXT_PUBLIC_UPDATE_LIST,
   NEXT_PUBLIC_UPDATE_TOPIC,
 } from "@/constants";
+import { isNull } from "@/app/utils/custom_helpers";
 
 export async function POST(
   request: Request,
@@ -30,9 +32,9 @@ export async function POST(
   const formData = await request.formData();
 
   //creating topic
-  if (action == "post_topic") {
-    const response = await postTopic(formData);
-    return new Response(JSON.stringify({ response }), {
+  if (action == "create_topic") {
+    const data = await postTopic(formData);
+    return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
     });
@@ -65,10 +67,19 @@ export async function POST(
     });
   }
 
+  //creating list
+  if (action == "post_list") {
+    const data = await postList(formData);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
   //updating list
   if (action == "update_list") {
-    const response = await updateList(formData);
-    return new Response(JSON.stringify({ response }), {
+    const data = await updateList(formData);
+    return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
     });
@@ -91,10 +102,13 @@ export async function POST(
 }
 
 async function postTopic(formData: any) {
-  const title = formData.get("title");
+  const postData = JSON.parse(formData.get("postData"));
 
   const data = {
-    title: title,
+    title: postData.title,
+    description: postData.description,
+    topId: postData.topId,
+    slug: postData.slug,
     created_at: new Date(),
   };
 
@@ -105,34 +119,33 @@ async function postTopic(formData: any) {
   }
 }
 
-async function updateTopic(formData: any) {
+export async function updateTopic(formData: any) {
   const updateData = JSON.parse(formData.get("updateData"));
 
-  const uData: TopicModel = {
-    title: updateData.title,
-    description: updateData.description,
-    updatedAt: new Date(),
-    topId: updateData.topId,
-    body: "",
-    status: "",
-    subTitle: "",
-    catId: "",
-    image: "",
-    metaDescriptio: "",
-    metaTitle: "",
-  };
+  const uData: TopicModel = {};
+
+  if (!isNull(updateData.title)) {
+    uData.title = updateData.title;
+  }
+  if (!isNull(updateData.description)) {
+    uData.description = updateData.description;
+  }
+  if (!!isNull(updateData.topId)) {
+    uData.topId = updateData.topId;
+  }
+
+  uData.updatedAt = new Date();
 
   try {
     await updateATopic(updateData._id, uData);
-    return { seccess: true };
+    return { success: true };
   } catch {
     return "47747 error";
   }
 }
 
-async function updateList(formData: any) {
-  const updateData = JSON.parse(formData.get("updateData"));
-  const _id = formData.get("_id");
+async function postList(formData: any) {
+  const updateData = JSON.parse(formData.get("postData"));
 
   const uData: ListsModel = {
     title: updateData.title,
@@ -149,8 +162,34 @@ async function updateList(formData: any) {
   };
 
   try {
-    await updateAList(_id, uData);
-    return { seccess: true };
+    return await addList(uData);
+  } catch {
+    return "489747 error";
+  }
+}
+
+async function updateList(formData: any) {
+  const updateData = JSON.parse(formData.get("updateData"));
+
+  const uData: ListsModel = {};
+
+  if (!isNull(updateData.title)) {
+    uData.title = updateData.title;
+  }
+
+  if (!isNull(updateData.description)) {
+    uData.description = updateData.description;
+  }
+
+  if (!isNull(updateData.topicId)) {
+    uData.topicId = updateData.topicId;
+  }
+
+  uData.updatedAt = new Date();
+
+  try {
+    await updateAList(updateData._id, uData);
+    return { success: true };
   } catch {
     return "489747 error";
   }

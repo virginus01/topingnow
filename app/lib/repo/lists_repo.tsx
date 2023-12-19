@@ -3,7 +3,9 @@ import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_GET_LIST,
   NEXT_PUBLIC_GET_LISTS,
+  NEXT_PUBLIC_POST_LIST,
   NEXT_PUBLIC_POST_LISTS,
+  NEXT_PUBLIC_UPDATE_LIST,
 } from "@/constants";
 
 export async function getLists(
@@ -97,5 +99,55 @@ export async function postLists(lData: any) {
     }
   } catch (error) {
     return { error: "An error occurred while fetching lists" };
+  }
+}
+
+export async function postList(lData: any) {
+  try {
+    const slugs = customSlugify(lData.title);
+
+    const url = `${NEXT_PUBLIC_POST_LIST}`;
+    lData.slug = slugs;
+    const formData = new FormData();
+    formData.append("postData", JSON.stringify(lData));
+
+    console.log(formData);
+    const response = await fetch(url, {
+      cache: "no-store",
+      method: "POST",
+      body: formData,
+    });
+
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      return { error: "Failed to fetch lists" };
+    }
+  } catch (error) {
+    return { error: "An error occurred while fetching lists" };
+  }
+}
+
+export async function UpdateList(tData: any) {
+  try {
+    const url = `${NEXT_PUBLIC_UPDATE_LIST}`;
+
+    let formData = new FormData();
+    formData.append("updateData", JSON.stringify(tData));
+
+    const result = await fetch(url, {
+      cache: "no-store",
+      method: "POST",
+      body: formData,
+    });
+
+    if (result.status === 200) {
+      return await result.json();
+    } else {
+      return { error: "Failed to update a list" };
+    }
+  } catch (error) {
+    console.log(error);
+    return { error: "An error occurred while updating list" };
   }
 }

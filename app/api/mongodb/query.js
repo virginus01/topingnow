@@ -366,10 +366,20 @@ export async function getUser(uid) {
 //POST
 
 export async function addTopic(data) {
+
     const _id = new ObjectId();
     data._id = _id;
     const db = await connectDB();
     await db.collection("topics").insertOne(data);
+    return _id;
+}
+
+export async function addList(data) {
+
+    const _id = new ObjectId();
+    data._id = _id;
+    const db = await connectDB();
+    await db.collection("lists").insertOne(data);
     return _id;
 }
 
@@ -406,6 +416,8 @@ export async function updateATopic(id, data) {
 
 
 export async function updateAList(id, data) {
+
+
     const _id = new ObjectId(id);
     const db = await connectDB();
 

@@ -4,9 +4,10 @@ import { redirect, useRouter } from "next/navigation";
 import { getTopicById } from "@/app/lib/repo/topics_repo";
 import Loading from "@/app/dashboard/loading";
 import { TopicModel } from "@/app/models/topic_model";
-import ListsImport from "@/app/dashboard/topics/add/[topic_id]/list_import";
 import { toast } from "sonner";
 import ListsView from "@/app/dashboard/lists/lists_view";
+import ListsImport from "@/app/dashboard/lists/list_import";
+import AddList from "../../create_list";
 
 export default function FromTopic({
   params,
@@ -66,16 +67,30 @@ export default function FromTopic({
         </div>
         <div className="flex space-x-4">
           <div className="float-right">
-            <button
-              className={`px-2 py-1.5 text-sm rounded-sm ${
-                activeTab === 3
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-800"
-              }`}
-              onClick={() => handleTabClick(3)}
-            >
-              Import Lists
-            </button>
+            <div className="flex justify-between">
+              <div className="flex space-x-4">
+                <button
+                  className={`px-2 py-1.5 text-sm rounded-sm ${
+                    activeTab === 3
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                  onClick={() => handleTabClick(3)}
+                >
+                  Create List
+                </button>
+                <button
+                  className={`px-2 py-1.5 text-sm rounded-sm ${
+                    activeTab === 4
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                  onClick={() => handleTabClick(3)}
+                >
+                  Import Lists
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -86,7 +101,14 @@ export default function FromTopic({
         </div>
       )}
       {activeTab === 2 && <div className="mt-10">Content for Tab 2</div>}
+
       {activeTab === 3 && (
+        <div className="mt-10">
+          <AddList topicData={topicData} />
+        </div>
+      )}
+
+      {activeTab === 4 && (
         <div className="mt-10">
           <ListsImport topicId={params.topic_id} />
         </div>

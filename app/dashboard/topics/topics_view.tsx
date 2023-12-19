@@ -10,6 +10,7 @@ import {
 import Loading from "../loading";
 import { NEXT_PUBLIC_GET_TOPICS } from "@/constants";
 import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
+import { useRouter } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -73,7 +74,7 @@ export default function TopicsView({ topId }) {
               </td>
               <td>
                 <div className="pl-16">
-                  <Buttons />
+                  <Buttons _id={_id} />
                 </div>
               </td>
             </tr>
@@ -98,14 +99,18 @@ export default function TopicsView({ topId }) {
   );
 }
 
-function Buttons() {
+function Buttons({ _id }) {
+  const router = useRouter();
   return (
     <div>
       <button className="text-red-500 hover:bg-green-600 p-1 rounded mx-1">
         <TrashIcon className="w-4 h-4" />
       </button>
 
-      <button className="text-blue-500 hover:bg-green-600 p-1 rounded mx-1">
+      <button
+        className="text-blue-500 hover:bg-green-600 p-1 rounded mx-1"
+        onClick={() => router.push(`/dashboard/topics/edit/${_id}`)}
+      >
         <PencilIcon className="w-4 h-4" />
       </button>
 

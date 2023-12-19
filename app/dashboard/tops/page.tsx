@@ -1,3 +1,5 @@
+"use client";
+import { useRouter } from "next/navigation";
 import { getTops } from "@/app/lib/repo/tops_repo";
 import {
   TrashIcon,
@@ -5,12 +7,27 @@ import {
   EyeIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
+import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
+import { useState } from "react";
+import Shimmer from "@/app/components/shimmer";
+import { usePaginatedSWR } from "@/app/utils/fetcher";
 
-async function Index() {
-  const tops = await getTops();
+function Index() {
+  const url = `${NEXT_PUBLIC_GET_TOPS}`;
 
-  if (!tops || tops == undefined || !Array.isArray(tops)) {
-    return <div>loading...</div>;
+  const perPage = 5;
+  const page = 1;
+  let [data, setData] = useState(Shimmer(perPage));
+
+  // Slice topics array for current page
+  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
+
+  if (paginatedData && paginatedData.length > 0) {
+    data = paginatedData;
+  }
+
+  if (paginatedData.length == 0) {
+    data = Shimmer(perPage);
   }
   return (
     <>
@@ -33,16 +50,16 @@ async function Index() {
           <div className="overflow-x-auto">
             <table className="w-full whitespace-nowrap">
               <tbody>
-                {tops.map(({ id, name, _id }) => (
+                {data.map(({ name, _id, extraClass }) => (
                   <tr
                     key={_id}
-                    className="text-sm leading-none text-gray-600 h-16"
+                    className={`text-sm leading-none text-gray-600 h-16 mb-2`}
                   >
-                    <td className="w-1/2">
+                    <td className={`${extraClass} w-1/2`}>
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-gray-700 rounded-sm flex items-center justify-center">
                           <p className="text-xs font-bold leading-3 text-white">
-                            {id}
+                            {"#"}
                           </p>
                         </div>
                         <div className="pl-2">
@@ -66,7 +83,7 @@ async function Index() {
                     </td>
                     <td>
                       <div className="pl-16">
-                        <Buttons />
+                        <Buttons _id={_id} />
                       </div>
                     </td>
                   </tr>
@@ -82,14 +99,18 @@ async function Index() {
 
 export default Index;
 
-function Buttons() {
+function Buttons({ _id }) {
+  const router = useRouter();
   return (
     <div>
       <button className="text-red-500 hover:bg-green-600 p-1 rounded mx-1">
         <TrashIcon className="w-4 h-4" />
       </button>
 
-      <button className="text-blue-500 hover:bg-green-600 p-1 rounded mx-1">
+      <button
+        className="text-blue-500 hover:bg-green-600 p-1 rounded mx-1"
+        onClick={() => router.push(`/dashboard/top/edit/${_id}`)}
+      >
         <PencilIcon className="w-4 h-4" />
       </button>
 

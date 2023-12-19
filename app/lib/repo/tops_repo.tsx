@@ -30,7 +30,7 @@ export async function getTops() {
 
 export async function getTop(id: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOP}?id=${id}`;
+    const url = `${NEXT_PUBLIC_GET_TOP}?id=${id}`;
 
     console.log(url);
     const res = await fetch(url, {
