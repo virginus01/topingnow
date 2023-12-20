@@ -311,7 +311,7 @@ export async function getTopic(id, process = 'yes') {
 
 }
 
-export async function getTopicWithEssentials(id, page = 1) {
+export async function getTopicWithEssentials(id, page = 1, process = 'yes') {
 
     try {
 
@@ -336,6 +336,10 @@ export async function getTopicWithEssentials(id, page = 1) {
 
         const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10))
         topic.lists = tLists;
+
+        if (process === 'yes') {
+            dataProcess(topic)
+        }
 
         return topic;
 
