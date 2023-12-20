@@ -7,6 +7,7 @@ import { useSingleSWRAdmin } from "@/app/utils/fetcher";
 import TinyMCEEditor from "@/app/utils/tinymce";
 import { UpdateTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
+import { TopicModel } from "@/app/models/topic_model";
 
 export default function FromTopic({
   params,
@@ -17,7 +18,7 @@ export default function FromTopic({
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
 
-  const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${params.topic_id}`;
+  const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${params.topic_id}&process=no`;
 
   // Slice topics array for current page
   const { result, loading } = useSingleSWRAdmin(url);
@@ -37,7 +38,7 @@ export default function FromTopic({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const submitData = {
+    const submitData: TopicModel = {
       _id: data._id,
       description: description,
       title: title,

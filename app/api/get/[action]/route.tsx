@@ -29,6 +29,7 @@ export async function GET(
   let topicId = searchParams.get("topicId");
   let listId = searchParams.get("listId");
   let uid = searchParams.get("uid");
+  let process = searchParams.get("process");
   let page = parseInt(searchParams.get("page") as string, 10);
   let perPage = parseInt(searchParams.get("perPage") as string, 10);
   let action = params.action;
@@ -58,6 +59,7 @@ export async function GET(
   //fetching topics
   if (action == "get_topics") {
     const data = await fetchTopics(topId, page, perPage);
+
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -66,7 +68,7 @@ export async function GET(
 
   //fetching topic info
   if (action == "get_topic") {
-    const data = await fetchTopic(topicId);
+    const data = await fetchTopic(topicId, process);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -165,9 +167,9 @@ async function fetchTopics(
   }
 }
 
-async function fetchTopic(id: any) {
+async function fetchTopic(id: any, process: any) {
   try {
-    return await getTopic(id);
+    return await getTopic(id, process);
   } catch {
     console.log("error: 8475775");
     return "not_found";

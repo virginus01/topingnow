@@ -1,5 +1,6 @@
 import { connectDB } from '@/app/utils/mongodb'
 import { ObjectId } from 'mongodb';
+import { dataProcess } from '@/app/utils/custom_helpers';
 
 export async function getTops(page = 1, perPage = 10) {
     const skip = (page - 1) * perPage;
@@ -53,7 +54,7 @@ export async function getTops(page = 1, perPage = 10) {
 
 
 
-export async function getTopics(topId, page = 1, perPage = 10) {
+export async function getTopics(topId, page = 1, perPage = 10, process = 'yes') {
 
     const skip = (page - 1) * perPage;
 
@@ -80,6 +81,10 @@ export async function getTopics(topId, page = 1, perPage = 10) {
         return "not_found";
     }
 
+
+    if (process === 'yes') {
+        dataProcess(result)
+    }
 
     return {
         result: result,
@@ -273,7 +278,7 @@ export async function stat() {
     return result;
 }
 
-export async function getTopic(id) {
+export async function getTopic(id, process = 'yes') {
 
     try {
 
@@ -291,6 +296,10 @@ export async function getTopic(id) {
 
         if (!topic) {
             return "not_found";
+        }
+
+        if (process === 'yes') {
+            dataProcess(topic)
         }
 
         return topic;

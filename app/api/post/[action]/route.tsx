@@ -130,7 +130,7 @@ export async function updateTopic(formData: any) {
   if (!isNull(updateData.description)) {
     uData.description = updateData.description;
   }
-  if (!!isNull(updateData.topId)) {
+  if (!isNull(updateData.topId)) {
     uData.topId = updateData.topId;
   }
 
