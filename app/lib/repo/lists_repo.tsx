@@ -1,6 +1,7 @@
 "use server";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
+  NEXT_PUBLIC_DELETE_LIST,
   NEXT_PUBLIC_GET_LIST,
   NEXT_PUBLIC_GET_LISTS,
   NEXT_PUBLIC_POST_LIST,
@@ -104,10 +105,11 @@ export async function postLists(lData: any) {
 
 export async function postList(lData: any) {
   try {
-    const slugs = customSlugify(lData.title);
+    const slug = customSlugify(lData.title);
+    lData.slug = slug;
 
     const url = `${NEXT_PUBLIC_POST_LIST}`;
-    lData.slug = slugs;
+
     const formData = new FormData();
     formData.append("postData", JSON.stringify(lData));
 
@@ -149,5 +151,29 @@ export async function UpdateList(tData: any) {
   } catch (error) {
     console.log(error);
     return { error: "An error occurred while updating list" };
+  }
+}
+
+export async function deleteList(_id: string) {
+  try {
+    const url = `${NEXT_PUBLIC_DELETE_LIST}`;
+
+    console.log(url);
+
+    const formData = new FormData();
+    formData.append("deleteData", JSON.stringify({ _id }));
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      body: formData,
+    });
+
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      return { error: "Failed to delete list" };
+    }
+  } catch (error) {
+    return { error: "An error occurred while deleting list" };
   }
 }

@@ -21,6 +21,8 @@ export const NEXT_PUBLIC_CREATE_IMPORT = "/api/post/create_import";
 // Endpoints delete
 export const NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS =
   "/api/delete/delete_topics_by_import";
+export const NEXT_PUBLIC_DELETE_TOPICS_WITH_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_topics_with_lists`;
+export const NEXT_PUBLIC_DELETE_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_list`;
 
 // User
 export const NEXT_PUBLIC_GET_USER = "/api/get/get_user";
@@ -30,3 +32,8 @@ export const NEXT_PUBLIC_DASHBOARD_LINK = "/dashboard";
 
 //AWS
 export const NEXT_PUBLIC_S3_UPLOADER = `${process.env.NEXT_PUBLIC_BASE_URL}/api/s3_uploader`;
+
+//Routing
+
+//dasboard topics
+export const DASH_TOPICS = "/dasboard/topics/";

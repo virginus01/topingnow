@@ -1,4 +1,8 @@
-import { deleteImportedTopics } from "../../mongodb/query";
+import {
+  deleteImportedTopics,
+  removeList,
+  removeTopicsWithLists,
+} from "../../mongodb/query";
 
 export async function DELETE(request, { params }) {
   const headers = {
@@ -14,6 +18,22 @@ export async function DELETE(request, { params }) {
   if (action === "delete_topics_by_import") {
     const { data } = await deleteTopicsByImport(formData);
 
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  if (action === "delete_topics_with_lists") {
+    const data = await deleteTopicsWithLists(formData);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  if (action === "delete_list") {
+    const data = await deleteList(formData);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -37,4 +57,22 @@ async function deleteTopicsByImport(formData: any) {
   }
 
   return { data };
+}
+
+async function deleteTopicsWithLists(formData: any) {
+  const deleteData = JSON.parse(formData.get("deleteData"));
+  try {
+    return await removeTopicsWithLists(deleteData._id);
+  } catch {
+    return { data: "not_found" };
+  }
+}
+
+async function deleteList(formData: any) {
+  const deleteData = JSON.parse(formData.get("deleteData"));
+  try {
+    return await removeList(deleteData._id);
+  } catch {
+    return { data: "not_found" };
+  }
 }

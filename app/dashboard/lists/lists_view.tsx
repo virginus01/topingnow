@@ -9,106 +9,69 @@ import {
 } from "@heroicons/react/24/outline";
 import Loading from "../loading";
 import { NEXT_PUBLIC_GET_LISTS } from "@/constants";
-import { usePaginatedSWR } from "@/app/utils/fetcher";
+import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
 import { useRouter } from "next/navigation";
+import { ActionButtons } from "@/app/components/widgets/action_buttons";
+import { deleteList } from "@/app/lib/repo/lists_repo";
+import { removeById } from "@/app/utils/custom_helpers";
+import { toast } from "sonner";
+import DataTable from "@/app/components/widgets/data_table";
+import Shimmer from "@/app/components/shimmer";
 
 export const dynamic = "force-dynamic";
 
 export default function ListsView({ topicId }) {
+  const router = useRouter();
   const [page, setPage] = useState(1);
+  let [data, setData] = useState(Shimmer(5));
   const perPage = 10;
 
   const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}`;
 
-  // Slice topics array for current page
-  const { paginatedData, loading, data } = usePaginatedSWR(url, page, perPage);
+  const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
 
   if (loading || !Array.isArray(paginatedData)) {
     return <Loading />;
   }
 
-  if (!paginatedData) {
-    return <div>No Topic found</div>;
+  if (!paginatedData || paginatedData.length === 0) {
+    return <div>No List found</div>;
   }
+
+  data = paginatedData;
 
   return (
     <>
-      <table className="w-full whitespace-nowrap">
-        <tbody>
-          {paginatedData.map(({ title, _id }) => (
-            <tr key={_id} className="text-sm leading-none text-gray-600 h-16">
-              <td className="w-1/2">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gray-700 rounded-sm flex items-center justify-center">
-                    <p className="text-xs font-bold leading-3 text-white">
-                      {"#"}
-                    </p>
-                  </div>
-                  <div className="pl-2">
-                    <p className="text-sm font-medium leading-none text-gray-800">
-                      {title}
-                    </p>
-                    <p className="text-xs leading-3 text-gray-600 mt-2">
-                      added by admin
-                    </p>
-                  </div>
-                </div>
-              </td>
-
-              <td className="pl-16">
-                <a
-                  href={`/dashboard/lists/add/${_id}`}
-                  className="flex items-center text-green-600"
-                >
-                  <PlusIcon className="w-4 h-4" />
-                  <span className="ml-1">list Q&A</span>
-                </a>
-              </td>
-              <td>
-                <div className="pl-16">
-                  <Buttons _id={_id} />
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <Pagination
-        className="pagination"
-        current={page} // use current instead of page
-        onChange={setPage}
-        total={paginatedData.length}
-        pageSize={perPage}
-        showPrevNextJumpers={true}
-        prevIcon={"Â«"}
-        nextIcon={"Â»"}
-        showTitle={false}
-        hideOnSinglePage={true}
-        showLessItems={true}
+      <DataTable
+        data={data}
+        page={page}
+        perPage={perPage}
+        deleteAction={deleteAction}
+        setPage={() => setPage}
+        viewAction={viewAction}
+        editAction={editAction}
+        addAction={addAction}
+        addText={"list Q&A"}
       />
     </>
   );
-}
 
-function Buttons({ _id }) {
-  const router = useRouter();
-  return (
-    <div>
-      <button className="text-red-500 hover:bg-green-600 p-1 rounded mx-1">
-        <TrashIcon className="w-4 h-4" />
-      </button>
+  async function deleteAction(_id: string) {
+    const res = await deleteList(_id);
+    const updatedData = removeById(paginatedData, _id);
+    setData(updatedData);
+    toast.success(`item deleted`);
+  }
 
-      <button
-        className="text-blue-500 hover:bg-green-600 p-1 rounded mx-1"
-        onClick={() => router.push(`/dashboard/lists/edit/${_id}`)}
-      >
-        <PencilIcon className="w-4 h-4" />
-      </button>
+  async function viewAction(slug: string) {
+    router.push(`/${slug}`);
+  }
 
-      <button className="text-green-500 hover:bg-green-600 p-1 rounded mx-1">
-        <EyeIcon className="w-4 h-4" />
-      </button>
-    </div>
-  );
+  async function editAction(_id: string) {
+    router.push(`/dashboard/lists/edit/${_id}`);
+  }
+
+  async function addAction(_id: string) {
+    router.push(`/dashboard/lists/add/${_id}`);
+  }
 }

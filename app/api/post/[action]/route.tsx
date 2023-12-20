@@ -152,6 +152,7 @@ async function postList(formData: any) {
     description: updateData.description,
     updatedAt: new Date(),
     topicId: updateData.topicId,
+    slug: updateData.slug,
     body: "",
     status: "",
     subTitle: "",

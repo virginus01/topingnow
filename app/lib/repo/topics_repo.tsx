@@ -1,6 +1,8 @@
 "use server";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
+  NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS,
+  NEXT_PUBLIC_DELETE_TOPICS_WITH_LISTS,
   NEXT_PUBLIC_GET_POPULAR_TOPICS,
   NEXT_PUBLIC_GET_TOPIC,
   NEXT_PUBLIC_GET_TOPICS,
@@ -201,5 +203,29 @@ export async function UpdateTopic(tData: any) {
   } catch (error) {
     console.log(error);
     return { error: "An error occurred while updating topic" };
+  }
+}
+
+export async function deleteTopicsWithLists(_id: string) {
+  try {
+    const url = `${NEXT_PUBLIC_DELETE_TOPICS_WITH_LISTS}`;
+
+    console.log(url);
+
+    const formData = new FormData();
+    formData.append("deleteData", JSON.stringify({ _id }));
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      body: formData,
+    });
+
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      return { error: "Failed to delete topic" };
+    }
+  } catch (error) {
+    return { error: "An error occurred while deleting topic" };
   }
 }

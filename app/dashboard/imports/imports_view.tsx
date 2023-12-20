@@ -13,6 +13,7 @@ import { getImports } from "@/app/lib/repo/import_repo";
 import { deleteTopicsByImports } from "@/app/lib/repo/import_repo";
 import { useRouter } from "next/navigation";
 import ConfirmAction from "@/app/components/widgets/confirm";
+import { ActionButtons } from "@/app/components/widgets/action_buttons";
 
 export let isOpen = false;
 
@@ -92,7 +93,12 @@ export default function ImportsView() {
               </td>
               <td>
                 <div className="pl-16">
-                  <Buttons _id={_id} />
+                  <ActionButtons
+                    id={_id}
+                    onDelete={deleteImport}
+                    onView={() => {}}
+                    onEdit={() => {}}
+                  />
                 </div>
               </td>
             </tr>
@@ -125,25 +131,5 @@ export default function ImportsView() {
     const updatedImports = removeById(data, _id);
     setData(updatedImports);
     toast.success(`${result.data} items deleted`);
-  }
-
-  function Buttons(_id: any) {
-    return (
-      <div>
-        <button
-          onClick={() => setIsOpen(true)}
-          className="text-red-500 hover:bg-white p-1 rounded mx-1"
-        >
-          <TrashIcon className="w-4 h-4" />
-        </button>
-
-        <ConfirmAction
-          isOpen={isOpen}
-          onConfirm={() => deleteImport(_id._id)}
-          onCancel={() => setIsOpen(false)}
-          confirmButtonText={"Proceed"}
-        />
-      </div>
-    );
   }
 }

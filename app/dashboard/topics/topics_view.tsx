@@ -8,14 +8,24 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import Loading from "../loading";
-import { NEXT_PUBLIC_GET_TOPICS } from "@/constants";
+import { DASH_TOPICS, NEXT_PUBLIC_GET_TOPICS } from "@/constants";
 import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
+import ConfirmAction from "@/app/components/widgets/confirm";
+import { toast } from "sonner";
+import { ActionButtons } from "@/app/components/widgets/action_buttons";
+import { deleteTopicsWithLists } from "@/app/lib/repo/topics_repo";
+import { removeById } from "@/app/utils/custom_helpers";
+import Shimmer from "@/app/components/shimmer";
+import DataTable from "@/app/components/widgets/data_table";
 
 export const dynamic = "force-dynamic";
 
 export default function TopicsView({ topId }) {
   const [page, setPage] = useState(1);
+  const [isOpen, setIsOpen] = useState(false);
+  let [data, setData] = useState(Shimmer(5));
+  const router = useRouter();
 
   const perPage = 10;
   const url = `${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
@@ -27,96 +37,48 @@ export default function TopicsView({ topId }) {
     return <Loading />;
   }
 
-  if (!paginatedData) {
+  data = paginatedData;
+
+  if (paginatedData.length === 0) {
     return <div>No Topic found</div>;
   }
 
   return (
     <>
-      <table className="w-full whitespace-nowrap">
-        <tbody>
-          {paginatedData.map(({ id, title, _id }) => (
-            <tr key={_id} className="text-sm leading-none text-gray-600 h-16">
-              <td className="w-1/2">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gray-700 rounded-sm flex items-center justify-center">
-                    <p className="text-xs font-bold leading-3 text-white">
-                      {id}
-                    </p>
-                  </div>
-                  <div className="pl-2">
-                    <p className="text-sm font-medium leading-none text-gray-800">
-                      {title}
-                    </p>
-                    <p className="text-xs leading-3 text-gray-600 mt-2">
-                      added by admin
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td className="pl-16">
-                <a
-                  href={`/dashboard/topics/add/${_id}`}
-                  className="flex items-center text-green-600"
-                >
-                  <PlusIcon className="w-4 h-4" />
-                  <span className="ml-1">lists</span>
-                </a>
-              </td>
-              <td className="pl-16">
-                <a
-                  href={`/dashboard/topics/add/${_id}`}
-                  className="flex items-center text-green-600"
-                >
-                  <PlusIcon className="w-4 h-4" />
-                  <span className="ml-1">Q&A</span>
-                </a>
-              </td>
-              <td>
-                <div className="pl-16">
-                  <Buttons _id={_id} />
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <Pagination
-        className="pagination"
-        current={page} // use current instead of page
-        onChange={setPage}
-        total={paginatedData.length}
-        pageSize={perPage}
-        showPrevNextJumpers={true}
-        prevIcon={"Â«"}
-        nextIcon={"Â»"}
-        showTitle={false}
-        hideOnSinglePage={true}
-        showLessItems={true}
+      <DataTable
+        data={data}
+        page={page}
+        perPage={perPage}
+        deleteAction={deleteAction}
+        setPage={() => setPage}
+        viewAction={viewAction}
+        editAction={editAction}
+        addAction={addAction}
+        addText={"list Q&A"}
       />
     </>
   );
-}
 
-function Buttons({ _id }) {
-  const router = useRouter();
-  return (
-    <div>
-      <button className="text-red-500 hover:bg-green-600 p-1 rounded mx-1">
-        <TrashIcon className="w-4 h-4" />
-      </button>
+  async function deleteAction(_id: string) {
+    const res = await deleteTopicsWithLists(_id);
+    if (res.data) {
+      const updatedData = removeById(paginatedData, _id);
+      data = updatedData;
+      toast.success(`${res.data} items deleted`);
+      router.push(`${DASH_TOPICS}`);
+    } else {
+      toast.error(` items not deleted`);
+    }
+  }
+  async function viewAction(slug: string) {
+    router.push(`/${slug}`);
+  }
 
-      <button
-        className="text-blue-500 hover:bg-green-600 p-1 rounded mx-1"
-        onClick={() => router.push(`/dashboard/topics/edit/${_id}`)}
-      >
-        <PencilIcon className="w-4 h-4" />
-      </button>
+  async function editAction(_id: string) {
+    router.push(`/dashboard/topics/edit/${_id}`);
+  }
 
-      <button className="text-green-500 hover:bg-green-600 p-1 rounded mx-1">
-        <EyeIcon className="w-4 h-4" />
-      </button>
-    </div>
-  );
+  async function addAction(_id: string) {
+    router.push(`/dashboard/topics/add/${_id}`);
+  }
 }

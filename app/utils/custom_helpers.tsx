@@ -53,3 +53,7 @@ export function dataProcess(text: any) {
   }
   return text;
 }
+
+export function removeById(data, id) {
+  return data.filter((item) => item._id !== id);
+}

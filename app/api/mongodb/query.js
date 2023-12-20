@@ -476,6 +476,55 @@ export async function deleteImportedTopics(importId) {
     return result.deletedCount + result2.deletedCount;
 }
 
+export async function removeTopicsWithLists(topicId) {
+
+    const db = await connectDB();
+
+    const filter = { _id: new ObjectId(topicId) };
+
+    const filter2 = {
+        topicId: topicId
+    };
+
+    let result = 0;
+    let result2 = 0;
+
+    try {
+        result = await db.collection("topics").deleteOne(filter);
+        result2 = await db.collection("lists").deleteMany(filter2);
+
+    } catch (e) {
+        console.log(`${e} error 85843775`)
+    }
+
+    const res = result.deletedCount + result2.deletedCount;
+
+
+    return res;
+}
+
+
+export async function removeList(listId) {
+
+    const db = await connectDB();
+
+    const filter = { _id: new ObjectId(listId) };
+
+    let result = 0;
+    let result2 = 0;
+
+    try {
+        result = await db.collection("lists").deleteOne(filter);
+
+    } catch (e) {
+        console.log(`${e} error 88364575`)
+    }
+
+    const res = result.deletedCount + result2.deletedCount;
+
+    return res;
+}
+
 
 export async function deleteImport(importId) {
 
