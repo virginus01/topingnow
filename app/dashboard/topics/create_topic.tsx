@@ -5,126 +5,33 @@ import TinyMCEEditor from "@/app/utils/tinymce";
 import { UpdateTopic, postTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import TopicsDataSearch from "@/app/components/widgets/topics_data_search";
+import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
+import Shimmer from "@/app/components/shimmer";
+import { usePaginatedSWR, usePaginatedSWRAdmin } from "@/app/utils/fetcher";
+import { isNull } from "@/app/utils/custom_helpers";
 
 export default function AddTopic({ topData }) {
-  const dd = {
-    data: {
-      result: [
-        {
-          _id: "65570f96fd5ef324149f2355",
-          id: "1",
-          top_slug: "top-5",
-          created_at: "2021-08-27 19:21:41",
-          updated_at: "2021-05-31 00:43:04",
-          title: "5",
-          topTopics: {
-            result: [
-              {
-                _id: "6582fef0a6ad7a30510b613c",
-                title: "Top 5 Best Flutter Developers in Lagos as of 2023",
-                description: "<p>This is the list of dev</p>",
-                topId: "65570f96fd5ef324149f2355",
-                slug: "5-best-flutter-developers-lagos-{year}",
-                created_at: "2023-12-20T14:49:20.690Z",
-              },
-            ],
-            metadata: {
-              total: 1,
-              page: 1,
-              perPage: 10,
-              hasNextPage: false,
-              hasPrevPage: false,
-            },
-          },
-        },
-        {
-          _id: "65570f96fd5ef324149f2356",
-          id: "2",
-          top_slug: "top-10",
-          created_at: "2021-06-05 13:30:54",
-          updated_at: "2021-05-31 00:43:04",
-          title: "10",
-          topTopics: {
-            result: [],
-            metadata: {
-              total: 1,
-              page: 1,
-              perPage: 10,
-              hasNextPage: false,
-              hasPrevPage: false,
-            },
-          },
-        },
-        {
-          _id: "65570f96fd5ef324149f2357",
-          id: "3",
-          top_slug: "top-20",
-          created_at: "2021-06-05 13:30:59",
-          updated_at: "2021-05-31 00:43:04",
-          title: "20",
-          topTopics: {
-            result: [],
-            metadata: {
-              total: 1,
-              page: 1,
-              perPage: 10,
-              hasNextPage: false,
-              hasPrevPage: false,
-            },
-          },
-        },
-        {
-          _id: "65570f96fd5ef324149f2358",
-          id: "4",
-          top_slug: "top-50",
-          created_at: "2021-06-05 13:31:11",
-          updated_at: "2021-05-31 00:43:04",
-          title: "50",
-          topTopics: {
-            result: [],
-            metadata: {
-              total: 1,
-              page: 1,
-              perPage: 10,
-              hasNextPage: false,
-              hasPrevPage: false,
-            },
-          },
-        },
-        {
-          _id: "65570f96fd5ef324149f2359",
-          id: "5",
-          top_slug: "top-100",
-          created_at: "2021-06-05 13:31:17",
-          updated_at: "2021-05-31 00:43:04",
-          title: "100",
-          topTopics: {
-            result: [],
-            metadata: {
-              total: 1,
-              page: 1,
-              perPage: 10,
-              hasNextPage: false,
-              hasPrevPage: false,
-            },
-          },
-        },
-      ],
-      metadata: {
-        total: 5,
-        page: null,
-        perPage: null,
-        hasNextPage: false,
-        hasPrevPage: false,
-      },
-    },
-  };
-
   const router = useRouter();
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
+  let [selectedItem, setSelected] = useState({});
+  const [page, setPage] = useState(1);
+  const perPage = 5;
+  let [url, setUrl] = useState(
+    `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`
+  );
 
-  const data = topData;
+  let searchData = [];
+  // Slice topics array for current page
+  const { paginatedData, loading, data } = usePaginatedSWRAdmin(
+    url,
+    page,
+    perPage
+  );
+
+  if (paginatedData && paginatedData.length > 0) {
+    searchData = paginatedData;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -148,6 +55,20 @@ export default function AddTopic({ topData }) {
       console.log(error);
     }
   };
+
+  function handleSearch(value) {
+    if (!isNull(value)) {
+      const url = `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}&q=${value}`;
+      setUrl(url);
+    } else {
+      const url = `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`;
+      setUrl(url);
+    }
+  }
+
+  function selected(value) {
+    console.log(value);
+  }
   return (
     <div className="space-y-12">
       <div className="border-b border-gray-900/10 pb-12">
@@ -180,7 +101,12 @@ export default function AddTopic({ topData }) {
               Top
             </label>
 
-            <TopicsDataSearch people={dd.data.result} />
+            <TopicsDataSearch
+              data={searchData}
+              onChange={(e) => handleSearch(e.target.value)}
+              onSelectedChange={(e) => selected(e)}
+              selectedItem={selectedItem}
+            />
           </div>
 
           <div className="mb-5">

@@ -1,13 +1,19 @@
 import { connectDB } from '@/app/utils/mongodb'
 import { ObjectId } from 'mongodb';
 import { dataProcess } from '@/app/utils/custom_helpers';
+import { isNull } from '@/app/utils/custom_helpers';
 
-export async function getTops(page = 1, perPage = 10) {
+export async function getTops(page = 1, perPage = 10, q = '') {
     const skip = (page - 1) * perPage;
 
     const db = await connectDB();
+    let filter = {};
 
-    const filter = {};
+    if (!isNull(q)) {
+        filter = { title: { $regex: new RegExp(q, 'i') } }
+    } else {
+        filter = {};
+    }
 
     let [result, total] = await Promise.all([
         db.collection("tops").find(filter)

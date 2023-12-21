@@ -10,7 +10,7 @@ import {
 import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
 import { useState } from "react";
 import Shimmer from "@/app/components/shimmer";
-import { usePaginatedSWR } from "@/app/utils/fetcher";
+import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
 import { toast } from "sonner";
 import { removeById } from "@/app/utils/custom_helpers";
 import DataTable from "@/app/components/widgets/data_table";
@@ -24,7 +24,7 @@ export default function TopsView() {
   let [data, setData] = useState(Shimmer(perPage));
 
   // Slice topics array for current page
-  const { paginatedData, loading } = usePaginatedSWR(url, page, perPage);
+  const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
 
   if (paginatedData && paginatedData.length > 0) {
     data = paginatedData;

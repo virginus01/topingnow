@@ -29,6 +29,7 @@ export async function GET(
   let topicId = searchParams.get("topicId");
   let listId = searchParams.get("listId");
   let uid = searchParams.get("uid");
+  let q = searchParams.get("q");
   let process = searchParams.get("process");
   let page = parseInt(searchParams.get("page") as string, 10);
   let perPage = parseInt(searchParams.get("perPage") as string, 10);
@@ -40,7 +41,7 @@ export async function GET(
 
   //fetching tops
   if (action == "get_tops") {
-    const data = await fetchTops(page, perPage);
+    const data = await fetchTops(page, perPage, q);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -130,15 +131,15 @@ export async function GET(
   //.....................PUT.......................
 
   //return info
-  return new Response(JSON.stringify({ data: "please define action" }), {
+  return new Response(JSON.stringify({ data: "please define get action" }), {
     status: 400,
     headers: headers,
   });
 }
 
-async function fetchTops(page: number, perPage: number) {
+async function fetchTops(page: number, perPage: number, q: any) {
   try {
-    return await getTops(page, perPage);
+    return await getTops(page, perPage, q);
   } catch (e) {
     return { data: "839847 error" };
   }
