@@ -5,7 +5,9 @@ import {
   addLists,
   updateAList,
   addImport,
+  updateATemplate,
   addList,
+  addTemplate,
 } from "@/app/api/mongodb/query";
 import { getTopicById } from "@/app/lib/repo/topics_repo";
 import { TopicModel } from "@/app/models/topic_model";
@@ -13,10 +15,12 @@ import { ListsModel } from "@/app/models/lists_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_CREATE_IMPORT,
+  NEXT_PUBLIC_POST_UPDATE_TEMPLATE,
   NEXT_PUBLIC_UPDATE_LIST,
   NEXT_PUBLIC_UPDATE_TOPIC,
 } from "@/constants";
 import { isNull } from "@/app/utils/custom_helpers";
+import { TempModel } from "@/app/models/templates_model";
 
 export async function POST(
   request: Request,
@@ -94,6 +98,24 @@ export async function POST(
     });
   }
 
+  //updating template
+  if (action == "update_template") {
+    const data = await updateTemplate(formData);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  //creating topics
+  if (action == "post_templates") {
+    const data = await postTemplates(formData);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
   // Default response for invalid actions
   return new Response(JSON.stringify({ data: "Invalid action" }), {
     status: 400,
@@ -139,6 +161,30 @@ export async function updateTopic(formData: any) {
   try {
     await updateATopic(updateData._id, uData);
     return { success: true };
+  } catch {
+    return "47747 error";
+  }
+}
+
+export async function updateTemplate(formData: any) {
+  const updateData = JSON.parse(formData.get("updateData"));
+
+  const uData: TempModel = {};
+
+  if (!isNull(updateData.title)) {
+    uData.title = updateData.title;
+  }
+
+  if (updateData.body) {
+    uData.body = JSON.stringify(updateData.body);
+  }
+
+  uData.updatedAt = new Date();
+
+  // console.log(updateData);
+
+  try {
+    return await updateATemplate(updateData._id, uData);
   } catch {
     return "47747 error";
   }
@@ -281,6 +327,76 @@ async function postTopics(formData: any) {
       });
 
       await addTopics(data);
+    }
+    return postData;
+  } catch {
+    return "474646 error";
+  }
+}
+
+async function postTemplates(formData: any) {
+  const postData = JSON.parse(formData.get("postData"));
+
+  const data: TempModel[] = new Array();
+
+  postData.map(
+    async (post: {
+      title: string;
+      body: any | null;
+      topId: any | null;
+      slug: string;
+      isDuplicate: boolean | null;
+      _id: any;
+    }) => {
+      let postSlug = customSlugify(post.slug);
+
+      const tData: TempModel = {
+        title: post.title,
+
+        body: post.body,
+        createdAt: new Date(),
+        slug: postSlug,
+      };
+
+      if (post.isDuplicate === true) {
+        const formData = new FormData();
+        tData._id = post._id;
+        formData.append("updateData", JSON.stringify(tData));
+        const url = `${NEXT_PUBLIC_POST_UPDATE_TEMPLATE}`;
+        try {
+          const response = await fetch(url, {
+            cache: "no-store",
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+        } catch (error) {
+          console.log("error 7464664");
+        }
+      } else {
+        data.push(tData);
+      }
+    }
+  );
+
+  try {
+    if (Array.isArray(data) && data !== null && data.length > 0) {
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
+
+      let formData = new FormData();
+      formData.append("title", `template: ${postData.title}`);
+
+      const response = await fetch(url, {
+        cache: "no-store",
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      data.map((d, i) => {
+        data[i].importId = result.response;
+      });
+
+      await addTemplate(data);
     }
     return postData;
   } catch {

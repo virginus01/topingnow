@@ -1,6 +1,11 @@
 export const NEXT_PUBLIC_GET_TOPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_tops`;
 export const NEXT_PUBLIC_GET_TOP = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_top`;
 export const NEXT_PUBLIC_GET_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topics`;
+
+//templates
+export const NEXT_PUBLIC_GET_TEMPLATES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_templates`;
+export const NEXT_PUBLIC_GET_TEMPLATE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_template`;
+
 export const NEXT_PUBLIC_GET_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic`;
 export const NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic_with_essentials`;
 export const NEXT_PUBLIC_GET_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_lists`;
@@ -17,6 +22,10 @@ export const NEXT_PUBLIC_POST_LISTS = "/api/post/post_lists";
 export const NEXT_PUBLIC_POST_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_list`;
 export const NEXT_PUBLIC_UPDATE_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_list`;
 export const NEXT_PUBLIC_CREATE_IMPORT = "/api/post/create_import";
+
+//Tmeplates
+export const NEXT_PUBLIC_POST_POST_TEMPLATES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_templates`;
+export const NEXT_PUBLIC_POST_UPDATE_TEMPLATE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_template`;
 
 // Endpoints delete
 export const NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS =

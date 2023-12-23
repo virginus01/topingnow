@@ -1,6 +1,6 @@
 import { connectDB } from '@/app/utils/mongodb'
 import { ObjectId } from 'mongodb';
-import { dataProcess } from '@/app/utils/custom_helpers';
+import { dataProcess, dataProcess2, tempProcess } from '@/app/utils/custom_helpers';
 import { isNull } from '@/app/utils/custom_helpers';
 
 export async function getTops(page = 1, perPage = 10, q = '') {
@@ -164,6 +164,84 @@ export async function fetchImports(page = 1, perPage = 10) {
         console.log("Error in fetchImports", error);
         return "not_found";
 
+    }
+
+}
+
+export async function fetchTemplates(page = 1, perPage = 10) {
+
+    try {
+
+        const skip = (page - 1) * perPage;
+
+        const db = await connectDB();
+
+        const [result, total] = await Promise.all([
+            db.collection("templates").find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
+            db.collection("templates").estimatedDocumentCount()
+        ]);
+
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
+
+
+
+        if (!result) {
+            return "not_found";
+        }
+
+
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+
+    } catch (error) {
+        console.log("Error in fetchTemplates", error);
+        return "not_found";
+
+    }
+
+}
+
+
+export async function fetchTemplate(templateId, rand = 'no') {
+
+    try {
+
+        const db = await connectDB();
+
+        let temp = await db.collection("templates").findOne({
+            title: templateId
+        });
+
+        if (!temp && isValidObjectId(templateId)) {
+            temp = await db.collection("templates").findOne({
+                _id: new ObjectId(templateId)
+            });
+        }
+
+        if (!temp) {
+            return "not_found";
+        }
+
+        return temp;
+
+    } catch (error) {
+        console.log("Error in getTemplate", error);
+        return "not_found";
     }
 
 }
@@ -344,7 +422,8 @@ export async function getTopicWithEssentials(id, page = 1, process = 'yes') {
         topic.lists = tLists;
 
         if (process === 'yes') {
-            dataProcess(topic)
+            topic = dataProcess(topic)
+            // topic = await tempProcess(topic)
         }
 
         return topic;
@@ -402,6 +481,18 @@ export async function addList(data) {
     return _id;
 }
 
+
+export async function addTemplate(data) {
+
+    const db = await connectDB();
+
+    const result = await db.collection("templates").insertMany(data);
+
+    return result.insertedIds;
+}
+
+
+
 export async function addTopics(data) {
     const db = await connectDB();
 
@@ -431,6 +522,19 @@ export async function updateATopic(id, data) {
         console.log("Error updating topic", error);
         return false;
     }
+}
+
+
+export async function updateATemplate(id, data) {
+
+
+    const _id = new ObjectId(id);
+    const db = await connectDB();
+
+    await db.collection("templates")
+        .updateOne({ _id: _id }, { $set: data });
+
+    return true;
 }
 
 

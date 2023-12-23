@@ -5,17 +5,12 @@ export default function CustomButton({
   onClick,
   size = "md",
   type,
-  className = "w-2/5 h-8",
+  className = "w-32 h-8",
 }) {
   return (
     <button
       type={type}
-      className={`
-        text-white rounded-${size}
-        bg-${color}-500 
-        hover:bg-${color}-600
-        ${className}
-      `}
+      className={`${className} text-white bg-green-600 font-medium rounded disabled:opacity-50`}
       onClick={onClick}
       disabled={disabled}
     >

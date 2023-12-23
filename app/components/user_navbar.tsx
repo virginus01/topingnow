@@ -12,6 +12,8 @@ const navigation = [
   { name: "Topics", href: "/dashboard/topics", current: false },
   { name: "Lists", href: "/dashboard/lists", current: false },
   { name: "Imports", href: "/dashboard/imports", current: false },
+  { name: "Templates", href: "/dashboard/templates", current: false },
+  { name: "Q&A", href: "/dashboard/qanda", current: false },
 ];
 
 function classNames(...classes) {
@@ -142,7 +144,6 @@ export const UserNavbar = () => {
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
-                  
                     href={item.href}
                     className={classNames(
                       item.current

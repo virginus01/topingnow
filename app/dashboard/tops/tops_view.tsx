@@ -16,15 +16,18 @@ import { removeById } from "@/app/utils/custom_helpers";
 import DataTable from "@/app/components/widgets/data_table";
 
 export default function TopsView() {
-  const url = `${NEXT_PUBLIC_GET_TOPS}`;
   const router = useRouter();
   const [page, setPage] = useState(1);
   const perPage = 5;
 
   let [data, setData] = useState(Shimmer(perPage));
-
+  let [url, setUrl] = useState(
+    `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`
+  );
   // Slice topics array for current page
   const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
+
+  console.log(paginatedData);
 
   if (paginatedData && paginatedData.length > 0) {
     data = paginatedData;

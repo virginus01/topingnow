@@ -9,6 +9,8 @@ import {
   getTop,
   fetchImports,
   getTopicWithEssentials,
+  fetchTemplates,
+  fetchTemplate,
 } from "@/app/api/mongodb/query";
 
 export async function GET(
@@ -30,6 +32,7 @@ export async function GET(
   let listId = searchParams.get("listId");
   let uid = searchParams.get("uid");
   let q = searchParams.get("q");
+  let rand = searchParams.get("rand");
   let process = searchParams.get("process");
   let page = parseInt(searchParams.get("page") as string, 10);
   let perPage = parseInt(searchParams.get("perPage") as string, 10);
@@ -128,6 +131,24 @@ export async function GET(
     });
   }
 
+  //fetching templates
+  if (action == "get_templates") {
+    const data = await getTemplates(page, perPage);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  ///
+  if (action == "get_template") {
+    const data = await getTemplate(id, rand);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
   //.....................PUT.......................
 
   //return info
@@ -180,8 +201,8 @@ async function fetchTopic(id: any, process: any) {
 async function fetchTopicWithEssentials(id: any, page: any) {
   try {
     return await getTopicWithEssentials(id, page);
-  } catch {
-    console.log("error: 8475775");
+  } catch (e) {
+    console.log(`error: 847785775 ${e}`);
     return "not_found";
   }
 }
@@ -225,6 +246,22 @@ async function fetchUser(uid: string | number | null) {
 async function getImports() {
   try {
     return await fetchImports();
+  } catch {
+    return { msg: "8474747 error" };
+  }
+}
+
+async function getTemplates(page: any, perPage: any) {
+  try {
+    return await fetchTemplates();
+  } catch {
+    return { msg: "8474747 error" };
+  }
+}
+
+async function getTemplate(templateId: any, rand: any) {
+  try {
+    return await fetchTemplate(templateId, rand);
   } catch {
     return { msg: "8474747 error" };
   }
