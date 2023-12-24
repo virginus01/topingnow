@@ -13,7 +13,7 @@ const navigation = [
   { name: "Lists", href: "/dashboard/lists", current: false },
   { name: "Imports", href: "/dashboard/imports", current: false },
   { name: "Templates", href: "/dashboard/templates", current: false },
-  { name: "Q&A", href: "/dashboard/qanda", current: false },
+  { name: "Q&A", href: "/dashboard/qandas", current: false },
 ];
 
 function classNames(...classes) {

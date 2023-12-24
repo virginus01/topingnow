@@ -7,10 +7,12 @@ import { postTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
+import { postTemplates } from "@/app/lib/repo/templates_repo";
+import { postQandAs } from "@/app/lib/repo/qanda_repo";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-const TopicsImport = (top_id) => {
+const QandAsImport = () => {
   const [file, setFile] = useState(null);
   const [data, setData] = useState([]);
   const [columnArray, setColumn] = useState([]);
@@ -21,7 +23,6 @@ const TopicsImport = (top_id) => {
   const [topics, setTopics] = useState([]);
   const [csv, setCSV] = useState("");
 
-
   const handleImport = async (e) => {
     e.preventDefault();
 
@@ -31,8 +32,8 @@ const TopicsImport = (top_id) => {
       return toast.error("'title' field is not present");
     }
 
-    if (!data[0].description || data[0].description == undefined) {
-      return toast.error("'description' field is not present");
+    if (!data[0].body || data[0].body == undefined) {
+      return toast.error("'body' field is not present");
     }
 
     if (!data) return;
@@ -41,17 +42,16 @@ const TopicsImport = (top_id) => {
     let topics = new Array();
 
     data.map(async (t, i) => {
-
       const topicsD = {
         title: t.title,
-        description: t.description,
-        topId: top_id.top_id,
+        body: [{ dataBody: t.body }],
         slug: t.title,
         isDuplicate: true,
         _id: "",
       };
 
-      if (topicsD.title && topicsD.description) {
+
+      if (topicsD.title && topicsD.body) {
         topics.push(topicsD);
       }
 
@@ -70,7 +70,8 @@ const TopicsImport = (top_id) => {
       return;
     }
 
-    const result = await postTopics(topics);
+
+    const result = await postQandAs(topics);
 
     // Set progress
     setProgress(values.length - 1);
@@ -87,7 +88,7 @@ const TopicsImport = (top_id) => {
   const handleFileChange = (e) => {
     e.preventDefault();
 
-    console.log("file change")
+    console.log("file change");
     setData([]);
     setColumn([]);
     setValues([]);
@@ -115,7 +116,6 @@ const TopicsImport = (top_id) => {
     });
   };
 
-
   return (
     <CsvImportSCR
       handleFileChange={handleFileChange}
@@ -123,8 +123,9 @@ const TopicsImport = (top_id) => {
       handleImport={handleImport}
       csv={csv}
       progress={progress}
-      columnArray={columnArray} />
+      columnArray={columnArray}
+    />
   );
 };
 
-export default TopicsImport;
+export default QandAsImport;

@@ -11,6 +11,8 @@ import {
   getTopicWithEssentials,
   fetchTemplates,
   fetchTemplate,
+  fetchQandAs,
+  fetchAQandA,
 } from "@/app/api/mongodb/query";
 
 export async function GET(
@@ -53,7 +55,7 @@ export async function GET(
 
   //fetching a top
   if (action == "get_top") {
-    const { data } = await fetchTop(id);
+    const data = await fetchTop(id);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -149,6 +151,22 @@ export async function GET(
     });
   }
 
+  if (action == "get_qandas") {
+    const data = await getQandAs(page, perPage);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  if (action == "get_qanda") {
+    const data = await getQandA(id, rand);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
   //.....................PUT.......................
 
   //return info
@@ -167,14 +185,11 @@ async function fetchTops(page: number, perPage: number, q: any) {
 }
 
 async function fetchTop(id: any) {
-  let data = [];
-
   try {
-    data = await getTop(id);
+    return await getTop(id);
   } catch {
     return { data: "746466 error" };
   }
-  return { data };
 }
 
 async function fetchTopics(
@@ -262,6 +277,22 @@ async function getTemplates(page: any, perPage: any) {
 async function getTemplate(templateId: any, rand: any) {
   try {
     return await fetchTemplate(templateId, rand);
+  } catch {
+    return { msg: "8474747 error" };
+  }
+}
+
+async function getQandA(Id: any, rand: any) {
+  try {
+    return await fetchAQandA(Id, rand);
+  } catch {
+    return { msg: "8474747 error" };
+  }
+}
+
+async function getQandAs(page: any, perPage: any) {
+  try {
+    return await fetchQandAs(page, perPage);
   } catch {
     return { msg: "8474747 error" };
   }

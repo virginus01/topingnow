@@ -10,6 +10,7 @@ import {
 
 import { ActionButtons } from "@/app/components/widgets/action_buttons";
 import { useRouter } from "next/navigation";
+import { isNull } from "@/app/utils/custom_helpers";
 
 export default function DataTable({
   data,
@@ -23,6 +24,11 @@ export default function DataTable({
   addText,
 }) {
   const router = useRouter();
+
+  if (isNull(data)) {
+    return <div>No result found</div>;
+  }
+
   return (
     <>
       <table className="w-full whitespace-nowrap">

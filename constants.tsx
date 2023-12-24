@@ -1,10 +1,11 @@
+//Tops
 export const NEXT_PUBLIC_GET_TOPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_tops`;
 export const NEXT_PUBLIC_GET_TOP = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_top`;
-export const NEXT_PUBLIC_GET_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topics`;
+export const NEXT_PUBLIC_POST_TOPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_tops`;
+export const NEXT_PUBLIC_UPDATE_TOP = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_top`;
+export const NEXT_PUBLIC_DELETE_TOP = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_top`;
 
-//templates
-export const NEXT_PUBLIC_GET_TEMPLATES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_templates`;
-export const NEXT_PUBLIC_GET_TEMPLATE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_template`;
+export const NEXT_PUBLIC_GET_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topics`;
 
 export const NEXT_PUBLIC_GET_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic`;
 export const NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic_with_essentials`;
@@ -15,7 +16,7 @@ export const NEXT_PUBLIC_GET_POPULAR_TOPICS = `${process.env.NEXT_PUBLIC_BASE_UR
 export const NEXT_PUBLIC_GET_IMPORTS = "/api/get/get_imports";
 
 // Endpoints post
-export const NEXT_PUBLIC_POST_TOPICS = "/api/post/post_topics";
+export const NEXT_PUBLIC_POST_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_topics`;
 export const NEXT_PUBLIC_POST_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/create_topic`;
 export const NEXT_PUBLIC_UPDATE_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_topic`;
 export const NEXT_PUBLIC_POST_LISTS = "/api/post/post_lists";
@@ -23,13 +24,24 @@ export const NEXT_PUBLIC_POST_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/po
 export const NEXT_PUBLIC_UPDATE_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_list`;
 export const NEXT_PUBLIC_CREATE_IMPORT = "/api/post/create_import";
 
-//Tmeplates
+//Templates
 export const NEXT_PUBLIC_POST_POST_TEMPLATES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_templates`;
 export const NEXT_PUBLIC_POST_UPDATE_TEMPLATE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_template`;
+export const NEXT_PUBLIC_GET_TEMPLATES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_templates`;
+export const NEXT_PUBLIC_GET_TEMPLATE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_template`;
+
+//Steps
+export const NEXT_PUBLIC_POST_POST_STEPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_steps`;
+export const NEXT_PUBLIC_POST_UPDATE_STEPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_steps`;
+
+//QnadA
+export const NEXT_PUBLIC_POST_POST_QANDAS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_qandas`;
+export const NEXT_PUBLIC_POST_UPDATE_QANDA = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_qanda`;
+export const NEXT_PUBLIC_GET_QANDAS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_qandas`;
+export const NEXT_PUBLIC_GET_QANDA = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_qanda`;
 
 // Endpoints delete
-export const NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS =
-  "/api/delete/delete_topics_by_import";
+export const NEXT_PUBLIC_DELETE_IMPORT = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_import`;
 export const NEXT_PUBLIC_DELETE_TOPICS_WITH_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_topics_with_lists`;
 export const NEXT_PUBLIC_DELETE_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_list`;
 

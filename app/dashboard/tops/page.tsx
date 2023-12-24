@@ -1,31 +1,93 @@
-import TopsView from "./tops_view";
+"use client";
+import { useRouter } from "next/navigation";
+import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
+import { useState } from "react";
+import Shimmer from "@/app/components/shimmer";
+import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
+import { toast } from "sonner";
+import DataTable from "@/app/components/widgets/data_table";
+import TopsImport from "@/app/dashboard/tops/tops_import";
+import TemplateBody from "../templates/body";
+import TabbedContents from "@/app/components/widgets/tabbed_contents";
+import { deleteTop } from "@/app/lib/repo/tops_repo";
 
-async function Index() {
+function Index() {
+  const router = useRouter();
+  const [page, setPage] = useState(1);
+  const perPage = 5;
+
+  let [data, setData] = useState([]);
+  let [url, setUrl] = useState(
+    `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`
+  );
+  // Slice topics array for current page
+  const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
+
+  if (paginatedData && paginatedData.length > 0) {
+    data = paginatedData;
+  }
+
+  const tabComponents = [
+    {
+      id: 1,
+      status: "active",
+      title: "Tops",
+      component: (
+        <DataTable
+          data={data}
+          page={page}
+          perPage={perPage}
+          deleteAction={deleteAction}
+          setPage={() => setPage}
+          viewAction={viewAction}
+          editAction={editAction}
+          addAction={addAction}
+          addText={"topics"}
+        />
+      ),
+    },
+    {
+      id: 2,
+      status: "inactive",
+      title: "templates",
+      component: <TemplateBody data={data} />,
+    },
+    {
+      id: 3,
+      status: "inactive",
+      title: "templates",
+      component: <TemplateBody data={[]} />,
+    },
+    {
+      id: 4,
+      status: "active",
+      title: "import tops",
+      component: <TopsImport />,
+    },
+  ];
+
   return (
     <>
-      <div className="w-full">
-        <div className="px-4 md:px-10 py-4 md:py-7">
-          <div className="sm:flex items-center justify-between">
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-normal text-gray-800">
-              Tops
-            </p>
-            <div className="mt-4 sm:mt-0">
-              <button className="inline-flex sm:ml-3 items-start justify-start px-3 py-2 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
-                <p className="text-sm font-sm leading-none text-white">
-                  Add Top
-                </p>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white px-4 md:px-10 pb-5">
-          <div className="overflow-x-auto">
-            <TopsView />
-          </div>
-        </div>
-      </div>
+      <TabbedContents tabComponents={tabComponents} />
     </>
   );
+
+  async function deleteAction(_id: string) {
+    const res = await deleteTop(_id);
+    toast.warning("no delete yet");
+  }
+
+  async function viewAction(slug: string) {
+    toast.warning("no view yet");
+  }
+
+  async function editAction(_id: string) {
+    toast.warning("no edit yet");
+  }
+
+  async function addAction(_id: string) {
+    router.push(`/dashboard/tops/add/${_id}`);
+  }
 }
 
 export default Index;

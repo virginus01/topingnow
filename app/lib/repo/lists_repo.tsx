@@ -15,7 +15,7 @@ export async function getLists(
   perPage: any | ""
 ) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}`;
+    const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}`;
 
     console.log(url);
 
@@ -39,7 +39,7 @@ export async function getLists(
 
 export async function getListById(id: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_LIST}?listId=${id}`;
+    const url = `${NEXT_PUBLIC_GET_LIST}?listId=${id}`;
 
     console.log(url);
     const res = await fetch(url, {

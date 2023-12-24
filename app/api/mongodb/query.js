@@ -58,7 +58,105 @@ export async function getTops(page = 1, perPage = 10, q = '') {
 }
 
 
+export async function getTopsByImport(importId, page = 1, perPage = 10, q = '') {
+    const skip = (page - 1) * perPage;
 
+    const db = await connectDB();
+    let filter = { importId: importId };
+
+    if (!isNull(q)) {
+        filter = { title: { $regex: new RegExp(q, 'i') } }
+    } else {
+        filter = {};
+    }
+
+    let [result, total] = await Promise.all([
+        db.collection("tops").find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
+
+        db.collection("tops")
+            .estimatedDocumentCount(filter)
+    ]);
+
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+    if (!result) {
+        return "not_found";
+    }
+
+    const topTopicsPromises = result.map(async (data) => {
+        const tTopics = await getTopics(String(data._id), 1, 10);
+        return {
+            ...data,
+            topTopics: tTopics
+        };
+    });
+
+    result = await Promise.all(topTopicsPromises);
+
+
+    return {
+        result: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
+}
+
+
+export async function getTopicsByImport(importId, page = 1, perPage = 10, process = 'yes') {
+
+    const skip = (page - 1) * perPage;
+
+    const db = await connectDB();
+
+    const filter = importId ? { importId } : {};
+
+    const [result, total] = await Promise.all([
+        db.collection("topics").find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
+
+        db.collection("topics")
+            .estimatedDocumentCount(filter)
+    ]);
+
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+    if (!result) {
+        return "not_found";
+    }
+
+
+    if (process === 'yes') {
+        dataProcess(result)
+    }
+
+    return {
+        result: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
+
+}
 
 export async function getTopics(topId, page = 1, perPage = 10, process = 'yes') {
 
@@ -106,17 +204,6 @@ export async function getTopics(topId, page = 1, perPage = 10, process = 'yes') 
 }
 
 
-export async function getTopicsWithLists(topId, page = 1, perPage = 10) {
-
-
-
-    result.map(async (data) => {
-        const tLists = await getLists(data._id, page = 1, perPage = 10)
-        result.lists = tLists;
-    })
-
-
-}
 
 
 export async function fetchImports(page = 1, perPage = 10) {
@@ -245,6 +332,87 @@ export async function fetchTemplate(templateId, rand = 'no') {
     }
 
 }
+
+
+export async function fetchAQandA(Id, rand = 'no') {
+
+
+    try {
+
+        const db = await connectDB();
+
+        let temp = await db.collection("qandas").findOne({
+            title: Id
+        });
+
+        if (!temp && isValidObjectId(Id)) {
+            temp = await db.collection("qandas").findOne({
+                _id: new ObjectId(Id)
+            });
+        }
+
+        if (!temp) {
+            return "not_found";
+        }
+
+        return temp;
+
+    } catch (error) {
+        console.log("Error in getQandA", error);
+        return "not_found";
+    }
+
+}
+
+
+export async function fetchQandAs(page = 1, perPage = 10) {
+
+    try {
+
+        const skip = (page - 1) * perPage;
+
+        const db = await connectDB();
+
+        const [result, total] = await Promise.all([
+            db.collection("qandas").find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
+            db.collection("qandas").estimatedDocumentCount()
+        ]);
+
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
+
+
+
+        if (!result) {
+            return "not_found";
+        }
+
+
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+
+    } catch (error) {
+        console.log("Error in fetchQandAs", error);
+        return "not_found";
+
+    }
+
+}
+
 
 export async function getLists(topicId, page = 1, perPage = 10) {
 
@@ -438,17 +606,34 @@ export async function getTopicWithEssentials(id, page = 1, process = 'yes') {
 
 
 export async function getTop(id) {
-    const db = await connectDB();
-    let top = await db.collection("tops").findOne({
-        slug: id
-    });
 
-    if (!top) {
-        top = await db.collection("tops").findOne({
-            _id: new ObjectId(id)
+    try {
+
+        const db = await connectDB();
+
+        let topic = await db.collection("tops").findOne({
+            slug: id
         });
+
+        if (!topic && isValidObjectId(id)) {
+            topic = await db.collection("tops").findOne({
+                _id: new ObjectId(id)
+            });
+        }
+
+
+
+        if (isNull(topic)) {
+            return "not_found";
+        }
+
+        return topic;
+
+    } catch (error) {
+        console.log("Error in getTop", error);
+        return "not_found";
     }
-    return top;
+
 }
 
 
@@ -487,6 +672,26 @@ export async function addTemplate(data) {
     const db = await connectDB();
 
     const result = await db.collection("templates").insertMany(data);
+
+    return result.insertedIds;
+}
+
+
+export async function addQandAs(data) {
+
+    const db = await connectDB();
+
+    const result = await db.collection("qandas").insertMany(data);
+
+    return result.insertedIds;
+}
+
+
+export async function addTops(data) {
+
+    const db = await connectDB();
+
+    const result = await db.collection("tops").insertMany(data);
 
     return result.insertedIds;
 }
@@ -537,6 +742,17 @@ export async function updateATemplate(id, data) {
     return true;
 }
 
+export async function updateAQandA(id, data) {
+
+    const _id = new ObjectId(id);
+    const db = await connectDB();
+
+    await db.collection("qandas")
+        .updateOne({ _id: _id }, { $set: data });
+
+    return true;
+}
+
 
 export async function updateAList(id, data) {
 
@@ -545,6 +761,19 @@ export async function updateAList(id, data) {
     const db = await connectDB();
 
     await db.collection("lists")
+        .updateOne({ _id: _id }, { $set: data });
+
+    return true;
+
+}
+
+export async function updateATop(id, data) {
+
+
+    const _id = new ObjectId(id);
+    const db = await connectDB();
+
+    await db.collection("tops")
         .updateOne({ _id: _id }, { $set: data });
 
     return true;
@@ -563,6 +792,48 @@ export async function addImport(data) {
 
 //DELETE
 
+export async function removeTopics(id, topId, importId) {
+
+    const db = await connectDB();
+
+    let result;
+
+
+    try {
+
+        if (importId) {
+            const res = await getTopicsByImport(importId, 1, 1000000, 'no');
+            if (!isNull(res.result)) {
+                const ids = res.result.map((t) => String(t._id));
+                const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
+            }
+            result = await db.collection("topics").deleteMany({ importId: importId });
+        }
+
+        if (topId) {
+            const res = await getTopics(topId, 1, 1000000, 'no');
+            if (!isNull(res.result)) {
+                const ids = res.result.map((t) => String(t._id));
+                const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
+            }
+            result = await db.collection("topics").deleteMany({ topId: topId });
+        }
+
+        if (id && isValidObjectId(id)) {
+            result = await db.collection("topics").deleteMany({ _id: new ObjectId(id) });
+            const delLists = await removeList(id, null, null);
+        }
+
+
+    } catch (error) {
+        console.log('Error removing topics:', error);
+        return 0;
+    }
+
+    return result;
+}
+
+
 export async function deleteImportedTopics(importId) {
 
     const db = await connectDB();
@@ -575,9 +846,9 @@ export async function deleteImportedTopics(importId) {
     let result2 = 0;
 
     try {
-        result = await db.collection("topics").deleteMany(filter);
-        result2 = await db.collection("lists").deleteMany(filter);
-        const imResult = await deleteImport(importId)
+        const rTopics = await removeTopics(null, null, importId);
+        const rLists = await removeList(null, null, importId);
+
 
     } catch (e) {
         console.log(`${e} error 8575775`)
@@ -614,17 +885,59 @@ export async function removeTopicsWithLists(topicId) {
 }
 
 
-export async function removeList(listId) {
+export async function removeList(id, topicId, importId) {
 
     const db = await connectDB();
 
-    const filter = { _id: new ObjectId(listId) };
+    let result;
+
+    try {
+        if (importId) {
+            result = await db.collection("lists").deleteMany({ importId: importId });
+        }
+
+        if (topicId) {
+            result = await db.collection("lists").deleteMany({ topicId: topicId });
+        }
+
+        if (id && isValidObjectId(id)) {
+            result = await db.collection("lists").deleteMany({ _id: new ObjectId(id) });
+        }
+
+
+    } catch (error) {
+        console.log('Error removing lists:', error);
+        return 0;
+    }
+
+    return result.deletedCount;
+}
+
+
+
+export async function removeTop(id, importId) {
+
+    const db = await connectDB();
 
     let result = 0;
     let result2 = 0;
 
     try {
-        result = await db.collection("lists").deleteOne(filter);
+        if (id) {
+            result = await db.collection("tops").deleteOne({ _id: new ObjectId(id) });
+            result2 = await removeTopics(null, id, null);
+        }
+
+        if (importId) {
+            const res = await getTopsByImport(importId, 1, 1000000, '');
+            if (!isNull(res.result)) {
+                const ids = res.result.map((t) => String(t._id));
+                const delLists = await Promise.all(ids.map((t) => removeTopics(null, t, null)));
+            }
+            result = await db.collection("tops").deleteOne({ importId: importId });
+        }
+
+
 
     } catch (e) {
         console.log(`${e} error 88364575`)

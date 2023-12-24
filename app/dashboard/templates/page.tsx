@@ -50,6 +50,7 @@ export default function TemplatesView({ topId }) {
     {
       id: 1,
       status: "active",
+      title: "templates",
       component: (
         <DataTable
           data={data}
@@ -67,16 +68,19 @@ export default function TemplatesView({ topId }) {
     {
       id: 2,
       status: "inactive",
+      title: "templates",
       component: <TemplateBody data={data} />,
     },
     {
       id: 3,
       status: "inactive",
+      title: "templates",
       component: <TemplateBody data={[]} />,
     },
     {
       id: 4,
       status: "active",
+      title: "import template",
       component: <TemplatesImport />,
     },
   ];

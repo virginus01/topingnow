@@ -28,7 +28,10 @@ export function isNull(text: any) {
     text === null ||
     text === "" ||
     !text ||
-    text != "not_found"
+    text === "not_found" ||
+    text === "[]" ||
+    text === "{}" ||
+    text.length === 0
   ) {
     return true;
   }

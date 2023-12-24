@@ -22,7 +22,7 @@ export default function TabbedContents({ title = "Dashboard", tabComponents }) {
               }`}
               onClick={() => handleTabClick(tabComponents[0].id)}
             >
-              Template Bodies
+              {tabComponents[0].title}
             </button>
           )}
 
@@ -35,7 +35,7 @@ export default function TabbedContents({ title = "Dashboard", tabComponents }) {
               }`}
               onClick={() => handleTabClick(tabComponents[1].id)}
             >
-              Draft Lists
+              {tabComponents[1].title}
             </button>
           )}
         </div>
@@ -52,7 +52,7 @@ export default function TabbedContents({ title = "Dashboard", tabComponents }) {
                     }`}
                     onClick={() => handleTabClick(tabComponents[2].id)}
                   >
-                    Create List
+                    {tabComponents[2].title}
                   </button>
                 )}
 
@@ -65,7 +65,7 @@ export default function TabbedContents({ title = "Dashboard", tabComponents }) {
                     }`}
                     onClick={() => handleTabClick(tabComponents[3].id)}
                   >
-                    Import Lists
+                    {tabComponents[3].title}
                   </button>
                 )}
               </div>

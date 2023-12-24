@@ -1,5 +1,5 @@
 import {
-  NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS,
+  NEXT_PUBLIC_DELETE_IMPORT,
   NEXT_PUBLIC_GET_IMPORTS,
 } from "@/constants";
 
@@ -26,9 +26,7 @@ export async function getImports(page: number, perPage: any | "") {
 
 export async function deleteTopicsByImports(_id: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS}`;
-
-    console.log(url);
+    const url = `${NEXT_PUBLIC_DELETE_IMPORT}`;
 
     const formData = new FormData();
     formData.append("deleteData", JSON.stringify({ _id }));

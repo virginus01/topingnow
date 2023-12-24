@@ -43,21 +43,25 @@ export default function TemplateOverview({
     {
       id: 1,
       status: "active",
+      title: "template",
       component: <TemplateBody data={data} />,
     },
     {
       id: 2,
       status: "inactive",
+      title: "template",
       component: <TemplateBody data={data} />,
     },
     {
       id: 3,
       status: "inactive",
+      title: "template",
       component: <TemplateBody data={[]} />,
     },
     {
       id: 4,
       status: "inactive",
+      title: "template",
       component: <TemplatesImport />,
     },
   ];

@@ -59,7 +59,7 @@ export async function getPopularTopics() {
 
 export async function getTopicById(topicId: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}`;
+    const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}`;
 
     console.log(url);
     const res = await fetch(url, {
@@ -133,7 +133,7 @@ export async function postTopics(tData: any) {
         tData[i].isUpdated = false;
       }
     });
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_POST_TOPICS}`;
+    const url = `${NEXT_PUBLIC_POST_TOPICS}`;
 
     let formData = new FormData();
     formData.append("postData", JSON.stringify(tData));
