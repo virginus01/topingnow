@@ -20,10 +20,6 @@ export default function TemplateOverview({
   const [activeTab, setActiveTab] = useState(1);
   let [data, setData] = useState(Shimmer(10));
 
-  const handleTabClick = (tabNumber) => {
-    setActiveTab(tabNumber);
-  };
-
   const url = `${NEXT_PUBLIC_GET_TEMPLATE}?id=${params._id}`;
 
   // Slice topics array for current page

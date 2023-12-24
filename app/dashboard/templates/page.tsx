@@ -33,7 +33,7 @@ export default function TemplatesView({ topId }) {
   const [isOpen, setIsOpen] = useState(false);
   let [data, setData] = useState(Shimmer(5));
   const router = useRouter();
-
+  const [updating, setUpdating] = useState(false);
   const perPage = 10;
   const url = `${NEXT_PUBLIC_GET_TEMPLATES}?page=${page}&perPage=${perPage}`;
 
@@ -44,7 +44,9 @@ export default function TemplatesView({ topId }) {
     return <Loading />;
   }
 
-  data = paginatedData;
+  if (updating === false) {
+    data = paginatedData;
+  }
 
   const tabComponents = [
     {
@@ -87,11 +89,14 @@ export default function TemplatesView({ topId }) {
 
   return (
     <>
-      <TabbedContents tabComponents={tabComponents} />
+      <TabbedContents title="Templates" tabComponents={tabComponents} />
     </>
   );
 
   async function deleteAction(_id: string) {
+    setUpdating(true);
+    const updatedImports = removeById(data, _id);
+    setData(updatedImports);
     const res = await deleteTopicsWithLists(_id);
     if (res.data) {
       const updatedData = removeById(paginatedData, _id);

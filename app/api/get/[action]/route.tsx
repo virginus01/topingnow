@@ -8,7 +8,6 @@ import {
   getUser,
   getTop,
   fetchImports,
-  getTopicWithEssentials,
   fetchTemplates,
   fetchTemplate,
   fetchQandAs,
@@ -64,8 +63,7 @@ export async function GET(
 
   //fetching topics
   if (action == "get_topics") {
-    const data = await fetchTopics(topId, page, perPage);
-
+    const data = await fetchTopics(topId, page, perPage, q);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -195,10 +193,11 @@ async function fetchTop(id: any) {
 async function fetchTopics(
   topId: string | number | null,
   page: number,
-  perPage: number
+  perPage: number,
+  q: string | number | null
 ) {
   try {
-    return await getTopics(topId, page, perPage);
+    return await getTopics(topId, page, perPage, "no", q);
   } catch {
     return { msg: "84746 error" };
   }
@@ -215,7 +214,7 @@ async function fetchTopic(id: any, process: any) {
 
 async function fetchTopicWithEssentials(id: any, page: any) {
   try {
-    return await getTopicWithEssentials(id, page);
+    return await getTopic(id, "yes", page, 10, "yes");
   } catch (e) {
     console.log(`error: 847785775 ${e}`);
     return "not_found";

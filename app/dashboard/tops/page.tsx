@@ -10,20 +10,22 @@ import TopsImport from "@/app/dashboard/tops/tops_import";
 import TemplateBody from "../templates/body";
 import TabbedContents from "@/app/components/widgets/tabbed_contents";
 import { deleteTop } from "@/app/lib/repo/tops_repo";
+import { removeById } from "@/app/utils/custom_helpers";
 
-function Index() {
+export default function Index() {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [updating, setUpdating] = useState(false);
   const perPage = 5;
-
   let [data, setData] = useState([]);
   let [url, setUrl] = useState(
     `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`
   );
+
   // Slice topics array for current page
   const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
 
-  if (paginatedData && paginatedData.length > 0) {
+  if (paginatedData && paginatedData.length > 0 && updating == false) {
     data = paginatedData;
   }
 
@@ -68,13 +70,22 @@ function Index() {
 
   return (
     <>
-      <TabbedContents tabComponents={tabComponents} />
+      <TabbedContents title={"Tops"} tabComponents={tabComponents} />
     </>
   );
 
   async function deleteAction(_id: string) {
+    setUpdating(true);
+    const updatedImports = removeById(data, _id);
+    setData(updatedImports);
+
     const res = await deleteTop(_id);
-    toast.warning("no delete yet");
+
+    if (res.data.success) {
+      toast.success("Items deleted successfully");
+    } else {
+      toast.error("Error deleteing Items");
+    }
   }
 
   async function viewAction(slug: string) {
@@ -89,5 +100,3 @@ function Index() {
     router.push(`/dashboard/tops/add/${_id}`);
   }
 }
-
-export default Index;

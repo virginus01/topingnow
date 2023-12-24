@@ -4,7 +4,7 @@ import { notFound, redirect, useRouter } from "next/navigation";
 import TinyMCEEditor from "@/app/utils/tinymce";
 import { UpdateTopic, postTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
-import TopicsDataSearch from "@/app/components/widgets/topics_data_search";
+import TopicsDataSearch from "@/app/components/widgets/select_search";
 import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
 import Shimmer from "@/app/components/shimmer";
 import { usePaginatedSWR, usePaginatedSWRAdmin } from "@/app/utils/fetcher";

@@ -4,9 +4,11 @@ import PopularTopics from "@/app/components/popular_topics";
 import ListTable from "@/app/components/list_table";
 import Lists from "../posts/lists";
 import { notFound } from "next/navigation";
-import { NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS } from "@/constants";
 import { SingleShimmer } from "../components/shimmer";
-import { justGetTopicWithEssentials } from "../lib/repo/topics_repo";
+import { justGetTopicWithEssentials, metaTags } from "../lib/repo/topics_repo";
+import { isNull } from "../utils/custom_helpers";
+import { metadata } from "../layout";
+import { NextSeo } from "next-seo";
 
 export default async function Post({ params }: { params: { slug: string } }) {
   const repeat = 2;
@@ -19,9 +21,11 @@ export default async function Post({ params }: { params: { slug: string } }) {
     data = result;
   }
 
-  if (!result) {
+  if (isNull(result)) {
     notFound();
   }
+
+  await metaTags(metadata, data);
 
   return (
     <>

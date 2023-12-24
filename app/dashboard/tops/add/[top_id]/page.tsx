@@ -7,106 +7,63 @@ import Loading from "@/app/dashboard/loading";
 import { TopModel } from "@/app/models/top_model";
 import TopicsView from "@/app/dashboard/topics/topics_view";
 import CreateTopic from "@/app/dashboard/topics/create_topic";
+import TabbedContents from "@/app/components/widgets/tabbed_contents";
+import { NEXT_PUBLIC_GET_TOP, NEXT_PUBLIC_GET_TOPS } from "@/constants";
+import {
+  usePaginatedSWRAdmin,
+  useSingleSWR,
+  useSingleSWRAdmin,
+} from "@/app/utils/fetcher";
 
 export default function FromTop({ params }: { params: { top_id: string } }) {
   const router = useRouter();
-  const [topData, setTopData] = useState<TopModel | null>(null);
+  let [topData, setTopData] = useState<TopModel | null>(null);
+  const [page, setPage] = useState(1);
+  const perPage = 10;
 
-  useEffect(() => {
-    getTop(params.top_id).then((data) => {
-      if (!data) {
-        router.replace("/dashboard/tops");
-      } else {
-        setTopData(data);
-      }
-    });
-  }, [params.top_id, router]);
+  const url = `${NEXT_PUBLIC_GET_TOP}?id=${params.top_id}`;
 
-  const [activeTab, setActiveTab] = useState(1);
+  const { result, loading } = useSingleSWRAdmin(url);
 
-  const handleTabClick = (tabNumber) => {
-    setActiveTab(tabNumber);
-  };
+  if (result) {
+    topData = result;
+  }
 
   if (!topData) {
     return <Loading />;
   }
 
+  const tabComponents = [
+    {
+      id: 1,
+      status: "active",
+      title: "topics",
+      component: <TopicsView topId={params.top_id} />,
+    },
+    {
+      id: 2,
+      status: "inactive",
+      title: "",
+      component: <></>,
+    },
+    {
+      id: 3,
+      status: "inactive",
+      title: "",
+      component: <CreateTopic topData={topData} />,
+    },
+    {
+      id: 4,
+      status: "active",
+      title: "topics import",
+      component: <TopicsImport top_id={params.top_id} />,
+    },
+  ];
+
   return (
-    <div className="container mx-auto mt-12">
-      <p className="my-10 font-extrabold">Top: Top {topData.name}</p>
-      <div className="flex justify-between">
-        <div className="flex space-x-4">
-          <button
-            className={`px-2 py-1.5 text-sm rounded-sm ${
-              activeTab === 1
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-            onClick={() => handleTabClick(1)}
-          >
-            Live Topics
-          </button>
-
-          <button
-            className={`px-2 py-1.5 text-sm rounded-sm ${
-              activeTab === 2
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-            onClick={() => handleTabClick(2)}
-          >
-            Draft Topics
-          </button>
-        </div>
-        <div className="flex space-x-4">
-          <div className="float-right">
-            <div className="flex justify-between">
-              <div className="flex space-x-4">
-                <button
-                  className={`px-2 py-1.5 text-sm rounded-sm ${
-                    activeTab === 3
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                  onClick={() => handleTabClick(3)}
-                >
-                  Create Topics
-                </button>
-
-                <button
-                  className={`px-2 py-1.5 text-sm rounded-sm ${
-                    activeTab === 4
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                  onClick={() => handleTabClick(4)}
-                >
-                  Import Topics
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Content for each tab */}
-      {activeTab === 1 && (
-        <div className="mt-10">
-          <TopicsView topId={params.top_id} />
-        </div>
-      )}
-      {activeTab === 2 && <div className="mt-10">Content for Tab 2</div>}
-      {activeTab === 3 && (
-        <div className="mt-10">
-          <CreateTopic topData={topData} />
-        </div>
-      )}
-
-      {activeTab === 4 && (
-        <div className="mt-10">
-          <TopicsImport top_id={params.top_id} />
-        </div>
-      )}
-    </div>
+    <TabbedContents
+      title={String(topData.title)}
+      tabComponents={tabComponents}
+    />
   );
 }

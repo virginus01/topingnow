@@ -5,11 +5,32 @@ import TinyMCEEditor from "@/app/utils/tinymce";
 import { UpdateTopic, postTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import { postList } from "@/app/lib/repo/lists_repo";
+import SelectSearch from "@/app/components/widgets/select_search";
+import { isNull } from "@/app/utils/custom_helpers";
+import { NEXT_PUBLIC_GET_TOPICS } from "@/constants";
+import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
+import { SingleShimmer } from "@/app/components/shimmer";
 
-export default function AddList({ topicData }) {
+export default function CreateList({ topicData }) {
   const router = useRouter();
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
+
+  const [selected, setSelected] = useState(topicData ?? SingleShimmer(1));
+
+  const [page, setPage] = useState(1);
+  const perPage = 5;
+  let [url, setUrl] = useState(
+    `${NEXT_PUBLIC_GET_TOPICS}?page=${page}&perPage=${perPage}`
+  );
+
+  let searchData = [];
+  // Slice topics array for current page
+  const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
+
+  if (paginatedData && paginatedData.length > 0) {
+    searchData = paginatedData;
+  }
 
   const data = topicData;
 
@@ -35,12 +56,23 @@ export default function AddList({ topicData }) {
       console.log(error);
     }
   };
+
+  function handleSearch(value) {
+    if (!isNull(value)) {
+      const url = `${NEXT_PUBLIC_GET_TOPICS}?page=${page}&perPage=${perPage}&q=${value}`;
+      setUrl(url);
+    } else {
+      const url = `${NEXT_PUBLIC_GET_TOPICS}?page=${page}&perPage=${perPage}`;
+      setUrl(url);
+    }
+  }
+
   return (
     <div className="space-y-12">
       <div className="border-b border-gray-900/10 pb-12">
-        <p className="my-10">Add a new Topic</p>
+        <p className="my-10">Add a new List</p>
 
-        <form method="POST" className="mx-auto px-10" onSubmit={handleSubmit}>
+        <form method="POST" className="px-1" onSubmit={handleSubmit}>
           <div className="mb-5">
             <label
               className="block mb-2 uppercase font-bold text-xs text-gray-700"
@@ -58,7 +90,16 @@ export default function AddList({ topicData }) {
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
-
+          <div className="mb-5">
+            <SelectSearch
+              label="Select Topic"
+              data={searchData}
+              onChange={(e) => handleSearch(e.target.value)}
+              selected={selected}
+              setSelected={setSelected}
+              isDisabled={topicData ?? true}
+            />
+          </div>
           <div className="mb-5">
             <label
               className="block mb-2 uppercase font-bold text-xs text-gray-700"

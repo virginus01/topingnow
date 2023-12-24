@@ -30,7 +30,7 @@ export default function QandAView({ topicId }) {
   const [isOpen, setIsOpen] = useState(false);
   let [data, setData] = useState(Shimmer(5));
   const router = useRouter();
-
+  const [updating, setUpdating] = useState(false);
   const perPage = 10;
   const url = `${NEXT_PUBLIC_GET_QANDAS}?page=${page}&perPage=${perPage}`;
 
@@ -40,7 +40,9 @@ export default function QandAView({ topicId }) {
     return <Loading />;
   }
 
-  data = paginatedData;
+  if (updating === false) {
+    data = paginatedData;
+  }
 
   const tabComponents = [
     {
@@ -83,11 +85,18 @@ export default function QandAView({ topicId }) {
 
   return (
     <>
-      <TabbedContents tabComponents={tabComponents} />
+      <TabbedContents
+        title="Questions and Answers"
+        tabComponents={tabComponents}
+      />
     </>
   );
 
   async function deleteAction(_id: string) {
+    setUpdating(true);
+    const updatedImports = removeById(data, _id);
+    setData(updatedImports);
+
     const res = await deleteTopicsWithLists(_id);
     if (res.data) {
       const updatedData = removeById(paginatedData, _id);

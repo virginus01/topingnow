@@ -7,6 +7,7 @@ import Shimmer from "./components/shimmer";
 import { useState } from "react";
 import { getTop, getTops } from "./lib/repo/tops_repo";
 import usePagination from "./utils/pagination";
+import { metadata } from "./layout";
 
 export default async function Page() {
   const perPage = 5;
@@ -21,6 +22,9 @@ export default async function Page() {
   }
 
   const paginatedData = usePagination(data, page, perPage);
+
+  metadata.title = "Toping Now";
+  metadata.description = `This is noun ranking site`;
 
   return (
     <Layout>

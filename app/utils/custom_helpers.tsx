@@ -41,59 +41,64 @@ export function isNull(text: any) {
 export function dProcess(text: any) {
   let output = text;
 
-  Object.keys(placeholders).forEach((placeholder) => {
-    output = output.replace(
-      new RegExp(placeholder, "g"),
-      placeholders[placeholder]
-    );
-  });
-
+  if (!isNull(text)) {
+    Object.keys(placeholders).forEach((placeholder) => {
+      output = output.replace(
+        new RegExp(placeholder, "g"),
+        placeholders[placeholder]
+      );
+    });
+  }
   return output;
 }
 
 export async function dataProcess(text: any) {
-  if (Array.isArray(text)) {
-    text.forEach(async (t, i) => {
-      text[i].title = dProcess(text[i].title);
-      text[i].description = dProcess(await tProcess(text[i].description));
-    });
-  } else {
-    text.title = dProcess(text.title);
-    text.description = dProcess(await tProcess(text.description));
+  if (!isNull(text)) {
+    if (Array.isArray(text)) {
+      text.forEach(async (t, i) => {
+        text[i].title = dProcess(text[i].title);
+        text[i].description = dProcess(await tProcess(text[i].description));
+      });
+    } else {
+      text.title = dProcess(text.title);
+      text.description = dProcess(await tProcess(text.description));
+    }
   }
 
   return text;
 }
 
 export async function tProcess(text) {
-  const regex = /\{([^}]*)\}/g; // Match words within curly braces
+  if (!isNull(text)) {
+    const regex = /\{([^}]*)\}/g; // Match words within curly braces
 
-  const matches = text.matchAll(regex);
+    const matches = text.matchAll(regex);
 
-  const extractedWords: string[] = []; // Explicitly declare extractedWords as a string array
+    const extractedWords: string[] = []; // Explicitly declare extractedWords as a string array
 
-  if (matches) {
-    for (const match of matches) {
-      const matchStr: string = match[1]; // Explicitly type matchStr as string
-      extractedWords.push(`{${matchStr}}`);
+    if (matches) {
+      for (const match of matches) {
+        const matchStr: string = match[1]; // Explicitly type matchStr as string
+        extractedWords.push(`{${matchStr}}`);
+      }
     }
-  }
 
-  const temps = await Promise.all(extractedWords.map(getTemplate));
+    const temps = await Promise.all(extractedWords.map(getTemplate));
 
-  let description = text;
+    let description = text;
 
-  for (let i = 0; i < extractedWords.length; i++) {
-    if (temps[i] != "not_found") {
-      const { title, body } = temps[i];
-      const bodyD = JSON.parse(body);
-      description = description.replace(title, getRandomDataBody(bodyD));
-    } else {
-      description = description.replace(extractedWords[i], "");
+    for (let i = 0; i < extractedWords.length; i++) {
+      if (temps[i] != "not_found") {
+        const { title, body } = temps[i];
+        const bodyD = JSON.parse(body);
+        description = description.replace(title, getRandomDataBody(bodyD));
+      } else {
+        description = description.replace(extractedWords[i], "");
+      }
     }
-  }
 
-  text = description;
+    text = description;
+  }
 
   return text;
 }

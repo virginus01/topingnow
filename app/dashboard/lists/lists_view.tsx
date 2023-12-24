@@ -25,6 +25,7 @@ export default function ListsView({ topicId }) {
   const [page, setPage] = useState(1);
   let [data, setData] = useState(Shimmer(5));
   const perPage = 10;
+  const [updating, setUpdating] = useState(false);
 
   const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}`;
 
@@ -38,7 +39,9 @@ export default function ListsView({ topicId }) {
     return <div>No List found</div>;
   }
 
-  data = paginatedData;
+  if (updating == false) {
+    data = paginatedData;
+  }
 
   return (
     <>
@@ -57,6 +60,10 @@ export default function ListsView({ topicId }) {
   );
 
   async function deleteAction(_id: string) {
+    setUpdating(true);
+    const updatedImports = removeById(data, _id);
+    setData(updatedImports);
+
     const res = await deleteList(_id);
     const updatedData = removeById(paginatedData, _id);
     setData(updatedData);

@@ -1,13 +1,13 @@
 import {
+  NEXT_PUBLIC_CREATE_IMPORT,
   NEXT_PUBLIC_DELETE_IMPORT,
   NEXT_PUBLIC_GET_IMPORTS,
 } from "@/constants";
 
 export async function getImports(page: number, perPage: any | "") {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_GET_IMPORTS}?page=${page}&perPage=${perPage}`;
+    const url = `${NEXT_PUBLIC_GET_IMPORTS}?page=${page}&perPage=${perPage}`;
 
-    console.log(url);
     const response = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -44,4 +44,25 @@ export async function deleteTopicsByImports(_id: string) {
   } catch (error) {
     return { error: "An error occurred while fetching topic" };
   }
+}
+
+export default async function generateImportId(title, data) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
+
+  const tD = {
+    title: title,
+    length: data.length,
+  };
+
+  let formData = new FormData();
+  formData.append("postData", JSON.stringify(tD));
+
+  const response = await fetch(url, {
+    cache: "no-store",
+    method: "POST",
+    body: formData,
+  });
+  const result = await response.json();
+
+  return result.response;
 }

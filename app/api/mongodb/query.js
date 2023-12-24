@@ -1,6 +1,6 @@
 import { connectDB } from '@/app/utils/mongodb'
 import { ObjectId } from 'mongodb';
-import { dataProcess, dataProcess2, tempProcess } from '@/app/utils/custom_helpers';
+import { dataProcess } from '@/app/utils/custom_helpers';
 import { isNull } from '@/app/utils/custom_helpers';
 
 export async function getTops(page = 1, perPage = 10, q = '') {
@@ -158,13 +158,17 @@ export async function getTopicsByImport(importId, page = 1, perPage = 10, proces
 
 }
 
-export async function getTopics(topId, page = 1, perPage = 10, process = 'yes') {
+export async function getTopics(topId, page = 1, perPage = 10, process = 'yes', q) {
 
     const skip = (page - 1) * perPage;
 
     const db = await connectDB();
 
-    const filter = topId ? { topId } : {};
+    let filter = topId ? { topId } : {};
+
+    if (!isNull(q)) {
+        filter = { title: { $regex: new RegExp(q, 'i') } }
+    }
 
     const [result, total] = await Promise.all([
         db.collection("topics").find(filter)
@@ -414,7 +418,7 @@ export async function fetchQandAs(page = 1, perPage = 10) {
 }
 
 
-export async function getLists(topicId, page = 1, perPage = 10) {
+export async function getLists(topicId, page = 1, perPage = 10, process = 'yes') {
 
 
     const skip = (page - 1) * perPage;
@@ -442,6 +446,11 @@ export async function getLists(topicId, page = 1, perPage = 10) {
         return "not_found";
     }
 
+    if (process === 'yes') {
+        dataProcess(result)
+    }
+
+
 
     return {
         result: result,
@@ -455,7 +464,7 @@ export async function getLists(topicId, page = 1, perPage = 10) {
     };
 }
 
-export async function getList(listId) {
+export async function getList(listId, essentials = 'yes', process = "yes") {
 
     try {
 
@@ -474,6 +483,14 @@ export async function getList(listId) {
         if (!topic) {
             return "not_found";
         }
+        if (process === 'yes') {
+            dataProcess(topic)
+        }
+
+        if (essentials == 'yes') {
+            const tTop = await getTopic(String(topic.topicId), "no", 1, 10, 'yes')
+            topic.topicData = tTop;
+        }
 
         return topic;
 
@@ -484,7 +501,7 @@ export async function getList(listId) {
 
 }
 
-export async function getPopularTopics(excludeId = '', page = 1, perPage = 10) {
+export async function getPopularTopics(excludeId = '', page = 1, perPage = 10, process = 'yes') {
     const skip = (page - 1) * perPage;
 
     const db = await connectDB();
@@ -510,6 +527,9 @@ export async function getPopularTopics(excludeId = '', page = 1, perPage = 10) {
         return "not_found";
     }
 
+    if (process === 'yes') {
+        dataProcess(result)
+    }
 
     return {
         result: result,
@@ -530,7 +550,8 @@ export async function stat() {
     return result;
 }
 
-export async function getTopic(id, process = 'yes') {
+
+export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, process = 'yes',) {
 
     try {
 
@@ -548,6 +569,14 @@ export async function getTopic(id, process = 'yes') {
 
         if (!topic) {
             return "not_found";
+        }
+
+        if (essentials == 'yes') {
+            const tTop = await getTop(String(topic.topId))
+            topic.topicTop = tTop;
+
+            const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10))
+            topic.lists = tLists;
         }
 
         if (process === 'yes') {
@@ -561,51 +590,11 @@ export async function getTopic(id, process = 'yes') {
         return "not_found";
     }
 
-}
-
-export async function getTopicWithEssentials(id, page = 1, process = 'yes') {
-
-    try {
-
-        const db = await connectDB();
-
-        let topic = await db.collection("topics").findOne({
-            slug: id
-        });
-
-        if (!topic && isValidObjectId(id)) {
-            topic = await db.collection("topics").findOne({
-                _id: new ObjectId(id)
-            });
-        }
-
-        if (!topic) {
-            return "not_found";
-        }
-
-        const tTop = await getTop(String(topic.topId))
-        topic.topicTop = tTop;
-
-        const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10))
-        topic.lists = tLists;
-
-        if (process === 'yes') {
-            topic = dataProcess(topic)
-            // topic = await tempProcess(topic)
-        }
-
-        return topic;
-
-    } catch (error) {
-        console.log("Error in getTopic", error);
-        return "not_found";
-    }
-
 
 }
 
 
-export async function getTop(id) {
+export async function getTop(id, process = 'yes') {
 
     try {
 
@@ -621,10 +610,12 @@ export async function getTop(id) {
             });
         }
 
-
-
         if (isNull(topic)) {
             return "not_found";
+        }
+
+        if (process === 'yes') {
+            dataProcess(topic)
         }
 
         return topic;
@@ -794,6 +785,7 @@ export async function addImport(data) {
 
 export async function removeTopics(id, topId, importId) {
 
+
     const db = await connectDB();
 
     let result;
@@ -821,7 +813,7 @@ export async function removeTopics(id, topId, importId) {
 
         if (id && isValidObjectId(id)) {
             result = await db.collection("topics").deleteMany({ _id: new ObjectId(id) });
-            const delLists = await removeList(id, null, null);
+            const delLists = await removeList(null, id, null);
         }
 
 
@@ -833,56 +825,6 @@ export async function removeTopics(id, topId, importId) {
     return result;
 }
 
-
-export async function deleteImportedTopics(importId) {
-
-    const db = await connectDB();
-
-    const filter = {
-        importId: importId
-    };
-
-    let result = 0;
-    let result2 = 0;
-
-    try {
-        const rTopics = await removeTopics(null, null, importId);
-        const rLists = await removeList(null, null, importId);
-
-
-    } catch (e) {
-        console.log(`${e} error 8575775`)
-    }
-
-    return result.deletedCount + result2.deletedCount;
-}
-
-export async function removeTopicsWithLists(topicId) {
-
-    const db = await connectDB();
-
-    const filter = { _id: new ObjectId(topicId) };
-
-    const filter2 = {
-        topicId: topicId
-    };
-
-    let result = 0;
-    let result2 = 0;
-
-    try {
-        result = await db.collection("topics").deleteOne(filter);
-        result2 = await db.collection("lists").deleteMany(filter2);
-
-    } catch (e) {
-        console.log(`${e} error 85843775`)
-    }
-
-    const res = result.deletedCount + result2.deletedCount;
-
-
-    return res;
-}
 
 
 export async function removeList(id, topicId, importId) {
@@ -925,31 +867,29 @@ export async function removeTop(id, importId) {
     try {
         if (id) {
             result = await db.collection("tops").deleteOne({ _id: new ObjectId(id) });
-            result2 = await removeTopics(null, id, null);
+            await removeTopics(null, id, null);
         }
 
         if (importId) {
             const res = await getTopsByImport(importId, 1, 1000000, '');
+
             if (!isNull(res.result)) {
                 const ids = res.result.map((t) => String(t._id));
                 const delLists = await Promise.all(ids.map((t) => removeTopics(null, t, null)));
             }
-            result = await db.collection("tops").deleteOne({ importId: importId });
+            result = await db.collection("tops").deleteMany({ importId: importId });
         }
 
-
+        return { success: true }
 
     } catch (e) {
         console.log(`${e} error 88364575`)
+        return { success: false }
     }
-
-    const res = result.deletedCount + result2.deletedCount;
-
-    return res;
 }
 
 
-export async function deleteImport(importId) {
+export async function removeImport(importId) {
 
     const db = await connectDB();
 
@@ -960,12 +900,15 @@ export async function deleteImport(importId) {
 
     try {
         const result = await db.collection("imports").deleteMany(filter);
+        await removeTop(null, importId);
+        await removeList(null, null, importId);
+        await removeTopics(null, null, importId);
 
     } catch (e) {
         console.log("error 7575775")
     }
 
-    return result.deletedCount;
+    return result;
 }
 
 

@@ -34,7 +34,7 @@ export async function getTemplate(id: string) {
   try {
     const url = `${NEXT_PUBLIC_GET_TEMPLATE}?id=${id}`;
 
-    console.log(url);
+
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),

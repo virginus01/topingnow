@@ -1,31 +1,44 @@
+"use client";
+import React, { useState } from "react";
+import TabbedContents from "@/app/components/widgets/tabbed_contents";
 import ListsView from "./lists_view";
+import CreateTopic from "../topics/create_topic";
+import CreateList from "./create_list";
 
-async function Index() {
+export const dynamic = "force-dynamic";
+
+function Index() {
+  const tabComponents = [
+    {
+      id: 1,
+      status: "active",
+      title: "lists",
+      component: <ListsView topicId={""} />,
+    },
+    {
+      id: 2,
+      status: "inactive",
+      title: "",
+      component: <></>,
+    },
+    {
+      id: 3,
+      status: "inactive",
+      title: "",
+      component: <></>,
+    },
+    {
+      id: 4,
+      status: "active",
+      title: "create list",
+      component: <CreateList topicData={{}} />,
+    },
+  ];
+
   return (
     <>
-      <div className="w-full">
-        <div className="px-4 md:px-10 py-4 md:py-7">
-          <div className="sm:flex items-center justify-between">
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-normal text-gray-800">
-              Lists
-            </p>
-            <div className="mt-4 sm:mt-0">
-              <button className="inline-flex sm:ml-3 items-start justify-start px-3 py-2 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
-                <p className="text-sm font-sm leading-none text-white">
-                  Add Top
-                </p>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white px-4 md:px-10 pb-5">
-          <div className="overflow-x-auto">
-            <ListsView topicId={""} />
-          </div>
-        </div>
-      </div>
+      <TabbedContents title="Lists" tabComponents={tabComponents} />
     </>
   );
 }
-
 export default Index;

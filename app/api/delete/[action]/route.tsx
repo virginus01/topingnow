@@ -1,7 +1,8 @@
 import {
-  deleteImportedTopics,
+  removeImport,
   removeList,
   removeTop,
+  removeTopics,
   removeTopicsWithLists,
 } from "../../mongodb/query";
 
@@ -17,16 +18,8 @@ export async function DELETE(request, { params }) {
   const formData = await request.formData();
 
   if (action === "delete_import") {
-    const { data } = await deleteImport(formData);
+    const data = await deleteImport(formData);
 
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  if (action === "delete_topics_with_lists") {
-    const data = await deleteTopicsWithLists(formData);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -49,6 +42,14 @@ export async function DELETE(request, { params }) {
     });
   }
 
+  if (action === "delete_topics") {
+    const data = await deleteTopics(formData);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
   //...............GET........................
 
   return new Response(JSON.stringify({ msg: "Can't process your request" }));
@@ -56,22 +57,17 @@ export async function DELETE(request, { params }) {
 
 async function deleteImport(formData: any) {
   const deleteData = JSON.parse(formData.get("deleteData"));
-
-  let data = [];
-
   try {
-    data = await deleteImportedTopics(deleteData._id);
+    return await removeImport(deleteData._id);
   } catch {
     return { data: "not_found" };
   }
-
-  return { data };
 }
 
-async function deleteTopicsWithLists(formData: any) {
+async function deleteTopics(formData: any) {
   const deleteData = JSON.parse(formData.get("deleteData"));
   try {
-    return await removeTopicsWithLists(deleteData._id);
+    return await removeTopics(deleteData._id);
   } catch {
     return { data: "not_found" };
   }

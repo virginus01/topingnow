@@ -26,7 +26,7 @@ export default function TopicsView({ topId }) {
   const [isOpen, setIsOpen] = useState(false);
   let [data, setData] = useState(Shimmer(5));
   const router = useRouter();
-
+  const [updating, setUpdating] = useState(false);
   const perPage = 10;
   const url = `${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
 
@@ -37,7 +37,9 @@ export default function TopicsView({ topId }) {
     return <Loading />;
   }
 
-  data = paginatedData;
+  if (updating === false) {
+    data = paginatedData;
+  }
 
   if (paginatedData.length === 0) {
     return <div>No Topic found</div>;
@@ -60,6 +62,9 @@ export default function TopicsView({ topId }) {
   );
 
   async function deleteAction(_id: string) {
+    setUpdating(true);
+    const updatedImports = removeById(data, _id);
+    setData(updatedImports);
     const res = await deleteTopicsWithLists(_id);
     if (res.data) {
       const updatedData = removeById(paginatedData, _id);
@@ -67,7 +72,7 @@ export default function TopicsView({ topId }) {
       toast.success(`${res.data} items deleted`);
       router.push(`${DASH_TOPICS}`);
     } else {
-      toast.error(` items not deleted`);
+      toast.error(`items not deleted`);
     }
   }
   async function viewAction(slug: string) {

@@ -1,33 +1,27 @@
-"use client";
 import React, { useState } from "react";
 import ListBody from "@/app/posts/list_body";
 import SideBar from "@/app/components/sidebar";
 import PopularTopics from "@/app/components/popular_topics";
-import { NEXT_PUBLIC_GET_LIST } from "@/constants";
-import { useSingleSWR } from "@/app/utils/fetcher";
 import { notFound } from "next/navigation";
 import { SingleShimmer } from "@/app/components/shimmer";
+import { getListById, listMetaTags } from "@/app/lib/repo/lists_repo";
+import { isNull } from "@/app/utils/custom_helpers";
+import { metadata } from "@/app/layout";
 
-export default function ListView({
+export default async function ListView({
   params,
 }: {
-  params: { list_slug: string };
+  params: { list_slug: string; slug: string };
 }) {
-  const repeat = 2;
-  let [data, setData] = useState(SingleShimmer(repeat));
+  const result = await getListById(params.list_slug);
 
-  const url = `${NEXT_PUBLIC_GET_LIST}?listId=${params.list_slug}`;
-
-  // Slice topics array for current page
-  const { result, loading } = useSingleSWR(url);
-
-  if (!loading && !result) {
+  if (isNull(result) || params.slug !== result.topicData.slug) {
     notFound();
   }
 
-  if (!loading) {
-    data = result;
-  }
+  const data = result;
+
+  await listMetaTags(metadata, data);
 
   const sideBarItemList = [
     {

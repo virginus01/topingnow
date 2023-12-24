@@ -9,7 +9,7 @@ export default function TabbedContents({ title = "Dashboard", tabComponents }) {
 
   return (
     <div className="container mx-auto mt-12">
-      <p className="my-10">{title}</p>
+      <p className="my-10 capitalize font-bold">{title}</p>
 
       <div className="flex justify-between">
         <div className="flex space-x-4">

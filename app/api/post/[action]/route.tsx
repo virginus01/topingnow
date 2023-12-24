@@ -28,6 +28,7 @@ import { isNull } from "@/app/utils/custom_helpers";
 import { TempModel } from "@/app/models/templates_model";
 import { QandAModel } from "@/app/models/qanda_model";
 import { TopModel } from "@/app/models/top_model";
+import generateImportId from "@/app/lib/repo/import_repo";
 
 export async function POST(
   request: Request,
@@ -335,10 +336,13 @@ async function updateTop(formData: any) {
 }
 
 async function createImport(formData: any) {
-  const title = formData.get("title");
+  const postData = JSON.parse(formData.get("postData"));
+
+  console.log(postData);
 
   const data = {
-    title: title,
+    title: `${postData.title} (${postData.length})`,
+    length: postData.length,
     createdAt: new Date(),
   };
   try {
@@ -403,19 +407,9 @@ async function postTopics(formData: any) {
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
-
-      let formData = new FormData();
-      formData.append("title", `topic: ${postData.title}`);
-
-      const response = await fetch(url, {
-        cache: "no-store",
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      data.map((d, i) => {
-        data[i].importId = result.response;
+      const importId = await generateImportId("test", data);
+      data.map((im, i) => {
+        data[i].importId = importId;
       });
 
       await addTopics(data);
@@ -473,19 +467,9 @@ async function postTemplates(formData: any) {
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
-
-      let formData = new FormData();
-      formData.append("title", `template: ${postData.title}`);
-
-      const response = await fetch(url, {
-        cache: "no-store",
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      data.map((d, i) => {
-        data[i].importId = result.response;
+      const importId = await generateImportId("test", data);
+      data.map((im, i) => {
+        data[i].importId = importId;
       });
 
       await addTemplate(data);
@@ -542,19 +526,9 @@ async function postQandAs(formData: any) {
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
-
-      let formData = new FormData();
-      formData.append("title", `template: ${postData.title}`);
-
-      const response = await fetch(url, {
-        cache: "no-store",
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      data.map((d, i) => {
-        data[i].importId = result.response;
+      const importId = await generateImportId("test", data);
+      data.map((im, i) => {
+        data[i].importId = importId;
       });
 
       await addQandAs(data);
@@ -610,19 +584,9 @@ async function postTops(formData: any) {
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
-
-      let formData = new FormData();
-      formData.append("title", `template: ${postData.title}`);
-
-      const response = await fetch(url, {
-        cache: "no-store",
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      data.map((d, i) => {
-        data[i].importId = result.response;
+      const importId = await generateImportId("test", data);
+      data.map((im, i) => {
+        data[i].importId = importId;
       });
 
       await addTops(data);
@@ -683,19 +647,9 @@ async function postLists(formData: any) {
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
-
-      let formData = new FormData();
-      formData.append("title", `list: ${postData.topicId}`);
-
-      const response = await fetch(url, {
-        cache: "no-store",
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      data.map((d, i) => {
-        data[i].importId = result.response;
+      const importId = await generateImportId("test", data);
+      data.map((im, i) => {
+        data[i].importId = importId;
       });
 
       await addLists(data);

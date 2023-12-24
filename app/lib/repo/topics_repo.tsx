@@ -1,8 +1,7 @@
 "use server";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
-  NEXT_PUBLIC_DELETE_TOPICS_BY_IMPORTS,
-  NEXT_PUBLIC_DELETE_TOPICS_WITH_LISTS,
+  NEXT_PUBLIC_DELETE_TOPICS,
   NEXT_PUBLIC_GET_POPULAR_TOPICS,
   NEXT_PUBLIC_GET_TOPIC,
   NEXT_PUBLIC_GET_TOPICS,
@@ -16,7 +15,6 @@ export async function getTopics(topId: any | "", page: any, perPage: any | "") {
   try {
     const url = `${NEXT_PUBLIC_GET_TOPICS}?topId=${topId}&page=${page}&perPage=${perPage}`;
 
-    console.log(url);
     const response = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -61,7 +59,7 @@ export async function getTopicById(topicId: string) {
   try {
     const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}`;
 
-    console.log(url);
+   
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -90,7 +88,6 @@ export async function justGetTopicWithEssentials(topicId: string, page = 1) {
   try {
     const url = `${NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS}?topicId=${topicId}&page=${page}`;
 
-    console.log(url);
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -208,9 +205,7 @@ export async function UpdateTopic(tData: any) {
 
 export async function deleteTopicsWithLists(_id: string) {
   try {
-    const url = `${NEXT_PUBLIC_DELETE_TOPICS_WITH_LISTS}`;
-
-    console.log(url);
+    const url = `${NEXT_PUBLIC_DELETE_TOPICS}`;
 
     const formData = new FormData();
     formData.append("deleteData", JSON.stringify({ _id }));
@@ -227,5 +222,19 @@ export async function deleteTopicsWithLists(_id: string) {
     }
   } catch (error) {
     return { error: "An error occurred while deleting topic" };
+  }
+}
+
+export async function metaTags(metadata, data) {
+  metadata.title = data.title;
+  metadata.description = `This is ${data.title}`;
+  metadata.alternates
+    ? (metadata.alternates.canonical = `${process.env.NEXT_PUBLIC_BASE_URL}/${data.slug}`)
+    : "";
+  if (metadata.robots) {
+    metadata.robots = {
+      index: true,
+      follow: true,
+    };
   }
 }

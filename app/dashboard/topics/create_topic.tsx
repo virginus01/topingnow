@@ -4,17 +4,17 @@ import { notFound, redirect, useRouter } from "next/navigation";
 import TinyMCEEditor from "@/app/utils/tinymce";
 import { UpdateTopic, postTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
-import TopicsDataSearch from "@/app/components/widgets/topics_data_search";
+import SelectSearch from "@/app/components/widgets/select_search";
 import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
-import Shimmer from "@/app/components/shimmer";
 import { usePaginatedSWR, usePaginatedSWRAdmin } from "@/app/utils/fetcher";
 import { isNull } from "@/app/utils/custom_helpers";
+import { SingleShimmer } from "@/app/components/shimmer";
 
-export default function AddTopic({ topData }) {
+export default function CreateTopic({ topData }) {
   const router = useRouter();
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
-  let [selectedItem, setSelected] = useState({});
+  const [selected, setSelected] = useState(topData ?? SingleShimmer(1));
   const [page, setPage] = useState(1);
   const perPage = 5;
   let [url, setUrl] = useState(
@@ -66,15 +66,11 @@ export default function AddTopic({ topData }) {
     }
   }
 
-  function selected(value) {
-    console.log(value);
-  }
   return (
     <div className="space-y-12">
-      <div className="border-b border-gray-900/10 pb-12">
-        <p className="my-10">Add a new Topic</p>
-
-        <form method="POST" className="mx-auto px-10" onSubmit={handleSubmit}>
+      <div className="border-b border-gray-900/10 pb-2">
+        <p className="my-5 font-bold">Create A Topic</p>
+        <form method="POST" className=" px-1" onSubmit={handleSubmit}>
           <div className="mb-5">
             <label
               className="block mb-2 uppercase font-bold text-xs text-gray-700"
@@ -93,21 +89,14 @@ export default function AddTopic({ topData }) {
             />
           </div>
 
-          <div className="mb-5">
-            <label
-              className="block mb-2 uppercase font-bold text-xs text-gray-700"
-              htmlFor="title"
-            >
-              Top
-            </label>
-
-            <TopicsDataSearch
-              data={searchData}
-              onChange={(e) => handleSearch(e.target.value)}
-              onSelectedChange={(e) => selected(e)}
-              selectedItem={selectedItem}
-            />
-          </div>
+          <SelectSearch
+            label="Select Top"
+            data={searchData}
+            onChange={(e) => handleSearch(e.target.value)}
+            selected={selected}
+            setSelected={setSelected}
+            isDisabled={isNull(topData) ?? true}
+          />
 
           <div className="mb-5">
             <label

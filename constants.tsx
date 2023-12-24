@@ -5,15 +5,15 @@ export const NEXT_PUBLIC_POST_TOPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/po
 export const NEXT_PUBLIC_UPDATE_TOP = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_top`;
 export const NEXT_PUBLIC_DELETE_TOP = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_top`;
 
+//Topics
 export const NEXT_PUBLIC_GET_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topics`;
-
 export const NEXT_PUBLIC_GET_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic`;
 export const NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic_with_essentials`;
 export const NEXT_PUBLIC_GET_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_lists`;
 export const NEXT_PUBLIC_GET_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_list`;
 export const NEXT_PUBLIC_GET_POST = "/api/get/get_post";
 export const NEXT_PUBLIC_GET_POPULAR_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_popular_topics`;
-export const NEXT_PUBLIC_GET_IMPORTS = "/api/get/get_imports";
+export const NEXT_PUBLIC_GET_IMPORTS = `${process.env.NEXT_PUBLIC_BASE_URL}//api/get/get_imports`;
 
 // Endpoints post
 export const NEXT_PUBLIC_POST_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_topics`;
@@ -42,7 +42,7 @@ export const NEXT_PUBLIC_GET_QANDA = `${process.env.NEXT_PUBLIC_BASE_URL}/api/ge
 
 // Endpoints delete
 export const NEXT_PUBLIC_DELETE_IMPORT = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_import`;
-export const NEXT_PUBLIC_DELETE_TOPICS_WITH_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_topics_with_lists`;
+export const NEXT_PUBLIC_DELETE_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_topics`;
 export const NEXT_PUBLIC_DELETE_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_list`;
 
 // User
