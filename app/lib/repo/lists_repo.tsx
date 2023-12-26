@@ -1,4 +1,9 @@
 "use server";
+import {
+  countWords,
+  getViewUrl,
+  stripHtmlTags,
+} from "@/app/utils/custom_helpers";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_DELETE_LIST,
@@ -16,8 +21,6 @@ export async function getLists(
 ) {
   try {
     const url = `${NEXT_PUBLIC_GET_LISTS}?topicId=${topicId}&page=${page}&perPage=${perPage}`;
-
-
 
     const response = await fetch(url, {
       next: {
@@ -41,7 +44,6 @@ export async function getListById(id: string) {
   try {
     const url = `${NEXT_PUBLIC_GET_LIST}?listId=${id}`;
 
-  
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -158,8 +160,6 @@ export async function deleteList(_id: string) {
   try {
     const url = `${NEXT_PUBLIC_DELETE_LIST}`;
 
-   
-
     const formData = new FormData();
     formData.append("deleteData", JSON.stringify({ _id }));
 
@@ -179,14 +179,18 @@ export async function deleteList(_id: string) {
 }
 
 export async function listMetaTags(metadata, data) {
+  const length = stripHtmlTags(data.description);
+
   metadata.title = data.title;
   metadata.description = `This is ${data.title}`;
   metadata.alternates
-    ? (metadata.alternates.canonical = `${process.env.NEXT_PUBLIC_BASE_URL}/${data.slug}`)
+    ? (metadata.alternates.canonical = getViewUrl(
+        `${data.topicData.slug}/${data.slug}`
+      ))
     : "";
   if (metadata.robots) {
     metadata.robots = {
-      index: true,
+      index: countWords(length) >= 300 ? true : false,
       follow: true,
     };
   }

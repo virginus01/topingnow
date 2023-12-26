@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-//import { Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "../styles/global.css";
+import { buildSchema } from "./seo/schema";
+const inter = Inter({ subsets: ["latin"] });
 
-//const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL as string),
   title: {
@@ -33,6 +34,32 @@ export const metadata: Metadata = {
   },
 };
 
+const breadcrumb: {
+  "@type": string;
+  position: string;
+  item: {
+    "@id": string;
+    name: string;
+  };
+}[] = [];
+
+breadcrumb.push({
+  "@type": "ListItem",
+  position: "1",
+  item: {
+    "@id": String(process.env.NEXT_PUBLIC_BASE_URL),
+    name: "Home",
+  },
+});
+
+export const schema = {
+  data: buildSchema("http://example.com", "My Site", "/logo.png", breadcrumb, {
+    headline: "My Article",
+    description: "Description here",
+    author: "John Doe",
+  }),
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -40,6 +67,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" prefix="og: https://ogp.me/ns#">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schema.data),
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

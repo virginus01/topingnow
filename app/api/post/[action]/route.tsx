@@ -81,8 +81,9 @@ export async function POST(
 
   //creating topics
   if (action == "update_topic") {
-    const response = await updateTopic(formData);
-    return new Response(JSON.stringify({ response }), {
+    const data = await updateTopic(formData);
+
+    return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
     });
@@ -186,6 +187,7 @@ async function postTopic(formData: any) {
 export async function updateTopic(formData: any) {
   const updateData = JSON.parse(formData.get("updateData"));
 
+  console.log(updateData);
   const uData: TopicModel = {};
 
   if (!isNull(updateData.title)) {

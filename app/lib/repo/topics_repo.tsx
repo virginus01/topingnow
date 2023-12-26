@@ -1,4 +1,5 @@
 "use server";
+import { countWords, stripHtmlTags } from "@/app/utils/custom_helpers";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_DELETE_TOPICS,
@@ -59,7 +60,6 @@ export async function getTopicById(topicId: string) {
   try {
     const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}`;
 
-   
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -226,6 +226,10 @@ export async function deleteTopicsWithLists(_id: string) {
 }
 
 export async function metaTags(metadata, data) {
+  const length = stripHtmlTags(
+    data.description + " " + data.lists.result[0]?.description ?? ""
+  );
+
   metadata.title = data.title;
   metadata.description = `This is ${data.title}`;
   metadata.alternates
@@ -233,7 +237,10 @@ export async function metaTags(metadata, data) {
     : "";
   if (metadata.robots) {
     metadata.robots = {
-      index: true,
+      index:
+        countWords(length) >= 300 && data.lists.result.length >= 1
+          ? true
+          : false,
       follow: true,
     };
   }

@@ -5,8 +5,9 @@ import PopularTopics from "@/app/components/popular_topics";
 import { notFound } from "next/navigation";
 import { SingleShimmer } from "@/app/components/shimmer";
 import { getListById, listMetaTags } from "@/app/lib/repo/lists_repo";
-import { isNull } from "@/app/utils/custom_helpers";
-import { metadata } from "@/app/layout";
+import { getViewUrl, isNull } from "@/app/utils/custom_helpers";
+import { metadata, schema } from "@/app/layout";
+import { buildSchema } from "@/app/seo/schema";
 
 export default async function ListView({
   params,
@@ -35,6 +36,50 @@ export default async function ListView({
       slug: "/",
     },
   ];
+
+  const breadcrumb: {
+    "@type": string;
+    position: string;
+    item: {
+      "@id": string;
+      name: string;
+    };
+  }[] = [];
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "1",
+    item: {
+      "@id": getViewUrl(""),
+      name: "Home",
+    },
+  });
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "2",
+    item: {
+      "@id": getViewUrl(`${result.topicData.slug}`),
+      name: data.title,
+    },
+  });
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "3",
+    item: {
+      "@id": getViewUrl(`${result.topicData.slug}/${data.slug}`),
+      name: data.title,
+    },
+  });
+
+  schema.data = buildSchema(
+    getViewUrl(`${result.topicData.slug}/${data.slug}`),
+    "Topingnow",
+    "/images/logo.png",
+    breadcrumb,
+    data
+  );
 
   return (
     <>

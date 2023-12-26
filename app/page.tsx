@@ -1,12 +1,8 @@
 import Topics from "@/app/posts/topics";
 import Layout from "./[slug]/layout";
 import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
-import { usePaginatedSWR } from "./utils/fetcher";
-import Loading from "./dashboard/loading";
 import Shimmer from "./components/shimmer";
-import { useState } from "react";
 import { getTop, getTops } from "./lib/repo/tops_repo";
-import usePagination from "./utils/pagination";
 import { metadata } from "./layout";
 
 export default async function Page() {
@@ -21,8 +17,6 @@ export default async function Page() {
     data = res.result;
   }
 
-  const paginatedData = usePagination(data, page, perPage);
-
   metadata.title = "Toping Now";
   metadata.description = `This is noun ranking site`;
 
@@ -36,7 +30,7 @@ export default async function Page() {
             </h2>
           </div>
           <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-            {paginatedData.map(({ name, _id, extraClass }, i) => (
+            {data.map(({ name, _id, extraClass }, i) => (
               <article
                 key={_id}
                 className="flex max-w-xl flex-col items-start justify-between "
@@ -49,7 +43,7 @@ export default async function Page() {
                   </div>
                   <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
                     <div className="mt-1 line-clamp-3 text-sm leading-6 text-gray-600">
-                      <Topics topId={_id} topicData={paginatedData[i]} />
+                      <Topics topId={_id} topicData={data[i]} />
                     </div>
                   </div>
                 </div>

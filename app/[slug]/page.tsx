@@ -6,9 +6,9 @@ import Lists from "../posts/lists";
 import { notFound } from "next/navigation";
 import { SingleShimmer } from "../components/shimmer";
 import { justGetTopicWithEssentials, metaTags } from "../lib/repo/topics_repo";
-import { isNull } from "../utils/custom_helpers";
-import { metadata } from "../layout";
-import { NextSeo } from "next-seo";
+import { getViewUrl, isNull } from "../utils/custom_helpers";
+import { metadata, schema } from "../layout";
+import { buildSchema } from "@/app/seo/schema";
 
 export default async function Post({ params }: { params: { slug: string } }) {
   const repeat = 2;
@@ -26,6 +26,41 @@ export default async function Post({ params }: { params: { slug: string } }) {
   }
 
   await metaTags(metadata, data);
+
+  const breadcrumb: {
+    "@type": string;
+    position: string;
+    item: {
+      "@id": string;
+      name: string;
+    };
+  }[] = [];
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "1",
+    item: {
+      "@id": getViewUrl("", "topic"),
+      name: "Home",
+    },
+  });
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "2",
+    item: {
+      "@id": getViewUrl("", "topic"),
+      name: data.title,
+    },
+  });
+
+  schema.data = buildSchema(
+    getViewUrl(data.slug, "topic"),
+    "Topingnow",
+    "/images/logo.png",
+    breadcrumb,
+    data
+  );
 
   return (
     <>

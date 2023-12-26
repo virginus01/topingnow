@@ -111,3 +111,20 @@ function getRandomDataBody(body) {
   const randIndex = Math.floor(Math.random() * body.length);
   return body[randIndex].dataBody;
 }
+
+export function getViewUrl(slug, type = "") {
+  return process.env.NEXT_PUBLIC_BASE_URL + slug + "/";
+}
+
+export function stripHtmlTags(html) {
+  if (typeof html !== "string") {
+    throw new Error("Expected a string");
+  }
+
+  return html.replace(/<[^>]*>?/gm, "");
+}
+
+export function countWords(textContent) {
+  const words = textContent.trim().split(/\s+/);
+  return words.length;
+}
