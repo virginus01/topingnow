@@ -259,6 +259,56 @@ export async function fetchImports(page = 1, perPage = 10) {
 
 }
 
+
+export async function fetchFiles(page = 1, perPage = 10) {
+
+    try {
+
+        const skip = (page - 1) * perPage;
+
+        const db = await connectDB();
+
+        const [result, total] = await Promise.all([
+            db.collection("files").find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
+            db.collection("files").estimatedDocumentCount()
+        ]);
+
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
+
+
+
+        if (!result) {
+            return "not_found";
+        }
+
+
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+
+    } catch (error) {
+
+        console.log("Error in fetchFiles", error);
+        return "not_found";
+
+    }
+
+}
+
 export async function fetchTemplates(page = 1, perPage = 10) {
 
     try {
@@ -447,7 +497,7 @@ export async function getLists(topicId, page = 1, perPage = 10, process = 'yes')
     }
 
     if (process === 'yes') {
-        dataProcess(result)
+        await dataProcess(result)
     }
 
 
@@ -484,7 +534,7 @@ export async function getList(listId, essentials = 'yes', process = "yes") {
             return "not_found";
         }
         if (process === 'yes') {
-            dataProcess(topic)
+            await dataProcess(topic)
         }
 
         if (essentials == 'yes') {
@@ -575,12 +625,12 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
             const tTop = await getTop(String(topic.topId))
             topic.topicTop = tTop;
 
-            const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10))
+            const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10), "yes")
             topic.lists = tLists;
         }
 
         if (process === 'yes') {
-            dataProcess(topic)
+            await dataProcess(topic)
         }
 
         return topic;
@@ -673,6 +723,15 @@ export async function addQandAs(data) {
     const db = await connectDB();
 
     const result = await db.collection("qandas").insertMany(data);
+
+    return result.insertedIds;
+}
+
+export async function addFiles(data) {
+
+    const db = await connectDB();
+
+    const result = await db.collection("files").insertMany(data);
 
     return result.insertedIds;
 }

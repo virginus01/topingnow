@@ -12,6 +12,7 @@ import {
   fetchTemplate,
   fetchQandAs,
   fetchAQandA,
+  fetchFiles,
 } from "@/app/api/mongodb/query";
 
 export async function GET(
@@ -115,7 +116,7 @@ export async function GET(
 
   //fetching a user
   if (action == "get_user") {
-    const { data } = await fetchUser(uid);
+    const data = await fetchUser(uid);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -159,6 +160,15 @@ export async function GET(
 
   if (action == "get_qanda") {
     const data = await getQandA(id, rand);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  //fetching a user
+  if (action == "get_files") {
+    const data = await getFiles();
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -294,5 +304,13 @@ async function getQandAs(page: any, perPage: any) {
     return await fetchQandAs(page, perPage);
   } catch {
     return { msg: "8474747 error" };
+  }
+}
+
+async function getFiles() {
+  try {
+    return await fetchFiles();
+  } catch {
+    return { msg: "848947 error" };
   }
 }

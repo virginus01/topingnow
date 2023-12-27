@@ -83,10 +83,12 @@ export default async function ListView({
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-left pt-12 ml-5">{data.title}</h1>
-
       <div className="flex flex-col md:flex-row">
-        <div className="w-full lg:w-3/5">
+        <div className="w-full lg:w-7/12 mt-5 mx-5 bg-white shadow-xl ring-1 ring-gray-900/5 rounded">
+          <h1 className="text-2xl font-bold text-center pb-12 pt-6 ml-5">
+            {data.title}
+          </h1>
+
           <ListBody post={data} />
         </div>
 

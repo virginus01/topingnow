@@ -13,7 +13,12 @@ export const NEXT_PUBLIC_GET_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/ge
 export const NEXT_PUBLIC_GET_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_list`;
 export const NEXT_PUBLIC_GET_POST = "/api/get/get_post";
 export const NEXT_PUBLIC_GET_POPULAR_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_popular_topics`;
-export const NEXT_PUBLIC_GET_IMPORTS = `${process.env.NEXT_PUBLIC_BASE_URL}//api/get/get_imports`;
+export const NEXT_PUBLIC_GET_IMPORTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_imports`;
+
+//files
+export const NEXT_PUBLIC_GET_FILES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_files`;
+export const NEXT_PUBLIC_GET_FILE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_file`;
+export const NEXT_PUBLIC_POST_FILES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_files`;
 
 // Endpoints post
 export const NEXT_PUBLIC_POST_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_topics`;

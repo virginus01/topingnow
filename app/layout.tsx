@@ -53,11 +53,17 @@ breadcrumb.push({
 });
 
 export const schema = {
-  data: buildSchema("http://example.com", "My Site", "/logo.png", breadcrumb, {
-    headline: "My Article",
-    description: "Description here",
-    author: "John Doe",
-  }),
+  data: buildSchema(
+    process.env.NEXT_PUBLIC_BASE_URL,
+    "TopingNow",
+    "/logo.png",
+    breadcrumb,
+    {
+      headline: "My Article",
+      description: "Description here",
+      author: "John Doe",
+    }
+  ),
 };
 
 export default function RootLayout({

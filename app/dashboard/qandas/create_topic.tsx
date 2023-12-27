@@ -104,8 +104,8 @@ export default function AddTopic({ topData }) {
             <TopicsDataSearch
               data={searchData}
               onChange={(e) => handleSearch(e.target.value)}
-              onSelectedChange={(e) => selected(e)}
-              selectedItem={selectedItem}
+              selected={selectedItem}
+              setSelected={() => {}}
             />
           </div>
 

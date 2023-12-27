@@ -14,6 +14,7 @@ const navigation = [
   { name: "Imports", href: "/dashboard/imports", current: false },
   { name: "Templates", href: "/dashboard/templates", current: false },
   { name: "Q&A", href: "/dashboard/qandas", current: false },
+  { name: "Media", href: "/dashboard/media", current: false },
 ];
 
 function classNames(...classes) {

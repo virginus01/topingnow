@@ -12,6 +12,7 @@ import {
   updateAQandA,
   addTops,
   updateATop,
+  addFiles,
 } from "@/app/api/mongodb/query";
 import { getTopicById } from "@/app/lib/repo/topics_repo";
 import { TopicModel } from "@/app/models/topic_model";
@@ -29,6 +30,7 @@ import { TempModel } from "@/app/models/templates_model";
 import { QandAModel } from "@/app/models/qanda_model";
 import { TopModel } from "@/app/models/top_model";
 import generateImportId from "@/app/lib/repo/import_repo";
+import { FileModel } from "@/app/models/file_model";
 
 export async function POST(
   request: Request,
@@ -159,6 +161,14 @@ export async function POST(
     });
   }
 
+  if (action == "post_files") {
+    const data = await postFiles(formData);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
   // Default response for invalid actions
   return new Response(JSON.stringify({ data: "Invalid action" }), {
     status: 400,
@@ -187,7 +197,6 @@ async function postTopic(formData: any) {
 export async function updateTopic(formData: any) {
   const updateData = JSON.parse(formData.get("updateData"));
 
-  console.log(updateData);
   const uData: TopicModel = {};
 
   if (!isNull(updateData.title)) {
@@ -198,6 +207,9 @@ export async function updateTopic(formData: any) {
   }
   if (!isNull(updateData.topId)) {
     uData.topId = updateData.topId;
+  }
+  if (!isNull(updateData.featuredImage)) {
+    uData.featuredImage = updateData.featuredImage;
   }
 
   uData.updatedAt = new Date();
@@ -339,8 +351,6 @@ async function updateTop(formData: any) {
 
 async function createImport(formData: any) {
   const postData = JSON.parse(formData.get("postData"));
-
-  console.log(postData);
 
   const data = {
     title: `${postData.title} (${postData.length})`,
@@ -538,6 +548,35 @@ async function postQandAs(formData: any) {
     return postData;
   } catch {
     return "474646 error";
+  }
+}
+
+async function postFiles(formData: any) {
+  const postData = JSON.parse(formData.get("postData"));
+
+  const data: FileModel[] = new Array();
+
+  postData.map(async (post) => {
+    const tData: FileModel = {
+      title: post.title,
+      size: post.size,
+      path: post.path,
+      provider: post.provider,
+      type: post.type,
+      createdAt: new Date(),
+      slug: post.slug,
+    };
+
+    data.push(tData);
+  });
+
+  try {
+    if (Array.isArray(data) && data !== null && data.length > 0) {
+      await addFiles(data);
+    }
+    return postData;
+  } catch {
+    return "4773646 error";
   }
 }
 

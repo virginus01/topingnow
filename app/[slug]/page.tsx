@@ -65,13 +65,17 @@ export default async function Post({ params }: { params: { slug: string } }) {
   return (
     <>
       <div className="mt-10">
-        <h1 className="text-2xl font-bold text-center py-12">{data.title}</h1>
+        <h1 className="text-2xl font-bold text-center py-12 bg-white">
+          {data.title}
+        </h1>
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
             <ListTable key="left" topicData={data} />
           </div>
           <section className="w-full md:w-2/4 p-4 mx-auto">
-            <article className={`mb-5`}>
+            <article
+              className={`mb-5 bg-white shadow-xl ring-1 ring-gray-900/5 rounded`}
+            >
               <PostBody post={data} />
             </article>
             <Lists topicData={data} />

@@ -61,7 +61,7 @@ export async function dataProcess(text: any) {
       });
     } else {
       text.title = dProcess(text.title);
-      text.description = dProcess(await tProcess(text.description));
+      text.description = await tProcess(dProcess(text.description));
     }
   }
 
@@ -113,9 +113,10 @@ function getRandomDataBody(body) {
 }
 
 export function getViewUrl(slug, type = "") {
-  return process.env.NEXT_PUBLIC_BASE_URL + slug + "/";
-}
+  const path = slug ? "/" + slug : "";
 
+  return `${process.env.NEXT_PUBLIC_BASE_URL}${path}`;
+}
 export function stripHtmlTags(html) {
   if (typeof html !== "string") {
     throw new Error("Expected a string");
@@ -127,4 +128,25 @@ export function stripHtmlTags(html) {
 export function countWords(textContent) {
   const words = textContent.trim().split(/\s+/);
   return words.length;
+}
+
+export function cleanFileName(filename) {
+  // Create temp file name
+  let cleanName = filename;
+
+  if (filename) {
+    // Remove file extension
+    cleanName = cleanName.split(".").slice(0, -1).join(".");
+
+    // Replace dashes and underscores with spaces
+    cleanName = cleanName.replace(/[-_]/g, " ");
+
+    // Remove non-alphanumeric characters
+    cleanName = cleanName.replace(/[^A-Za-z0-9]/g, " ");
+
+    // Replace double spaces with single spaces
+    cleanName = cleanName.replace(/\s\s+/g, " ");
+  }
+  // Return cleaned file name
+  return cleanName.trim();
 }

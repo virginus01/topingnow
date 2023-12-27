@@ -1,4 +1,8 @@
+import { getViewUrl } from "../utils/custom_helpers";
+
 export const buildSchema = (url, name, logoUrl, breadcrumb, article) => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL + "/";
+
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -20,7 +24,7 @@ export const buildSchema = (url, name, logoUrl, breadcrumb, article) => {
       },
       {
         "@type": "WebSite",
-        "@id": `${process.env.NEXT_PUBLIC_BASE_URL}search/#website`,
+        "@id": `${baseUrl}search/#website`,
         url,
         name,
         potentialAction: {
@@ -29,7 +33,7 @@ export const buildSchema = (url, name, logoUrl, breadcrumb, article) => {
           "query-input": "required name=search_term_string",
         },
         publisher: {
-          "@id": `${process.env.NEXT_PUBLIC_BASE_URL}#organization`,
+          "@id": `${baseUrl}#organization`,
         },
         inLanguage: "en-US",
       },
