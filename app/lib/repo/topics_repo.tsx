@@ -244,4 +244,5 @@ export async function metaTags(metadata, data) {
       follow: true,
     };
   }
+  return true;
 }

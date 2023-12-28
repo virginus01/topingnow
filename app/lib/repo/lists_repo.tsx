@@ -194,4 +194,5 @@ export async function listMetaTags(metadata, data) {
       follow: true,
     };
   }
+  return true;
 }

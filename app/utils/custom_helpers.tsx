@@ -38,38 +38,70 @@ export function isNull(text: any) {
   return false;
 }
 
-export function dProcess(text: any) {
-  let output = text;
-
-  if (!isNull(text)) {
-    Object.keys(placeholders).forEach((placeholder) => {
-      output = output.replace(
-        new RegExp(placeholder, "g"),
-        placeholders[placeholder]
-      );
-    });
+export function dProcess(text, type = "none") {
+  let output;
+  try {
+    output = text;
+    if (!isNull(text)) {
+      Object.keys(placeholders).forEach((placeholder) => {
+        try {
+          output = output.replace(
+            new RegExp(placeholder, "g"),
+            placeholders[placeholder]
+          );
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    output = text;
   }
+
   return output;
 }
 
-export async function dataProcess(text: any) {
-  if (!isNull(text)) {
-    if (Array.isArray(text)) {
-      text.forEach(async (t, i) => {
-        text[i].title = dProcess(text[i].title);
-        text[i].description = dProcess(await tProcess(text[i].description));
-      });
-    } else {
-      text.title = dProcess(text.title);
-      text.description = await tProcess(dProcess(text.description));
+export async function dataProcess(text, type = "none") {
+  try {
+    if (!isNull(text)) {
+      if (Array.isArray(text)) {
+        for (let t of text) {
+          try {
+            t.title = await tProcess(t.title, type);
+          } catch (error) {
+            console.log(error);
+          }
+          try {
+            t.description = await tProcess(t.description, type);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } else {
+        try {
+          text.title = await tProcess(text.title, type);
+        } catch (error) {
+          console.log(error);
+        }
+        try {
+          text.description = await tProcess(text.description, type);
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
+  } catch (error) {
+    console.log(error);
   }
 
   return text;
 }
 
-export async function tProcess(text) {
+export async function tProcess(text, type = "none") {
   if (!isNull(text)) {
+    text = await dProcess(text, type);
+
     const regex = /\{([^}]*)\}/g; // Match words within curly braces
 
     const matches = text.matchAll(regex);
@@ -91,9 +123,12 @@ export async function tProcess(text) {
       if (temps[i] != "not_found") {
         const { title, body } = temps[i];
         const bodyD = JSON.parse(body);
-        description = description.replace(title, getRandomDataBody(bodyD));
+        description = description.replace(
+          title,
+          await getRandomDataBody(bodyD)
+        );
       } else {
-        description = description.replace(extractedWords[i], "");
+        description = description.replace(extractedWords[i], "...");
       }
     }
 
@@ -107,7 +142,7 @@ export function removeById(data, id) {
   return data.filter((item) => item._id !== id);
 }
 
-function getRandomDataBody(body) {
+async function getRandomDataBody(body) {
   const randIndex = Math.floor(Math.random() * body.length);
   return body[randIndex].dataBody;
 }

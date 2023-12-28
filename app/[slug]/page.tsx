@@ -25,7 +25,11 @@ export default async function Post({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  await metaTags(metadata, data);
+  try {
+    await metaTags(metadata, data);
+  } catch (e) {
+    console.log(e);
+  }
 
   const breadcrumb: {
     "@type": string;

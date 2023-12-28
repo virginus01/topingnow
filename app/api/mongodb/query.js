@@ -142,7 +142,7 @@ export async function getTopicsByImport(importId, page = 1, perPage = 10, proces
 
 
     if (process === 'yes') {
-        dataProcess(result)
+        await dataProcess(result)
     }
 
     return {
@@ -191,7 +191,7 @@ export async function getTopics(topId, page = 1, perPage = 10, process = 'yes', 
 
 
     if (process === 'yes') {
-        dataProcess(result)
+        await dataProcess(result)
     }
 
     return {
@@ -501,7 +501,6 @@ export async function getLists(topicId, page = 1, perPage = 10, process = 'yes')
     }
 
 
-
     return {
         result: result,
         metadata: {
@@ -578,7 +577,7 @@ export async function getPopularTopics(excludeId = '', page = 1, perPage = 10, p
     }
 
     if (process === 'yes') {
-        dataProcess(result)
+        await dataProcess(result)
     }
 
     return {
@@ -626,7 +625,10 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
             topic.topicTop = tTop;
 
             const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10), "yes")
+
             topic.lists = tLists;
+
+            //console.log(topic.lists.result[0].description)
         }
 
         if (process === 'yes') {
@@ -665,7 +667,7 @@ export async function getTop(id, process = 'yes') {
         }
 
         if (process === 'yes') {
-            dataProcess(topic)
+            await dataProcess(topic)
         }
 
         return topic;

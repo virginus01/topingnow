@@ -22,7 +22,11 @@ export default async function ListView({
 
   const data = result;
 
-  await listMetaTags(metadata, data);
+  try {
+    await listMetaTags(metadata, data);
+  } catch (e) {
+    console.log(e);
+  }
 
   const sideBarItemList = [
     {
