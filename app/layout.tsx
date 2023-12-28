@@ -6,10 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL as string),
-  title: {
-    default: "Topingnow",
-    template: "%s - Topingnow",
-  },
+  title: "Topinnow",
   description: "we rank nothing but the Top best in everything",
   robots: {
     index: false,
