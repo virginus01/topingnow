@@ -5,17 +5,19 @@ import { updateTemplate } from "@/app/lib/repo/templates_repo";
 import { TempModel } from "@/app/models/templates_model";
 import { toast } from "sonner";
 import { updateQandA } from "@/app/lib/repo/qanda_repo";
+import { BodyList } from "@/app/components/body_lists";
 
 export default function QandAsBody({ data }) {
   let [bodies, setBodies] = useState(data.body ? JSON.parse(data.body) : []);
 
   if (!data.body) {
-    return <div>no template found</div>;
+    return <div>no QandA found</div>;
   }
 
   function addNewBody() {
     const newBody = {
       dataBody: "",
+      position: "0",
     };
 
     setBodies((prevBodies) => [...prevBodies, newBody]);
@@ -37,36 +39,7 @@ export default function QandAsBody({ data }) {
 
   return (
     <>
-      <div className="mt-5">
-        {bodies.map((body, index) => (
-          <div key={index} className="flex flex-col md:flex-row mt-4">
-            <div className="w-full lg:w-11/12">
-              <TinyMCEEditor
-                height="300"
-                onChange={(e) => {
-                  const updatedBodies = [...bodies];
-                  updatedBodies[index].dataBody = e;
-                  setBodies(updatedBodies);
-                }}
-                initialValue={body.dataBody}
-              />
-            </div>
-            <div className="flex items-center justify-end right-0 mx-3 my-4">
-              <button
-                onClick={(e) => {
-                  let updatedBodies = [...bodies];
-                  updatedBodies = bodies.filter((_, i) => i !== index);
-
-                  setBodies(updatedBodies);
-                }}
-                className="bg-red-500 text-white px-2 py-1 rounded"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+      <BodyList bodies={bodies} setBodies={setBodies} />
 
       <div className="flex justify-end mt-10">
         <div className="py-10 px-10">

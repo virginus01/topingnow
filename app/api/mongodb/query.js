@@ -388,7 +388,7 @@ export async function fetchTemplate(templateId, rand = 'no') {
 }
 
 
-export async function fetchAQandA(Id, rand = 'no') {
+export async function fetchAQandA(id, rand = 'no') {
 
 
     try {
@@ -396,12 +396,12 @@ export async function fetchAQandA(Id, rand = 'no') {
         const db = await connectDB();
 
         let temp = await db.collection("qandas").findOne({
-            title: Id
+            slug: id
         });
 
-        if (!temp && isValidObjectId(Id)) {
+        if (!temp && isValidObjectId(id)) {
             temp = await db.collection("qandas").findOne({
-                _id: new ObjectId(Id)
+                _id: new ObjectId(id)
             });
         }
 
@@ -419,34 +419,39 @@ export async function fetchAQandA(Id, rand = 'no') {
 }
 
 
-export async function fetchQandAs(page = 1, perPage = 10) {
-
+export async function fetchQandAs(listId, page = 1, perPage = 10, process = 'yes') {
     try {
+
+        listId = String(listId);
 
         const skip = (page - 1) * perPage;
 
         const db = await connectDB();
 
+        const filter = listId ? { listId } : {};
+
         const [result, total] = await Promise.all([
-            db.collection("qandas").find()
+            db.collection("qandas").find(filter)
                 .sort({ createdAt: -1 })
                 .skip(skip)
-                .limit(perPage)
+                .limit(parseInt(perPage))
                 .toArray(),
-            db.collection("qandas").estimatedDocumentCount()
+
+            db.collection("qandas")
+                .estimatedDocumentCount(filter)
         ]);
 
         const numPages = Math.ceil(total / perPage);
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-
-
         if (!result) {
             return "not_found";
         }
 
-
+        if (process === 'yes') {
+            await dataProcess(result)
+        }
 
         return {
             result: result,
@@ -460,8 +465,9 @@ export async function fetchQandAs(page = 1, perPage = 10) {
         };
 
     } catch (error) {
-        console.log("Error in fetchQandAs", error);
-        return "not_found";
+
+        console.error(error);
+        return { success: false };
 
     }
 
@@ -500,7 +506,6 @@ export async function getLists(topicId, page = 1, perPage = 10, process = 'yes')
         await dataProcess(result)
     }
 
-
     return {
         result: result,
         metadata: {
@@ -537,8 +542,12 @@ export async function getList(listId, essentials = 'yes', process = "yes") {
         }
 
         if (essentials == 'yes') {
-            const tTop = await getTopic(String(topic.topicId), "no", 1, 10, 'yes')
+            const tTop = await getTopic(String(topic.topicId), "no", 1, 10, process)
             topic.topicData = tTop;
+
+            const tQ = await fetchQandAs(topic._id, 1, 10, process)
+            topic.qanda = tQ;
+
         }
 
         return topic;
@@ -628,7 +637,6 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
 
             topic.lists = tLists;
 
-            //console.log(topic.lists.result[0].description)
         }
 
         if (process === 'yes') {
@@ -726,7 +734,7 @@ export async function addQandAs(data) {
 
     const result = await db.collection("qandas").insertMany(data);
 
-    return result.insertedIds;
+    return { success: true, ids: result.insertedIds };
 }
 
 export async function addFiles(data) {
@@ -914,6 +922,32 @@ export async function removeList(id, topicId, importId) {
     }
 
     return result.deletedCount;
+}
+
+
+
+export async function removeQandA(id, importId) {
+
+    const db = await connectDB();
+
+    let result;
+
+    try {
+        if (importId) {
+            result = await db.collection("qandas").deleteMany({ importId: importId });
+        }
+
+        if (id && isValidObjectId(id)) {
+            result = await db.collection("qandas").deleteMany({ _id: new ObjectId(id) });
+        }
+
+
+    } catch (error) {
+        console.log('Error removing lists:', error);
+        return 0;
+    }
+
+    return { success: true, count: result.deletedCount };
 }
 
 

@@ -1,5 +1,6 @@
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
+  NEXT_PUBLIC_DELETE_QANDA,
   NEXT_PUBLIC_GET_QANDA,
   NEXT_PUBLIC_POST_POST_QANDAS,
   NEXT_PUBLIC_POST_UPDATE_QANDA,
@@ -9,7 +10,6 @@ export async function getQandA(id: string) {
   try {
     const url = `${NEXT_PUBLIC_GET_QANDA}?id=${id}`;
 
-   
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -80,6 +80,7 @@ export async function updateQandA(tData: any) {
   try {
     const url = `${NEXT_PUBLIC_POST_UPDATE_QANDA}`;
 
+    console.log(tData);
     let formData = new FormData();
     formData.append("updateData", JSON.stringify(tData));
 
@@ -97,5 +98,27 @@ export async function updateQandA(tData: any) {
   } catch (error) {
     console.log(error);
     return { error: "An error occurred while updating topic" };
+  }
+}
+
+export async function deleteQandA(_id: string) {
+  try {
+    const url = `${NEXT_PUBLIC_DELETE_QANDA}`;
+
+    const formData = new FormData();
+    formData.append("deleteData", JSON.stringify({ _id }));
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      body: formData,
+    });
+
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      return { error: "Failed to delete QandA" };
+    }
+  } catch (error) {
+    return { error: "An error occurred while deleting QandA" };
   }
 }

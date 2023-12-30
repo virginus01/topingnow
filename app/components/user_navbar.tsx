@@ -8,13 +8,13 @@ import Image from "next/image";
 
 const navigation = [
   { name: "Dashboard", href: "/hq/page", current: true },
+  { name: "Media", href: "/dashboard/media", current: false },
   { name: "Tops", href: "/dashboard/tops", current: false },
   { name: "Topics", href: "/dashboard/topics", current: false },
   { name: "Lists", href: "/dashboard/lists", current: false },
+  { name: "Q&A", href: "/dashboard/qandas", current: false },
   { name: "Imports", href: "/dashboard/imports", current: false },
   { name: "Templates", href: "/dashboard/templates", current: false },
-  { name: "Q&A", href: "/dashboard/qandas", current: false },
-  { name: "Media", href: "/dashboard/media", current: false },
 ];
 
 function classNames(...classes) {

@@ -6,11 +6,9 @@ import { NEXT_PUBLIC_GET_LIST, NEXT_PUBLIC_GET_QANDA } from "@/constants";
 import { useSingleSWRAdmin } from "@/app/utils/fetcher";
 import TabbedContents from "@/app/components/widgets/tabbed_contents";
 import Shimmer, { SingleShimmer } from "@/app/components/shimmer";
-import TemplatesImport from "@/app/dashboard/templates/template_import";
-import QandAsBody from "../../body";
+
 import QandAsImport from "../../qanda_import";
-import StepsImport from "../../steps_import";
-import Steps from "../../steps";
+
 import QandAView from "../../qandas_view";
 
 export default function QandAsOverview({
@@ -59,7 +57,7 @@ export default function QandAsOverview({
       id: 4,
       status: "active",
       title: "QandA Import",
-      component: <QandAsImport />,
+      component: <QandAsImport listId={params._id} />,
     },
   ];
 

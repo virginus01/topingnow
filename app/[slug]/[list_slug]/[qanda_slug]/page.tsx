@@ -15,15 +15,15 @@ import { schema } from "@/app/layout";
 import { buildSchema } from "@/app/seo/schema";
 import { Metadata } from "next";
 import { ConstructMetadata } from "@/app/seo/metadata";
-import Lists from "@/app/posts/lists";
-import QandAs from "@/app/posts/qandas";
+import { getQandA } from "@/app/lib/repo/qanda_repo";
+import QandABody from "@/app/posts/qanda_body";
 
 export async function generateMetadata({
   params,
 }: {
-  params: { list_slug: string };
+  params: { qanda_slug: string };
 }): Promise<Metadata> {
-  const result = await getListById(params.list_slug);
+  const result = await await getQandA(params.qanda_slug);
 
   const breadcrumb: {
     "@type": string;
@@ -66,11 +66,11 @@ export async function generateMetadata({
 export default async function ListView({
   params,
 }: {
-  params: { list_slug: string; slug: string };
+  params: { slug: string; list_slug: string; qanda_slug: string };
 }) {
-  const result = await getListById(params.list_slug);
+  const result = await getQandA(params.qanda_slug);
 
-  if (isNull(result) || params.slug !== result.topicData.slug) {
+  if (isNull(result)) {
     notFound();
   }
 
@@ -91,50 +91,6 @@ export default async function ListView({
     },
   ];
 
-  const breadcrumb: {
-    "@type": string;
-    position: string;
-    item: {
-      "@id": string;
-      name: string;
-    };
-  }[] = [];
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "1",
-    item: {
-      "@id": getViewUrl(""),
-      name: "Home",
-    },
-  });
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "2",
-    item: {
-      "@id": getViewUrl(`${result.topicData.slug}`),
-      name: data.title,
-    },
-  });
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "3",
-    item: {
-      "@id": getViewUrl(`${result.topicData.slug}/${data.slug}`),
-      name: data.title,
-    },
-  });
-
-  schema.data = buildSchema(
-    getViewUrl(`${result.topicData.slug}/${data.slug}`),
-    "Topingnow",
-    "/images/logo.png",
-    breadcrumb,
-    data
-  );
-
   return (
     <main>
       <h1 className="text-2xl font-bold text-left pb-12 pt-6 ml-10">
@@ -142,9 +98,7 @@ export default async function ListView({
       </h1>
       <div className="flex flex-col md:flex-row">
         <div className="w-full lg:w-7/12 lg:mt-2 mt-2 lg:ml-4">
-          <ListBody post={data} />
-
-          <QandAs listData={data} />
+          <QandABody post={data} />
         </div>
 
         <div className="w-full lg:w-1/5 lg:h-screen lg:mt-12 mt-2 lg:fixed lg:ml-14 lg:left-2/3 lg:top-1/2 lg:transform lg:-translate-x-1/2 lg:-translate-y-1/2">

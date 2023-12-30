@@ -1,23 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Pagination from "rc-pagination";
-import {
-  TrashIcon,
-  PencilIcon,
-  EyeIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
-import Loading from "../loading";
-import { DASH_TOPICS, NEXT_PUBLIC_GET_QANDAS } from "@/constants";
-import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
-import { notFound, useRouter } from "next/navigation";
-import ConfirmAction from "@/app/components/widgets/confirm";
-import { toast } from "sonner";
-import { ActionButtons } from "@/app/components/widgets/action_buttons";
-import { deleteTopicsWithLists } from "@/app/lib/repo/topics_repo";
-import { removeById } from "@/app/utils/custom_helpers";
 import Shimmer from "@/app/components/shimmer";
-import DataTable from "@/app/components/widgets/data_table";
 import TemplateBody from "./body";
 import QandAsImport from "./qanda_import";
 import StepsImport from "./steps_import";
@@ -34,7 +17,7 @@ export default function Page() {
       id: 1,
       status: "active",
       title: "QandA",
-      component: <QandAView listId={undefined} />,
+      component: <QandAView listId={""} />,
     },
     {
       id: 2,
@@ -50,9 +33,9 @@ export default function Page() {
     },
     {
       id: 4,
-      status: "active",
+      status: "inactive",
       title: "QandA Import",
-      component: <QandAsImport />,
+      component: <QandAsImport listId={""} />,
     },
   ];
 

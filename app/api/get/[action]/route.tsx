@@ -90,7 +90,7 @@ export async function GET(
   }
   //fetching lists
   if (action == "get_lists") {
-    const data = await fetchLists(topicId, page, perPage);
+    const data = await fetchLists(topicId, page, perPage, process);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -142,7 +142,7 @@ export async function GET(
   }
 
   if (action == "get_qandas") {
-    const data = await getQandAs(page, perPage);
+    const data = await getQandAs(listId, page, perPage, process);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -224,10 +224,11 @@ async function fetchPopularTopics(_id: any, page: number, perPage: number) {
 async function fetchLists(
   topicId: string | number | null,
   page: number,
-  perPage: number
+  perPage: number,
+  process: any
 ) {
   try {
-    return await getLists(topicId, page, perPage);
+    return await getLists(topicId, page, perPage, process);
   } catch {
     return { msg: "74746 error" };
   }
@@ -245,7 +246,7 @@ async function fetchUser(uid: string | number | null) {
   try {
     return await getUser(uid);
   } catch {
-    return { data: "8474747 error" };
+    return { data: "847487747 error" };
   }
 }
 
@@ -253,7 +254,7 @@ async function getImports() {
   try {
     return await fetchImports();
   } catch {
-    return { msg: "8474747 error" };
+    return { msg: "847984747 error" };
   }
 }
 
@@ -261,7 +262,7 @@ async function getTemplates(page: any, perPage: any) {
   try {
     return await fetchTemplates();
   } catch {
-    return { msg: "8474747 error" };
+    return { msg: "847874747 error" };
   }
 }
 
@@ -269,23 +270,24 @@ async function getTemplate(templateId: any, rand: any) {
   try {
     return await fetchTemplate(templateId, rand);
   } catch {
-    return { msg: "8474747 error" };
+    return { msg: "887474747 error" };
   }
 }
 
-async function getQandA(Id: any, rand: any) {
+async function getQandA(id: any, rand: any) {
   try {
-    return await fetchAQandA(Id, rand);
-  } catch {
-    return { msg: "8474747 error" };
+    return await fetchAQandA(id, rand);
+  } catch (e) {
+    console.log(e);
+    return { msg: "8487674747 error", e: e };
   }
 }
 
-async function getQandAs(page: any, perPage: any) {
+async function getQandAs(listId: any, page: any, perPage: any, process) {
   try {
-    return await fetchQandAs(page, perPage);
+    return await fetchQandAs(listId, page, perPage, process);
   } catch {
-    return { msg: "8474747 error" };
+    return { msg: "84877874747 error" };
   }
 }
 

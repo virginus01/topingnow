@@ -12,7 +12,7 @@ import { postQandAs } from "@/app/lib/repo/qanda_repo";
 
 export const dynamic = "force-dynamic";
 
-const QandAsImport = () => {
+const QandAsImport = ({ listId }) => {
   const [file, setFile] = useState(null);
   const [data, setData] = useState([]);
   const [columnArray, setColumn] = useState([]);
@@ -46,6 +46,7 @@ const QandAsImport = () => {
         title: t.title,
         body: [{ dataBody: t.body }],
         slug: t.title,
+        listId: listId,
         isDuplicate: true,
         _id: "",
       };
@@ -61,12 +62,12 @@ const QandAsImport = () => {
     });
 
     if (!Array.isArray(topics)) {
-      toast.error("Topics must be an array");
+      toast.error("Qanda must be an array");
       return;
     }
 
     if (topics.length === 0) {
-      toast.error("No topics to insert");
+      toast.error("No Qanda to insert");
       return;
     }
 

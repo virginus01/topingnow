@@ -18,10 +18,7 @@ import { deleteTopicsWithLists } from "@/app/lib/repo/topics_repo";
 import { removeById } from "@/app/utils/custom_helpers";
 import Shimmer from "@/app/components/shimmer";
 import DataTable from "@/app/components/widgets/data_table";
-import TemplateBody from "./body";
-import QandAsImport from "./qanda_import";
-import StepsImport from "./steps_import";
-import TabbedContents from "@/app/components/widgets/tabbed_contents";
+import { deleteQandA } from "@/app/lib/repo/qanda_repo";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +29,7 @@ export default function QandAView({ listId }) {
   const router = useRouter();
   const [updating, setUpdating] = useState(false);
   const perPage = 10;
-  const url = `${NEXT_PUBLIC_GET_QANDAS}?page=${page}&perPage=${perPage}`;
+  const url = `${NEXT_PUBLIC_GET_QANDAS}?page=${page}&perPage=${perPage}&listId=${listId}`;
 
   const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
 
@@ -43,7 +40,7 @@ export default function QandAView({ listId }) {
   if (updating === false) {
     data = paginatedData;
   }
-
+  console.log(url);
   return (
     <>
       <DataTable
@@ -65,12 +62,9 @@ export default function QandAView({ listId }) {
     const updatedImports = removeById(data, _id);
     setData(updatedImports);
 
-    const res = await deleteTopicsWithLists(_id);
-    if (res.data) {
-      const updatedData = removeById(paginatedData, _id);
-      data = updatedData;
-      toast.success(`${res.data} items deleted`);
-      router.push(`${DASH_TOPICS}`);
+    const res = await deleteQandA(_id);
+    if (res.data.success) {
+      toast.success(`item deleted`);
     } else {
       toast.error(`items not deleted`);
     }

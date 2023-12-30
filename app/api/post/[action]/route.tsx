@@ -20,6 +20,7 @@ import { ListsModel } from "@/app/models/lists_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_CREATE_IMPORT,
+  NEXT_PUBLIC_POST_UPDATE_QANDA,
   NEXT_PUBLIC_POST_UPDATE_TEMPLATE,
   NEXT_PUBLIC_UPDATE_LIST,
   NEXT_PUBLIC_UPDATE_TOP,
@@ -467,44 +468,36 @@ async function postQandAs(formData: any) {
 
   const data: QandAModel[] = new Array();
 
-  postData.map(
-    async (post: {
-      title: string;
-      body: any | null;
-      listId: any | null;
-      slug: string;
-      isDuplicate: boolean | null;
-      _id: any;
-    }) => {
-      let postSlug = customSlugify(post.slug);
+  postData.map(async (post) => {
+    let postSlug = customSlugify(post.slug);
 
-      const tData: TempModel = {
-        title: post.title,
-        body: post.body,
-        createdAt: new Date(),
-        slug: postSlug,
-      };
+    const tData: QandAModel = {
+      title: post.title,
+      body: post.body,
+      listId: post.listId,
+      createdAt: new Date(),
+      slug: postSlug,
+    };
 
-      if (post.isDuplicate === true) {
-        const formData = new FormData();
-        tData._id = post._id;
-        formData.append("updateData", JSON.stringify(tData));
-        const url = `${NEXT_PUBLIC_POST_UPDATE_TEMPLATE}`;
-        try {
-          const response = await fetch(url, {
-            cache: "no-store",
-            method: "POST",
-            body: formData,
-          });
-          const result = await response.json();
-        } catch (error) {
-          console.log("error 7464664");
-        }
-      } else {
-        data.push(tData);
+    if (post.isDuplicate === true) {
+      const formData = new FormData();
+      tData._id = post._id;
+      formData.append("updateData", JSON.stringify(tData));
+      const url = `${NEXT_PUBLIC_POST_UPDATE_QANDA}`;
+      try {
+        const response = await fetch(url, {
+          cache: "no-store",
+          method: "POST",
+          body: formData,
+        });
+        const result = await response.json();
+      } catch (error) {
+        console.log("error 7464664");
       }
+    } else {
+      data.push(tData);
     }
-  );
+  });
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
@@ -513,11 +506,12 @@ async function postQandAs(formData: any) {
         data[i].importId = importId;
       });
 
-      await addQandAs(data);
+      return await addQandAs(data);
     }
-    return postData;
-  } catch {
-    return "474646 error";
+    return { success: true };
+  } catch (e) {
+    console.log(`error 774764 ${e}`);
+    return { success: false };
   }
 }
 

@@ -43,6 +43,7 @@ export const NEXT_PUBLIC_POST_POST_QANDAS = `${process.env.NEXT_PUBLIC_BASE_URL}
 export const NEXT_PUBLIC_POST_UPDATE_QANDA = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_qanda`;
 export const NEXT_PUBLIC_GET_QANDAS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_qandas`;
 export const NEXT_PUBLIC_GET_QANDA = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_qanda`;
+export const NEXT_PUBLIC_DELETE_QANDA = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_qanda`;
 
 // Endpoints delete
 export const NEXT_PUBLIC_DELETE_IMPORT = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_import`;

@@ -1,9 +1,9 @@
 import {
   removeImport,
   removeList,
+  removeQandA,
   removeTop,
   removeTopics,
-  removeTopicsWithLists,
 } from "../../mongodb/query";
 
 export async function DELETE(request, { params }) {
@@ -50,6 +50,14 @@ export async function DELETE(request, { params }) {
     });
   }
 
+  if (action === "delete_qanda") {
+    const data = await deleteQandA(formData);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
   //...............GET........................
 
   return new Response(JSON.stringify({ msg: "Can't process your request" }));
@@ -68,6 +76,15 @@ async function deleteTopics(formData: any) {
   const deleteData = JSON.parse(formData.get("deleteData"));
   try {
     return await removeTopics(deleteData._id);
+  } catch {
+    return { data: "not_found" };
+  }
+}
+
+async function deleteQandA(formData: any) {
+  const deleteData = JSON.parse(formData.get("deleteData"));
+  try {
+    return await removeQandA(deleteData._id);
   } catch {
     return { data: "not_found" };
   }
