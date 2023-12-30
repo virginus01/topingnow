@@ -18,12 +18,10 @@ import { toast } from "sonner";
 import DataTable from "@/app/components/widgets/data_table";
 import Shimmer from "@/app/components/shimmer";
 
-export const dynamic = "force-dynamic";
-
 export default function ListsView({ topicId }) {
   const router = useRouter();
   const [page, setPage] = useState(1);
-  let [data, setData] = useState(Shimmer(5));
+  let [data, setData] = useState([]);
   const perPage = 10;
   const [updating, setUpdating] = useState(false);
 
@@ -31,15 +29,7 @@ export default function ListsView({ topicId }) {
 
   const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
 
-  if (loading || !Array.isArray(paginatedData)) {
-    return <Loading />;
-  }
-
-  if (!paginatedData || paginatedData.length === 0) {
-    return <div>No List found</div>;
-  }
-
-  if (updating == false) {
+  if (updating === false) {
     data = paginatedData;
   }
 
@@ -54,7 +44,7 @@ export default function ListsView({ topicId }) {
         viewAction={viewAction}
         editAction={editAction}
         addAction={addAction}
-        addText={"list Q&A"}
+        addText={"Q&A"}
       />
     </>
   );
@@ -62,11 +52,11 @@ export default function ListsView({ topicId }) {
   async function deleteAction(_id: string) {
     setUpdating(true);
     const updatedImports = removeById(data, _id);
+
     setData(updatedImports);
 
-    const res = await deleteList(_id);
-    const updatedData = removeById(paginatedData, _id);
-    setData(updatedData);
+    await deleteList(_id);
+
     toast.success(`item deleted`);
   }
 
@@ -79,6 +69,6 @@ export default function ListsView({ topicId }) {
   }
 
   async function addAction(_id: string) {
-    router.push(`/dashboard/lists/add/${_id}`);
+    router.push(`/dashboard/qandas/add/${_id}`);
   }
 }

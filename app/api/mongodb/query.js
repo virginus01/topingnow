@@ -1,6 +1,6 @@
 import { connectDB } from '@/app/utils/mongodb'
 import { ObjectId } from 'mongodb';
-import { dataProcess } from '@/app/utils/custom_helpers';
+import { dataProcess, removeById } from '@/app/utils/custom_helpers';
 import { isNull } from '@/app/utils/custom_helpers';
 
 export async function getTops(page = 1, perPage = 10, q = '') {
@@ -755,7 +755,7 @@ export async function addTopics(data) {
 
     const result = await db.collection("topics").insertMany(data);
 
-    return result.insertedIds;
+    return { success: true, ids: result.insertedIds };
 }
 
 export async function addLists(data) {
@@ -764,8 +764,7 @@ export async function addLists(data) {
 
     const result = await db.collection("lists").insertMany(data);
 
-    return result.insertedIds;
-
+    return { success: true, ids: result.insertedIds };
 }
 
 export async function updateATopic(id, data) {
@@ -774,10 +773,10 @@ export async function updateATopic(id, data) {
         const db = await connectDB();
         await db.collection("topics")
             .updateOne({ _id: _id }, { $set: data });
-        return true;
+        return { success: true };
     } catch (error) {
         console.log("Error updating topic", error);
-        return false;
+        return { success: false };
     }
 }
 
@@ -808,19 +807,20 @@ export async function updateAQandA(id, data) {
 
 export async function updateAList(id, data) {
 
-
-    const _id = new ObjectId(id);
-    const db = await connectDB();
-
-    await db.collection("lists")
-        .updateOne({ _id: _id }, { $set: data });
-
-    return true;
+    try {
+        const _id = new ObjectId(String(id));
+        const db = await connectDB();
+        await db.collection("lists")
+            .updateOne({ _id: _id }, { $set: data });
+        return { success: true };
+    } catch (error) {
+        console.log(error)
+        return { success: false }
+    }
 
 }
 
 export async function updateATop(id, data) {
-
 
     const _id = new ObjectId(id);
     const db = await connectDB();

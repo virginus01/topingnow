@@ -48,7 +48,6 @@ export async function deleteTopicsByImports(_id: string) {
 
 export default async function generateImportId(title, data) {
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_CREATE_IMPORT}`;
-
   const tD = {
     title: title,
     length: data.length,

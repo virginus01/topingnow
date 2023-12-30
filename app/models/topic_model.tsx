@@ -12,7 +12,11 @@ export type TopicModel = {
   catId?: string | null;
   image?: string | null;
   metaTitle?: string | null;
-  metaDescriptio?: string | null;
+  metaDesc?: string | null;
   importId?: string | null;
-  featuredImage?: string | null;
+  featuredImagePath?: string | null;
+  rankingScore?: string | null;
+  ratingScore?: string | null;
+  views?: string | null;
+  selectedImage?: any;
 };

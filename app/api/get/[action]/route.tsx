@@ -73,16 +73,7 @@ export async function GET(
 
   //fetching topic info
   if (action == "get_topic") {
-    const data = await fetchTopic(topicId, process);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //fetching topic info
-  if (action == "get_topic_with_essentials") {
-    const data = await fetchTopicWithEssentials(topicId, page);
+    const data = await fetchTopic(topicId, "yes", "10", process);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -213,20 +204,11 @@ async function fetchTopics(
   }
 }
 
-async function fetchTopic(id: any, process: any) {
+async function fetchTopic(id: any, essentials: any, page: any, process: any) {
   try {
-    return await getTopic(id, process);
+    return await getTopic(id, essentials, page, 10, process);
   } catch {
     console.log("error: 8475775");
-    return "not_found";
-  }
-}
-
-async function fetchTopicWithEssentials(id: any, page: any) {
-  try {
-    return await getTopic(id, "yes", page, 10, "yes");
-  } catch (e) {
-    console.log(`error: 847785775 ${e}`);
     return "not_found";
   }
 }

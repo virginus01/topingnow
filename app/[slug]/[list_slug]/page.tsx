@@ -5,9 +5,61 @@ import PopularTopics from "@/app/components/popular_topics";
 import { notFound } from "next/navigation";
 import { SingleShimmer } from "@/app/components/shimmer";
 import { getListById, listMetaTags } from "@/app/lib/repo/lists_repo";
-import { getViewUrl, isNull } from "@/app/utils/custom_helpers";
-import { metadata, schema } from "@/app/layout";
+import {
+  countWords,
+  getViewUrl,
+  isNull,
+  stripHtmlTags,
+} from "@/app/utils/custom_helpers";
+import { schema } from "@/app/layout";
 import { buildSchema } from "@/app/seo/schema";
+import { Metadata } from "next";
+import { ConstructMetadata } from "@/app/seo/metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { list_slug: string };
+}): Promise<Metadata> {
+  const result = await getListById(params.list_slug);
+
+  const breadcrumb: {
+    "@type": string;
+    position: string;
+    item: {
+      "@id": string;
+      name: string;
+    };
+  }[] = [];
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "1",
+    item: {
+      "@id": getViewUrl("", "topic"),
+      name: "Home",
+    },
+  });
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "2",
+    item: {
+      "@id": getViewUrl("", "topic"),
+      name: result.title,
+    },
+  });
+
+  schema.data = buildSchema(
+    getViewUrl(result.slug, "topic"),
+    "Topingnow",
+    "/images/logo.png",
+    breadcrumb,
+    result
+  );
+
+  return ConstructMetadata(result) as {};
+}
 
 export default async function ListView({
   params,
@@ -22,11 +74,7 @@ export default async function ListView({
 
   const data = result;
 
-  try {
-    await listMetaTags(metadata, data);
-  } catch (e) {
-    console.log(e);
-  }
+  const metadata = await generateMetadata({ params });
 
   const sideBarItemList = [
     {
@@ -86,13 +134,12 @@ export default async function ListView({
   );
 
   return (
-    <>
+    <main>
+      <h1 className="text-2xl font-bold text-left pb-12 pt-6 ml-10">
+        {data.title}
+      </h1>
       <div className="flex flex-col md:flex-row">
-        <div className="w-full lg:w-7/12 mt-5 mx-5 bg-white shadow-xl ring-1 ring-gray-900/5 rounded">
-          <h1 className="text-2xl font-bold text-center pb-12 pt-6 ml-5">
-            {data.title}
-          </h1>
-
+        <div className="w-full lg:w-7/12 lg:mt-2 mt-2 lg:ml-4">
           <ListBody post={data} />
         </div>
 
@@ -104,6 +151,6 @@ export default async function ListView({
           <PopularTopics _id={data._id} />
         </div>
       </div>
-    </>
+    </main>
   );
 }

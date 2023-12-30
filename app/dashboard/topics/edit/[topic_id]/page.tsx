@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { notFound, useRouter } from "next/navigation";
 import Loading from "@/app/dashboard/loading";
-import { NEXT_PUBLIC_GET_TOPIC } from "@/constants";
+import { NEXT_PUBLIC_GET_TOPIC, NEXT_PUBLIC_GET_TOPS } from "@/constants";
 import { useSingleSWRAdmin } from "@/app/utils/fetcher";
 import TinyMCEEditor from "@/app/utils/tinymce";
 import { UpdateTopic } from "@/app/lib/repo/topics_repo";
@@ -13,6 +13,10 @@ import { FileModel } from "@/app/models/file_model";
 import { getS3Url } from "@/app/lib/repo/files_repo";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import FeaturedImage from "@/app/components/widgets/featuredImage";
+import { SingleShimmer } from "@/app/components/shimmer";
+import PostBasic from "@/app/components/forms/post_basic";
+import { isNull } from "@/app/utils/custom_helpers";
 
 export default function FromTopic({
   params,
@@ -22,8 +26,20 @@ export default function FromTopic({
   const router = useRouter();
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
-  const [showImageModal, setShowImageModal] = useState(false);
-  const [selected, setSelected] = useState<FileModel>({});
+  let [metaTitle, setMetaTitle] = useState("");
+  let [metaDesc, setMetaDesc] = useState("");
+  let [rankingScore, setRankingScore] = useState("");
+  let [ratingScore, setRatingScore] = useState("");
+  let [views, setViews] = useState("");
+  let [slug, setSlug] = useState("");
+  let [featuredImagePath, setFeaturedImagePath] = useState(null);
+  let [selectedImage, setSelectedImage] = useState<FileModel>({});
+  let [isUpdating, setIsUpdating] = useState(false);
+  let [selectedParent, setSelectedParent] = useState<TopicModel>({});
+
+  let [selectSearchUrl, setselectSearchUrl] = useState(
+    `${NEXT_PUBLIC_GET_TOPS}?page=${"1"}&perPage=${"10"}`
+  );
 
   const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${params.topic_id}&process=no`;
 
@@ -39,23 +55,55 @@ export default function FromTopic({
   }
 
   const data = result;
-  const iniTitle = data.title;
-  const iniDescription = data.description;
+
+  if (selectedImage.path) {
+    data.featuredImagePath = `${selectedImage.path}/${selectedImage.slug}`;
+    data.selectedImage = selectedImage;
+    featuredImagePath = data.featuredImagePath;
+  } else {
+    featuredImagePath = data.featuredImagePath;
+  }
+
+  if (selectedParent.title) {
+    data.selectedParent = selectedParent;
+    selectedParent = data.selectedParent;
+  } else {
+    selectedParent = data.topicTop;
+  }
+
+  const search = {
+    selectSearchUrl,
+    showParentSearch: true,
+    selectedParent,
+    isDisabled: false,
+    label: "Select Top",
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const submitData: TopicModel = {
+    const basicData: TopicModel = {
+      title,
+      metaTitle,
+      metaDesc,
+      rankingScore,
+      ratingScore,
+      views,
+      slug,
+      description,
+      featuredImagePath,
+      topId: selectedParent._id,
+    };
+
+    const submitData = {
       _id: data._id,
-      description: description,
-      title: title,
-      featuredImage: `${selected.path}/${selected.slug}`,
+      ...basicData,
     };
 
     try {
-      const { response } = await UpdateTopic(submitData);
+      const { data } = await UpdateTopic(submitData);
 
-      if (response.success) {
+      if (data.success) {
         toast.success(`${title} updated`);
       }
     } catch (error) {
@@ -67,80 +115,23 @@ export default function FromTopic({
     <div className="space-y-12">
       <div className="border-b border-gray-900/10 pb-12">
         <p className="my-10">Topic: {data.title}</p>
-
-        <form method="POST" className="mx-auto px-10" onSubmit={handleSubmit}>
-          <div className="mb-5">
-            <label
-              className="block mb-2 uppercase font-bold text-xs text-gray-700"
-              htmlFor="title"
-            >
-              Title
-            </label>
-
-            <input
-              className="border border-gray-400 p-2 w-full rounded"
-              type="text"
-              id="title"
-              name="title"
-              defaultValue={iniTitle}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-5">
-            <label
-              className="block mb-2 uppercase font-bold text-xs text-gray-700"
-              htmlFor="body"
-            >
-              Body
-            </label>
-
-            <TinyMCEEditor
-              onChange={(newValue) => setDescription(newValue)}
-              initialValue={iniDescription}
-            />
-          </div>
-
-          <div className="col-span-full">
-            <label
-              htmlFor="photo"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Photo
-            </label>
-            <div className="mt-2 flex items-center gap-x-3 border border-dashed border-gray-900/25 rounded-lg">
-              <div>
-                <Image
-                  src={getS3Url(`${selected.path}/${selected.slug}`)}
-                  alt={String(selected.title)}
-                  width={100}
-                  height={100}
-                  className="rounded-lg object-cover"
-                  priority={true}
-                />
-              </div>
-              <button
-                onClick={() => setShowImageModal(true)}
-                type="button"
-                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ml-5"
-              >
-                Change
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-end mt-5">
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              type="submit"
-            >
-              Update
-            </button>
-          </div>
+        <form method="POST" className=" px-1" onSubmit={handleSubmit}>
+          <PostBasic
+            search={search}
+            data={data}
+            setTitle={setTitle}
+            setMetaTitle={setMetaTitle}
+            setMetaDesc={setMetaDesc}
+            setRankingScore={setRankingScore}
+            setRatingScore={setRatingScore}
+            setViews={setViews}
+            setSlug={setSlug}
+            setDescription={setDescription}
+            setSelectedImage={setSelectedImage}
+            setSelectedParent={setSelectedParent}
+          />
         </form>
       </div>
-
-      {showImageModal && <MediaModal setSelected={setSelected} />}
     </div>
   );
 }

@@ -2,34 +2,56 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../styles/global.css";
 import { buildSchema } from "./seo/schema";
+import Head from "next/head";
+import Script from "next/script";
+import { ConstructMetadata } from "./seo/metadata";
+import { getViewUrl } from "./utils/custom_helpers";
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL as string),
-  title: "Topinnow",
-  description: "we rank nothing but the Top best in everything",
-  robots: {
-    index: false,
-    follow: true,
-  },
-  icons: {
-    icon: "/favicon.ico",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_IE",
-    url: process.env.BASE_URL,
-    siteName: "topingnow",
-  },
-  alternates: {
-    canonical: process.env.BASE_URL,
-  },
-  twitter: {
-    creator: "@topingnow",
-    site: "topingnow.com",
-    card: "summary_large_image",
-  },
-};
+export async function generateMetadata() {
+  const result = {
+    title: "Topingnow",
+    slug: process.env.NEXT_PUBLIC_BASE_URL,
+    description: "desc",
+  };
+
+  const breadcrumb: {
+    "@type": string;
+    position: string;
+    item: {
+      "@id": string;
+      name: string;
+    };
+  }[] = [];
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "1",
+    item: {
+      "@id": getViewUrl("", "topic"),
+      name: "Home",
+    },
+  });
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "2",
+    item: {
+      "@id": getViewUrl("", "topic"),
+      name: result.title,
+    },
+  });
+
+  schema.data = buildSchema(
+    getViewUrl(result.slug, "topic"),
+    "Topingnow",
+    "/images/logo.png",
+    breadcrumb,
+    result
+  );
+
+  return ConstructMetadata(result) as {};
+}
 
 const breadcrumb: {
   "@type": string;
@@ -72,6 +94,7 @@ export default function RootLayout({
     <html lang="en" prefix="og: https://ogp.me/ns#">
       <head>
         <script
+          id="application"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(schema.data),

@@ -6,7 +6,6 @@ import {
   NEXT_PUBLIC_GET_POPULAR_TOPICS,
   NEXT_PUBLIC_GET_TOPIC,
   NEXT_PUBLIC_GET_TOPICS,
-  NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS,
   NEXT_PUBLIC_POST_TOPIC,
   NEXT_PUBLIC_POST_TOPICS,
   NEXT_PUBLIC_UPDATE_TOPIC,
@@ -86,7 +85,7 @@ export async function getTopicById(topicId: string) {
 
 export async function justGetTopicWithEssentials(topicId: string, page = 1) {
   try {
-    const url = `${NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS}?topicId=${topicId}&page=${page}`;
+    const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}&page=${page}&essentials=${"yes"}&process=${"yes"}`;
 
     const res = await fetch(url, {
       next: {
@@ -112,7 +111,7 @@ export async function justGetTopicWithEssentials(topicId: string, page = 1) {
   }
 }
 
-export async function postTopics(tData: any) {
+export async function postTopics(tData: any, isImport = "no") {
   try {
     const slugs = tData.map((t) => customSlugify(t.slug));
 
@@ -122,6 +121,7 @@ export async function postTopics(tData: any) {
     // Assign isDuplicate and id
     tData.forEach((t, i) => {
       tData[i].isUpdated = true;
+      tData[i].isImport = isImport;
       tData[i]._id = topics[i]._id ? topics[i]._id : null;
 
       if (topics[i] === "not_found" || topics[i] === "undefined") {

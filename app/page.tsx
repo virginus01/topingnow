@@ -3,7 +3,6 @@ import Layout from "./[slug]/layout";
 import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
 import Shimmer from "./components/shimmer";
 import { getTop, getTops } from "./lib/repo/tops_repo";
-import { metadata } from "./layout";
 
 export default async function Page() {
   const perPage = 5;
@@ -16,9 +15,6 @@ export default async function Page() {
   if (res) {
     data = res.result;
   }
-
-  metadata.title = "Toping Now";
-  metadata.description = `This is noun ranking site`;
 
   return (
     <Layout>

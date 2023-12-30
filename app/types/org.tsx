@@ -90,3 +90,7 @@ interface OrganizationData {
   "@context"?: string;
   "@graph"?: (WebSite | ImageObject | BreadcrumbList | WebPage | Article)[];
 }
+
+interface Org {
+  data: any;
+}

@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
-export default function SelectSearch({
+export default function SelectSearch2({
   data,
   onChange,
   selected,

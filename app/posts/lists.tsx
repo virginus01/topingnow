@@ -5,6 +5,8 @@ import { usePaginatedSWR } from "../utils/fetcher";
 import Shimmer from "../components/shimmer";
 import { useState } from "react";
 import usePagination from "../utils/pagination";
+import Image from "next/image";
+import { getS3Url } from "../lib/repo/files_repo";
 
 export default function Lists({ topicData }) {
   const perPage = 5;
@@ -22,7 +24,10 @@ export default function Lists({ topicData }) {
   return (
     <ul>
       {paginatedData.map(
-        ({ _id, title, description, slug, extraClass }: any, index: number) => (
+        (
+          { _id, title, description, slug, extraClass, featuredImagePath }: any,
+          index: number
+        ) => (
           <li key={_id} id={slug}>
             <article className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
               <div
@@ -30,6 +35,18 @@ export default function Lists({ topicData }) {
               >
                 #{index + 1}: {title}
               </div>
+              {featuredImagePath && (
+                <div className="mb-1">
+                  <Image
+                    src={getS3Url(featuredImagePath)}
+                    alt={title}
+                    style={{ width: "100%" }}
+                    width={500}
+                    height={200}
+                    className="w-full rounded-sm object-cover"
+                  />
+                </div>
+              )}
               <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
                 <section
                   className={`${extraClass} mt-5 line-clamp-3 text-sm leading-6 text-gray-600`}

@@ -1,127 +1,109 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { notFound, redirect, useRouter } from "next/navigation";
-import TinyMCEEditor from "@/app/utils/tinymce";
-import { UpdateTopic, postTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
-import { postList } from "@/app/lib/repo/lists_repo";
-import SelectSearch from "@/app/components/widgets/select_search";
-import { isNull } from "@/app/utils/custom_helpers";
+import { postLists } from "@/app/lib/repo/lists_repo";
 import { NEXT_PUBLIC_GET_TOPICS } from "@/constants";
-import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
-import { SingleShimmer } from "@/app/components/shimmer";
+import PostBasic from "@/app/components/forms/post_basic";
+import { FileModel } from "@/app/models/file_model";
+import { TopicModel } from "@/app/models/topic_model";
+import { ListsModel } from "@/app/models/lists_model";
 
 export default function CreateList({ topicData }) {
   const router = useRouter();
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
-
-  const [selected, setSelected] = useState(topicData ?? SingleShimmer(1));
-
+  let [metaTitle, setMetaTitle] = useState("");
+  let [metaDesc, setMetaDesc] = useState("");
+  let [rankingScore, setRankingScore] = useState("");
+  let [ratingScore, setRatingScore] = useState("");
+  let [views, setViews] = useState("");
+  let [slug, setSlug] = useState("");
+  let [featuredImagePath, setFeaturedImagePath] = useState("");
+  let [selectedImage, setSelectedImage] = useState<FileModel>({});
+  let [isUpdating, setIsUpdating] = useState(false);
+  let [selectedParent, setSelectedParent] = useState<TopicModel>({});
   const [page, setPage] = useState(1);
   const perPage = 5;
-  let [url, setUrl] = useState(
-    `${NEXT_PUBLIC_GET_TOPICS}?page=${page}&perPage=${perPage}`
+
+  let [selectSearchUrl, setselectSearchUrl] = useState(
+    `${NEXT_PUBLIC_GET_TOPICS}?page=${"1"}&perPage=${"10"}`
   );
 
-  let searchData = [];
-  // Slice topics array for current page
-  const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
+  const data: any = {};
 
-  if (paginatedData && paginatedData.length > 0) {
-    searchData = paginatedData;
+  if (selectedImage.path) {
+    data.featuredImagePath = `${selectedImage.path}/${selectedImage.slug}`;
+    data.selectedImage = selectedImage;
+    featuredImagePath = data.featuredImagePath;
   }
 
-  const data = topicData;
+  if (selectedParent.title) {
+    data.selectedParent = selectedParent;
+    selectedParent = data.selectedParent;
+  }
 
+  console.log(slug);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const basicData: ListsModel = {
+      title,
+      metaTitle,
+      metaDesc,
+      rankingScore,
+      ratingScore,
+      views,
+      slug,
+      description,
+      featuredImagePath,
+    };
     const submitData = {
-      description: description,
-      title: title,
       topicId: data._id,
+      ...basicData,
     };
 
     try {
-      const response = await postList(submitData);
-
-      if (response.data) {
+      const { data } = await postLists([submitData], "no");
+      console.log(data);
+      if (data.success) {
         toast.success("list created");
         router.push("/dashboard/lists");
       } else {
-        toast.error("error creating topic");
+        toast.error("error creating list");
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  function handleSearch(value) {
-    if (!isNull(value)) {
-      const url = `${NEXT_PUBLIC_GET_TOPICS}?page=${page}&perPage=${perPage}&q=${value}`;
-      setUrl(url);
-    } else {
-      const url = `${NEXT_PUBLIC_GET_TOPICS}?page=${page}&perPage=${perPage}`;
-      setUrl(url);
-    }
-  }
+  const search = {
+    selectSearchUrl,
+    showParentSearch: true,
+    selectedParent,
+    isDisabled: false,
+    label: "Select Topic",
+  };
 
   return (
     <div className="space-y-12">
       <div className="border-b border-gray-900/10 pb-12">
-        <p className="my-10">Add a new List</p>
-
-        <form method="POST" className="px-1" onSubmit={handleSubmit}>
-          <div className="mb-5">
-            <label
-              className="block mb-2 uppercase font-bold text-xs text-gray-700"
-              htmlFor="title"
-            >
-              Title
-            </label>
-
-            <input
-              className="border border-gray-400 p-2 w-full rounded"
-              type="text"
-              id="title"
-              name="title"
-              defaultValue={""}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div className="mb-5">
-            <SelectSearch
-              label="Select Topic"
-              data={searchData}
-              onChange={(e) => handleSearch(e.target.value)}
-              selected={selected}
-              setSelected={setSelected}
-              isDisabled={topicData ?? true}
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              className="block mb-2 uppercase font-bold text-xs text-gray-700"
-              htmlFor="body"
-            >
-              Body
-            </label>
-
-            <TinyMCEEditor
-              onChange={(newValue) => setDescription(newValue)}
-              initialValue={""}
-            />
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
-              type="submit"
-            >
-              Create
-            </button>
-          </div>
+        <p className="my-10">Topic: {title}</p>
+        <form method="POST" className=" px-1" onSubmit={handleSubmit}>
+          <PostBasic
+            search={search}
+            data={data}
+            setTitle={setTitle}
+            setMetaTitle={setMetaTitle}
+            setMetaDesc={setMetaDesc}
+            setRankingScore={setRankingScore}
+            setRatingScore={setRatingScore}
+            setViews={setViews}
+            setSlug={setSlug}
+            setDescription={setDescription}
+            setSelectedImage={setSelectedImage}
+            setSelectedParent={setSelectedParent}
+          />
         </form>
       </div>
     </div>

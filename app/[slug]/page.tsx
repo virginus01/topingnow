@@ -6,30 +6,23 @@ import Lists from "../posts/lists";
 import { notFound } from "next/navigation";
 import { SingleShimmer } from "../components/shimmer";
 import { justGetTopicWithEssentials, metaTags } from "../lib/repo/topics_repo";
-import { getViewUrl, isNull } from "../utils/custom_helpers";
-import { metadata, schema } from "../layout";
+import {
+  countWords,
+  getViewUrl,
+  isNull,
+  stripHtmlTags,
+} from "../utils/custom_helpers";
+import { schema } from "../layout";
 import { buildSchema } from "@/app/seo/schema";
+import { Metadata } from "next";
+import { ConstructMetadata } from "../seo/metadata";
 
-export default async function Post({ params }: { params: { slug: string } }) {
-  const repeat = 2;
-  const page = 1;
-
-  let data = SingleShimmer(repeat);
-  const result = await justGetTopicWithEssentials(params.slug, page);
-
-  if (result) {
-    data = result;
-  }
-
-  if (isNull(result)) {
-    notFound();
-  }
-
-  try {
-    await metaTags(metadata, data);
-  } catch (e) {
-    console.log(e);
-  }
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const result = await justGetTopicWithEssentials(params.slug);
 
   const breadcrumb: {
     "@type": string;
@@ -54,17 +47,37 @@ export default async function Post({ params }: { params: { slug: string } }) {
     position: "2",
     item: {
       "@id": getViewUrl("", "topic"),
-      name: data.title,
+      name: result.title,
     },
   });
 
   schema.data = buildSchema(
-    getViewUrl(data.slug, "topic"),
+    getViewUrl(result.slug, "topic"),
     "Topingnow",
     "/images/logo.png",
     breadcrumb,
-    data
+    result
   );
+
+  return ConstructMetadata(result) as {};
+}
+
+export default async function Post({ params }: { params: { slug: string } }) {
+  const repeat = 2;
+  const page = 1;
+
+  let data = SingleShimmer(repeat);
+  const result = await justGetTopicWithEssentials(params.slug, page);
+
+  if (result) {
+    data = result;
+  }
+
+  if (isNull(result)) {
+    notFound();
+  }
+
+  const metadata = await generateMetadata({ params });
 
   return (
     <>

@@ -9,7 +9,6 @@ import {
   NEXT_PUBLIC_DELETE_LIST,
   NEXT_PUBLIC_GET_LIST,
   NEXT_PUBLIC_GET_LISTS,
-  NEXT_PUBLIC_POST_LIST,
   NEXT_PUBLIC_POST_LISTS,
   NEXT_PUBLIC_UPDATE_LIST,
 } from "@/constants";
@@ -68,7 +67,7 @@ export async function getListById(id: string) {
   }
 }
 
-export async function postLists(lData: any) {
+export async function postLists(lData: any, isImport = "yes") {
   try {
     const slugs = lData.map((t) => customSlugify(t.slug));
 
@@ -76,6 +75,7 @@ export async function postLists(lData: any) {
 
     lData.forEach((t, i) => {
       lData[i].isUpdated = true;
+      lData[i].isImport = isImport;
       lData[i]._id = lists[i]._id ? lists[i]._id : null;
       if (lists[i] === "not_found" || lists[i] === "undefined") {
         lData[i].isDuplicate = false;
@@ -84,38 +84,13 @@ export async function postLists(lData: any) {
       }
     });
 
+    console.log(lData);
+
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_POST_LISTS}`;
 
     let formData = new FormData();
     formData.append("postData", JSON.stringify(lData));
 
-    const response = await fetch(url, {
-      cache: "no-store",
-      method: "POST",
-      body: formData,
-    });
-
-    if (response.status === 200) {
-      return await response.json();
-    } else {
-      return { error: "Failed to fetch lists" };
-    }
-  } catch (error) {
-    return { error: "An error occurred while fetching lists" };
-  }
-}
-
-export async function postList(lData: any) {
-  try {
-    const slug = customSlugify(lData.title);
-    lData.slug = slug;
-
-    const url = `${NEXT_PUBLIC_POST_LIST}`;
-
-    const formData = new FormData();
-    formData.append("postData", JSON.stringify(lData));
-
-    console.log(formData);
     const response = await fetch(url, {
       cache: "no-store",
       method: "POST",

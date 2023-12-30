@@ -8,7 +8,6 @@ export const NEXT_PUBLIC_DELETE_TOP = `${process.env.NEXT_PUBLIC_BASE_URL}/api/d
 //Topics
 export const NEXT_PUBLIC_GET_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topics`;
 export const NEXT_PUBLIC_GET_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic`;
-export const NEXT_PUBLIC_GET_TOPIC_WITH_ESSENTIALS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_topic_with_essentials`;
 export const NEXT_PUBLIC_GET_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_lists`;
 export const NEXT_PUBLIC_GET_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_list`;
 export const NEXT_PUBLIC_GET_POST = "/api/get/get_post";

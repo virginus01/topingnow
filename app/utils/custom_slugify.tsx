@@ -1,3 +1,5 @@
+import { stripHtmlTags } from "./custom_helpers";
+
 export function customSlugify(text: string): string {
   const stopWords = [
     "a",
@@ -177,6 +179,7 @@ export function customSlugify(text: string): string {
   ];
 
   // Split into words
+  text = stripHtmlTags(text);
   let words = text.split(" ");
 
   // Filter stop words
@@ -185,5 +188,14 @@ export function customSlugify(text: string): string {
   });
 
   // Join words back together
-  return words.join("-").replace(/^top-/i, "").toLowerCase();
+
+  return words
+    .join("-")
+    .replace(/top-\d+\s*/gi, "") // Remove "top any number" anywhere in the string
+    .replace(/{[^}]*}/g, "")
+    .replace(/[^\w-]+/g, "")
+    .replace(/-+$/, "")
+    .replace(/^-+/, "")
+    .replace(/-+/g, "-")
+    .toLowerCase();
 }

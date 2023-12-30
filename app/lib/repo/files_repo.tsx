@@ -28,7 +28,7 @@ export async function postFiles(tData: any) {
 }
 
 export const getS3Url = (path: any) => {
-  if (isNull(path) || path == "undefined/undefined") {
+  if (isNull(path) || path == "undefined/undefined" || path == "/") {
     const s3FileUrl = `/images/placeholder.png`;
     return s3FileUrl;
   }

@@ -3,6 +3,7 @@ export type ListsModel = {
   _id?: string | null;
   description?: string | null;
   body?: string | null;
+  featuredImagePath?: string | null;
   createdAt?: Date | null;
   updatedAt?: Date | null;
   topicId?: string | null;
@@ -12,6 +13,10 @@ export type ListsModel = {
   catId?: string | null;
   image?: string | null;
   metaTitle?: string | null;
-  metaDescriptio?: string | null;
+  metaDesc?: string | null;
   importId?: string | null;
+  rankingScore?: string | null;
+  ratingScore?: string | null;
+  views?: string | null;
+  selectedImage?: any;
 };

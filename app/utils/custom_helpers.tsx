@@ -31,7 +31,8 @@ export function isNull(text: any) {
     text === "not_found" ||
     text === "[]" ||
     text === "{}" ||
-    text.length === 0
+    text.length === 0 ||
+    Object.keys(text).length === 0
   ) {
     return true;
   }
@@ -184,4 +185,90 @@ export function cleanFileName(filename) {
   }
   // Return cleaned file name
   return cleanName.trim();
+}
+
+export function beforeUpdate(updateData, uData) {
+  if (!isNull(updateData.title)) {
+    uData.title = updateData.title;
+  }
+
+  if (!isNull(updateData.description)) {
+    uData.description = updateData.description;
+  }
+
+  if (!isNull(updateData.body)) {
+    uData.body = updateData.body;
+  }
+
+  if (!isNull(updateData.featuredImagePath)) {
+    uData.featuredImagePath = updateData.featuredImagePath;
+  }
+
+  if (!isNull(updateData.createdAt)) {
+    uData.createdAt = updateData.createdAt;
+  }
+
+  if (!isNull(updateData.updatedAt)) {
+    uData.updatedAt = updateData.updatedAt;
+  }
+
+  if (!isNull(updateData.topicId)) {
+    uData.topicId = updateData.topicId;
+  }
+
+  if (!isNull(updateData.status)) {
+    uData.status = updateData.status;
+  }
+
+  if (!isNull(updateData.subTitle)) {
+    uData.subTitle = updateData.subTitle;
+  }
+
+  if (!isNull(updateData.slug)) {
+    uData.slug = updateData.slug;
+  }
+
+  if (!isNull(updateData.catId)) {
+    uData.catId = updateData.catId;
+  }
+
+  if (!isNull(updateData.image)) {
+    uData.image = updateData.image;
+  }
+
+  if (!isNull(updateData.metaTitle)) {
+    uData.metaTitle = updateData.metaTitle;
+  }
+
+  if (!isNull(updateData.metaDesc)) {
+    uData.metaDesc = updateData.metaDesc;
+  }
+
+  if (!isNull(updateData.importId)) {
+    uData.importId = updateData.importId;
+  }
+
+  if (!isNull(updateData.rankingScore)) {
+    uData.rankingScore = updateData.rankingScore;
+  }
+
+  if (!isNull(updateData.ratingScore)) {
+    uData.ratingScore = updateData.ratingScore;
+  }
+
+  if (!isNull(updateData.views)) {
+    uData.views = updateData.views;
+  }
+
+  if (!isNull(updateData.selectedImage)) {
+    uData.selectedImage = updateData.selectedImage;
+  }
+
+  if (!isNull(updateData.topId)) {
+    uData.topId = updateData.topId;
+  }
+
+  uData.updatedAt = new Date();
+
+  return uData;
 }

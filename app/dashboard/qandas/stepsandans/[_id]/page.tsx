@@ -13,11 +13,7 @@ import StepsImport from "../../steps_import";
 import Steps from "../../steps";
 import QandAView from "../../qandas_view";
 
-export default function QandAsOverview({
-  params,
-}: {
-  params: { _id: string };
-}) {
+export default function StepsAndAns({ params }: { params: { _id: string } }) {
   let [data, setData] = useState(SingleShimmer(10));
 
   const url = `${NEXT_PUBLIC_GET_LIST}?listId=${params._id}`;
@@ -45,19 +41,19 @@ export default function QandAsOverview({
 
     {
       id: 2,
-      status: "inactive",
+      status: "active",
       title: "steps",
-      component: <></>,
+      component: <Steps data={data} />,
     },
     {
       id: 3,
-      status: "inactive",
+      status: "active",
       title: "Steps Import",
-      component: <></>,
+      component: <StepsImport qanda={data} />,
     },
     {
       id: 4,
-      status: "active",
+      status: "inactive",
       title: "QandA Import",
       component: <QandAsImport />,
     },

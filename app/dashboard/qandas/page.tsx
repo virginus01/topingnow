@@ -22,46 +22,19 @@ import TemplateBody from "./body";
 import QandAsImport from "./qanda_import";
 import StepsImport from "./steps_import";
 import TabbedContents from "@/app/components/widgets/tabbed_contents";
+import QandAView from "./qandas_view";
 
 export const dynamic = "force-dynamic";
 
-export default function QandAView({ topicId }) {
-  const [page, setPage] = useState(1);
-  const [isOpen, setIsOpen] = useState(false);
+export default function Page() {
   let [data, setData] = useState(Shimmer(5));
-  const router = useRouter();
-  const [updating, setUpdating] = useState(false);
-  const perPage = 10;
-  const url = `${NEXT_PUBLIC_GET_QANDAS}?page=${page}&perPage=${perPage}`;
-
-  const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
-
-  if (loading || !Array.isArray(paginatedData)) {
-    return <Loading />;
-  }
-
-  if (updating === false) {
-    data = paginatedData;
-  }
 
   const tabComponents = [
     {
       id: 1,
       status: "active",
       title: "QandA",
-      component: (
-        <DataTable
-          data={data}
-          page={page}
-          perPage={perPage}
-          deleteAction={deleteAction}
-          setPage={() => setPage}
-          viewAction={viewAction}
-          editAction={editAction}
-          addAction={addAction}
-          addText={"answers & steps"}
-        />
-      ),
+      component: <QandAView listId={undefined} />,
     },
     {
       id: 2,
@@ -91,31 +64,4 @@ export default function QandAView({ topicId }) {
       />
     </>
   );
-
-  async function deleteAction(_id: string) {
-    setUpdating(true);
-    const updatedImports = removeById(data, _id);
-    setData(updatedImports);
-
-    const res = await deleteTopicsWithLists(_id);
-    if (res.data) {
-      const updatedData = removeById(paginatedData, _id);
-      data = updatedData;
-      toast.success(`${res.data} items deleted`);
-      router.push(`${DASH_TOPICS}`);
-    } else {
-      toast.error(`items not deleted`);
-    }
-  }
-  async function viewAction(slug: string) {
-    router.push(`/${slug}`);
-  }
-
-  async function editAction(_id: string) {
-    router.push(`/dashboard/topics/edit/${_id}`);
-  }
-
-  async function addAction(_id: string) {
-    router.push(`/dashboard/qandas/add/${_id}`);
-  }
 }
