@@ -7,8 +7,9 @@ import { postTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
+import { beforePost } from "@/app/utils/custom_helpers";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 const TopicsImport = (top_id) => {
   const [file, setFile] = useState(null);
@@ -21,18 +22,23 @@ const TopicsImport = (top_id) => {
   const [topics, setTopics] = useState([]);
   const [csv, setCSV] = useState("");
 
-
   const handleImport = async (e) => {
     e.preventDefault();
 
     // Check criteria
 
-    if (!data[0].title || data[0].title == undefined) {
-      return toast.error("'title' field is not present");
-    }
+    const title = data[0].title;
+    const slug = data[0].slug;
+    const desc = data[0].desc;
+    const metaDesc = data[0].metaDesc;
+    const metaTitle = data[0].metaTitle;
+    const body = data[0].body;
 
-    if (!data[0].description || data[0].description == undefined) {
-      return toast.error("'description' field is not present");
+    const requiredFields = { title, slug, desc, metaDesc, metaTitle, body };
+    const errors = beforePost(requiredFields);
+
+    if (errors !== true) {
+      return errors
     }
 
     if (!data) return;
@@ -41,7 +47,6 @@ const TopicsImport = (top_id) => {
     let topics = new Array();
 
     data.map(async (t, i) => {
-
       const topicsD = {
         title: t.title,
         description: t.description,
@@ -75,7 +80,7 @@ const TopicsImport = (top_id) => {
     // Set progress
     setProgress(values.length - 1);
 
-    setCSV(result.response);
+    setCSV(result.data);
 
     setValuesEmpty(true);
 
@@ -87,7 +92,7 @@ const TopicsImport = (top_id) => {
   const handleFileChange = (e) => {
     e.preventDefault();
 
-    console.log("file change")
+    console.log("file change");
     setData([]);
     setColumn([]);
     setValues([]);
@@ -115,7 +120,6 @@ const TopicsImport = (top_id) => {
     });
   };
 
-
   return (
     <CsvImportSCR
       handleFileChange={handleFileChange}
@@ -123,7 +127,10 @@ const TopicsImport = (top_id) => {
       handleImport={handleImport}
       csv={csv}
       progress={progress}
-      columnArray={columnArray} />
+      columnArray={columnArray}
+      compulsory="title|string, desc|string, slug|string"
+      importType="Topics"
+    />
   );
 };
 

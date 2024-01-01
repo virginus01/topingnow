@@ -38,7 +38,7 @@
     "app/lib/route.ts",
     "app/utils/mongodb.js",
     "app/controllers/route.tsx",
-    "app/dashboard/topics/topics_import.js",
+    "app/dashboard/topics/topics_import.tsx",
     "app/dashboard/templates/template_import.js"
   ],
   "exclude": [

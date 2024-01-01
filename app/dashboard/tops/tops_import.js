@@ -9,9 +9,7 @@ import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
 import { postTemplates } from "@/app/lib/repo/templates_repo";
 import { postTops } from "@/app/lib/repo/tops_repo";
-import { beforeImport, beforePost } from "@/app/utils/custom_helpers";
-import { TopModel } from "@/app/models/top_model";
-import { customSlugify } from "@/app/utils/custom_slugify";
+import { beforePost } from "@/app/utils/custom_helpers";
 
 export const dynamic = "force-dynamic";
 

@@ -201,18 +201,19 @@ export function beforeImport(data, requiredFields) {
 }
 
 export function beforePost(data) {
-  const keysArray = Object.keys(data);
-  if (data) {
-    return keysArray.map((key) => {
-      if (isNull(data[key])) {
-        let keyMsg = key;
-        if (key === "metaDesc") {
-          keyMsg = "meta Description";
-        }
-        return toast.error(`${keyMsg} is required`);
-      }
-      return true;
-    });
+  const requiredFields = Object.keys(data);
+
+  let errors: string[] = [];
+
+  requiredFields.forEach((field) => {
+    if (!data[field]) {
+      errors.push(`${field} is required`);
+    }
+  });
+
+  if (errors.length) {
+    errors.forEach((err) => toast.error(err));
+    return false;
   }
 
   return true;

@@ -75,14 +75,8 @@ export default function CreateTopic({ topData }) {
 
     const errors = beforePost(requiredFields);
 
-    if (errors[0] !== true) {
-      if (Array.isArray(errors)) {
-        return errors.map((error) => {
-          if (error !== true) {
-            return error;
-          }
-        });
-      }
+    if (errors !== true) {
+      return errors;
     }
 
     const submitData = {
