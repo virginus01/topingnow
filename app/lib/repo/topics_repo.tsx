@@ -32,9 +32,10 @@ export async function getTopics(topId: any | "", page: any, perPage: any | "") {
   }
 }
 
-export async function getPopularTopics() {
+export async function getPopularTopics(_id, page, perPage) {
   try {
-    const url = `${NEXT_PUBLIC_GET_POPULAR_TOPICS}`;
+    const url = `${NEXT_PUBLIC_GET_POPULAR_TOPICS}?_id=${_id}&page=${page}&perPage=${perPage}`;
+
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -86,7 +87,7 @@ export async function getTopicById(topicId: string) {
 export async function justGetTopicWithEssentials(topicId: string, page = 1) {
   try {
     const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}&page=${page}&essentials=${"yes"}&process=${"yes"}`;
-
+    // console.log(url);
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
@@ -203,12 +204,12 @@ export async function UpdateTopic(tData: any) {
   }
 }
 
-export async function deleteTopicsWithLists(_id: string) {
+export async function deleteTopics(_id) {
   try {
     const url = `${NEXT_PUBLIC_DELETE_TOPICS}`;
 
     const formData = new FormData();
-    formData.append("deleteData", JSON.stringify({ _id }));
+    formData.append("deleteData", JSON.stringify(_id));
 
     const response = await fetch(url, {
       method: "DELETE",

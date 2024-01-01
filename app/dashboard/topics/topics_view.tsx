@@ -14,17 +14,18 @@ import { notFound, useRouter } from "next/navigation";
 import ConfirmAction from "@/app/components/widgets/confirm";
 import { toast } from "sonner";
 import { ActionButtons } from "@/app/components/widgets/action_buttons";
-import { deleteTopicsWithLists } from "@/app/lib/repo/topics_repo";
+import { deleteTopics } from "@/app/lib/repo/topics_repo";
 import { removeById } from "@/app/utils/custom_helpers";
 import Shimmer from "@/app/components/shimmer";
 import DataTable from "@/app/components/widgets/data_table";
+import { TopicModel } from "@/app/models/topic_model";
 
 export const dynamic = "force-dynamic";
 
 export default function TopicsView({ topId }) {
   const [page, setPage] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
-  let [data, setData] = useState(Shimmer(5));
+  let [data, setData] = useState<TopicModel>();
   const router = useRouter();
   const [updating, setUpdating] = useState(false);
   const perPage = 10;
@@ -38,7 +39,7 @@ export default function TopicsView({ topId }) {
   }
 
   if (updating === false) {
-    data = paginatedData;
+    data = paginatedData as TopicModel;
   }
 
   if (paginatedData.length === 0) {
@@ -61,16 +62,16 @@ export default function TopicsView({ topId }) {
     </>
   );
 
-  async function deleteAction(_id: string) {
+  async function deleteAction(_id: any) {
     setUpdating(true);
     const updatedImports = removeById(data, _id);
     setData(updatedImports);
-    const res = await deleteTopicsWithLists(_id);
+
+    const res = await deleteTopics(_id);
     if (res.data) {
       const updatedData = removeById(paginatedData, _id);
       data = updatedData;
       toast.success(`${res.data} items deleted`);
-      router.push(`${DASH_TOPICS}`);
     } else {
       toast.error(`items not deleted`);
     }

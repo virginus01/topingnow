@@ -4,6 +4,7 @@ export default function Shimmer(length: number) {
     title: "\u00A0".repeat(2),
     name: "\u00A0".repeat(2),
     slug: "#",
+    postSlug: "#",
     body: [],
     extraClass: "bg-gray-200 animate-pulse px-2 w-full text-transparent",
   }));

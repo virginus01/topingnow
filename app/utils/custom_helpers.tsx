@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { getTemplate } from "../lib/repo/templates_repo";
 import { placeholders } from "./templates";
 
@@ -187,6 +188,36 @@ export function cleanFileName(filename) {
   return cleanName.trim();
 }
 
+export function beforeImport(data, requiredFields) {
+  const missingFields = requiredFields.filter((field) => !data[0][field]);
+
+  if (missingFields.length > 0) {
+    return missingFields.map((field) => {
+      return `${field} field is required`;
+    });
+  }
+
+  return true;
+}
+
+export function beforePost(data) {
+  const keysArray = Object.keys(data);
+  if (data) {
+    return keysArray.map((key) => {
+      if (isNull(data[key])) {
+        let keyMsg = key;
+        if (key === "metaDesc") {
+          keyMsg = "meta Description";
+        }
+        return toast.error(`${keyMsg} is required`);
+      }
+      return true;
+    });
+  }
+
+  return true;
+}
+
 export function beforeUpdate(updateData, uData) {
   if (!isNull(updateData.title)) {
     uData.title = updateData.title;
@@ -194,6 +225,10 @@ export function beforeUpdate(updateData, uData) {
 
   if (!isNull(updateData.description)) {
     uData.description = updateData.description;
+  }
+
+  if (!isNull(updateData.desc)) {
+    uData.desc = updateData.desc;
   }
 
   if (!isNull(updateData.body)) {

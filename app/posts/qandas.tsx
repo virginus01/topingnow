@@ -46,7 +46,13 @@ export default function QandAs({ listData }) {
                 <div
                   className={`${extraClass} bg-gray-500 flex items-left justify-left gap-x-4 px-2 py-2 text-xs font-bold text-left text-white`}
                 >
-                  {dataTitle}
+                  <Link
+                    prefetch={true}
+                    href={url}
+                    className="text-white font-extrabold capitalize"
+                  >
+                    {dataTitle}
+                  </Link>
                 </div>
                 {featuredImagePath && (
                   <div className="mb-1">
@@ -62,22 +68,25 @@ export default function QandAs({ listData }) {
                 )}
                 <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
                   <section
-                    className={`${extraClass} mt-5 line-clamp-3 text-sm leading-6 text-gray-600`}
+                    className={`${extraClass} mt-1 line-clamp-3 text-sm leading-6 text-gray-600`}
                   >
-                    <span>
+                    <div
+                      className="mb-3"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(data[0].dataBody),
+                      }}
+                    />
+
+                    <div className="text-right">
+                      {" "}
                       <Link
                         prefetch={true}
                         href={url}
-                        className="text-red-900 font-medium"
+                        className="text-red-500 font-medium"
                       >
-                        {dataTitle}
+                        visit page
                       </Link>
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: DOMPurify.sanitize(data[0].dataBody),
-                        }}
-                      />
-                    </span>
+                    </div>
                   </section>
                 </div>
               </article>

@@ -18,13 +18,13 @@ import { notFound, useRouter } from "next/navigation";
 import ConfirmAction from "@/app/components/widgets/confirm";
 import { toast } from "sonner";
 import { ActionButtons } from "@/app/components/widgets/action_buttons";
-import { deleteTopicsWithLists } from "@/app/lib/repo/topics_repo";
 import { removeById } from "@/app/utils/custom_helpers";
 import Shimmer from "@/app/components/shimmer";
 import DataTable from "@/app/components/widgets/data_table";
 import TemplateBody from "./body";
 import TemplatesImport from "./template_import";
 import TabbedContents from "@/app/components/widgets/tabbed_contents";
+import { deleteTopics } from "@/app/lib/repo/topics_repo";
 
 export const dynamic = "force-dynamic";
 
@@ -97,7 +97,7 @@ export default function TemplatesView({ topId }) {
     setUpdating(true);
     const updatedImports = removeById(data, _id);
     setData(updatedImports);
-    const res = await deleteTopicsWithLists(_id);
+    const res = await deleteTopics(_id);
     if (res.data) {
       const updatedData = removeById(paginatedData, _id);
       data = updatedData;

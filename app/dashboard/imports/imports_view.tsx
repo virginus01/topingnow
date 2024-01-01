@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Loading from "../loading";
-import { deleteTopicsByImports } from "@/app/lib/repo/import_repo";
+import { deleteImports } from "@/app/lib/repo/import_repo";
 import DataTable from "@/app/components/widgets/data_table";
 import { NEXT_PUBLIC_GET_IMPORTS } from "@/constants";
 import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
@@ -16,7 +16,6 @@ export default function ImportsView() {
 
   const url = `${NEXT_PUBLIC_GET_IMPORTS}?page=${page}&perPage=${perPage}`;
 
- 
   const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
 
   if (updating === false) {
@@ -48,7 +47,7 @@ export default function ImportsView() {
     const updatedImports = removeById(data, _id);
     setData(updatedImports);
 
-    const result = await deleteTopicsByImports(_id);
+    const result = await deleteImports(_id);
 
     toast.success(`${result.data} items deleted`);
   }

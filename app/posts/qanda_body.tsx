@@ -1,14 +1,23 @@
 import DOMPurify from "isomorphic-dompurify";
 import Image from "next/image";
 import { getS3Url } from "../lib/repo/files_repo";
+import StepsBody from "./steps_body";
 
 export default function QandABody({ post }) {
   if (!post) {
     return <>loading..</>;
   }
 
-  const { title, description, featuredImagePath } = post;
+  const { title, description, featuredImagePath, body, steps } = post;
 
+  const postBody = JSON.parse(body);
+  const postSteps = JSON.parse(steps);
+
+  let postTitle = title;
+
+  if (postSteps.length > 0) {
+    postTitle = `${title} in ${postSteps.length}`;
+  }
   return (
     <div className="relative flex sm:py-7">
       <div className="relative px-1 pb-2 pt-2 sm:mx-auto w-full sm:px-2">
@@ -17,7 +26,7 @@ export default function QandABody({ post }) {
             <div className="h-200">
               <Image
                 src={getS3Url(featuredImagePath)}
-                alt={title}
+                alt={postTitle}
                 style={{ width: "100%" }}
                 width={200}
                 height={200}
@@ -25,15 +34,16 @@ export default function QandABody({ post }) {
               />
             </div>
           )}
-          <div className="pt-5">
+          <div className="pt-1">
             <div
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(title),
+                __html: DOMPurify.sanitize(postBody[0].dataBody),
               }}
             />
           </div>
         </div>
-      </div>{" "}
+        <StepsBody postSteps={postSteps} />
+      </div>
     </div>
   );
 }

@@ -1,6 +1,10 @@
 import { stripHtmlTags } from "./custom_helpers";
 
-export function customSlugify(text: string): string {
+export function customSlugify(
+  text: string,
+  seperator = "-",
+  filterTop = "yes"
+): string {
   const stopWords = [
     "a",
     "about",
@@ -189,13 +193,24 @@ export function customSlugify(text: string): string {
 
   // Join words back together
 
-  return words
-    .join("-")
-    .replace(/top-\d+\s*/gi, "") // Remove "top any number" anywhere in the string
-    .replace(/{[^}]*}/g, "")
-    .replace(/[^\w-]+/g, "")
-    .replace(/-+$/, "")
-    .replace(/^-+/, "")
-    .replace(/-+/g, "-")
-    .toLowerCase();
+  if (filterTop === "yes") {
+    return words
+      .join("-")
+      .replace(/top-\d+\s*/gi, "") // Remove "top any number" anywhere in the string
+      .replace(/{[^}]*}/g, "")
+      .replace(/[^\w-]+/g, "")
+      .replace(/-+$/, "")
+      .replace(/^-+/, "")
+      .replace(/-+/g, "-")
+      .toLowerCase();
+  } else {
+    return words
+      .join("-")
+      .replace(/{[^}]*}/g, "")
+      .replace(/[^\w-]+/g, "")
+      .replace(/-+$/, "")
+      .replace(/^-+/, "")
+      .replace(/-+/g, "-")
+      .toLowerCase();
+  }
 }

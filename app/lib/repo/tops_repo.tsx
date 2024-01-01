@@ -65,7 +65,7 @@ export async function getTop(id: string) {
 
 export async function postTops(tData: any) {
   try {
-    const slugs = tData.map((t) => customSlugify(t.slug));
+    const slugs = tData.map((t) => customSlugify(t.slug, "-", "no"));
 
     // Fetch existing topics by slug
     const topics = await Promise.all(slugs.map(getTop));

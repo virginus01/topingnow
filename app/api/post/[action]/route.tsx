@@ -1,6 +1,4 @@
 import {
-  addTopic,
-  addTopics,
   updateATopic,
   addLists,
   updateAList,
@@ -14,17 +12,15 @@ import {
   updateATop,
   addFiles,
 } from "@/app/api/mongodb/query";
-import { getTopicById } from "@/app/lib/repo/topics_repo";
+
 import { TopicModel } from "@/app/models/topic_model";
 import { ListsModel } from "@/app/models/lists_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
-  NEXT_PUBLIC_CREATE_IMPORT,
   NEXT_PUBLIC_POST_UPDATE_QANDA,
   NEXT_PUBLIC_POST_UPDATE_TEMPLATE,
   NEXT_PUBLIC_UPDATE_LIST,
   NEXT_PUBLIC_UPDATE_TOP,
-  NEXT_PUBLIC_UPDATE_TOPIC,
 } from "@/constants";
 import { beforeUpdate, isNull } from "@/app/utils/custom_helpers";
 import { TempModel } from "@/app/models/templates_model";
@@ -32,6 +28,7 @@ import { QandAModel } from "@/app/models/qanda_model";
 import { TopModel } from "@/app/models/top_model";
 import generateImportId from "@/app/lib/repo/import_repo";
 import { FileModel } from "@/app/models/file_model";
+import { postTopics } from "../../api_repos/topics_api_repo";
 
 export async function POST(
   request: Request,
@@ -55,18 +52,9 @@ export async function POST(
     });
   }
 
-  //creating topics
+  //creating tops
   if (action == "update_top") {
     const data = await updateTop(formData);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //creating topic
-  if (action == "create_topic") {
-    const data = await postTopic(formData);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -177,24 +165,6 @@ export async function POST(
   });
 }
 
-async function postTopic(formData: any) {
-  const postData = JSON.parse(formData.get("postData"));
-
-  const data = {
-    title: postData.title,
-    description: postData.description,
-    topId: postData.topId,
-    slug: postData.slug,
-    created_at: new Date(),
-  };
-
-  try {
-    return await addTopic(data);
-  } catch {
-    return "8484774 error";
-  }
-}
-
 export async function updateTopic(formData: any) {
   const updateData = JSON.parse(formData.get("updateData"));
 
@@ -299,22 +269,11 @@ async function updateList(formData: any) {
 async function updateTop(formData: any) {
   const updateData = JSON.parse(formData.get("updateData"));
 
-  const uData: TopModel = {};
+  let uData: TopModel = {};
 
-  if (!isNull(updateData.title)) {
-    uData.title = updateData.title;
-  }
+  uData = beforeUpdate(updateData, uData);
 
-  if (!isNull(updateData.body)) {
-    uData.body = updateData.body;
-  }
-
-  if (!isNull(updateData.top)) {
-    uData.top = updateData.top;
-  }
-
-  uData.updatedAt = new Date();
-
+  // console.log(uData);
   try {
     await updateATop(updateData._id, uData);
     return { success: true };
@@ -335,71 +294,6 @@ async function createImport(formData: any) {
     return await addImport(data);
   } catch {
     return "8764664 error";
-  }
-}
-
-async function postTopics(formData: any) {
-  const postData = JSON.parse(formData.get("postData"));
-  const data: TopicModel[] = new Array();
-
-  postData.map(async (post, i) => {
-    let postSlug = customSlugify(post.slug);
-    const tData: TopicModel = {
-      title: post.title,
-      _id: post._id,
-      description: post.description,
-      body: post.body,
-      createdAt: new Date(),
-      updatedAt: post.updatedAt,
-      topId: post.topId,
-      status: post.status,
-      subTitle: post.subTitle,
-      slug: postSlug,
-      catId: post.catId,
-      image: post.image,
-      metaTitle: post.metaTitle,
-      metaDesc: post.metaDesc,
-      importId: post.importId,
-      featuredImagePath: post.featuredImagePath,
-      rankingScore: post.rankingScore,
-      ratingScore: post.ratingScore,
-      views: post.views,
-      selectedImage: post.selectedImage,
-    };
-
-    if (post.isDuplicate === true) {
-      const formData = new FormData();
-      tData._id = post._id;
-      formData.append("updateData", JSON.stringify(tData));
-      const url = `${NEXT_PUBLIC_UPDATE_TOPIC}`;
-      try {
-        const response = await fetch(url, {
-          cache: "no-store",
-          method: "POST",
-          body: formData,
-        });
-        const result = await response.json();
-      } catch (error) {
-        console.log("error 7464664");
-      }
-    } else {
-      data.push(tData);
-    }
-  });
-
-  try {
-    if (Array.isArray(data) && data !== null && data.length > 0) {
-      if (postData[0].isImport === "yes") {
-        const importId = await generateImportId("test", data);
-        data.map((im, i) => {
-          data[i].importId = importId;
-        });
-      }
-      return await addTopics(data);
-    }
-    return { success: false, ids: [] };
-  } catch {
-    return "474646 error";
   }
 }
 
@@ -548,48 +442,43 @@ async function postTops(formData: any) {
   const postData = JSON.parse(formData.get("postData"));
 
   const data: TopModel[] = new Array();
+  const dataUpdate: TopModel[] = new Array();
 
-  postData.map(
-    async (post: {
-      title: string;
-      body: any | null;
-      slug: string;
-      isDuplicate: boolean | null;
-      _id: any;
-    }) => {
-      let postSlug = customSlugify(post.slug);
+  postData.map(async (post) => {
+    let postSlug = customSlugify(post.slug, "-", "no");
 
-      const tData: TempModel = {
-        title: post.title,
-        body: post.body,
-        createdAt: new Date(),
-        slug: postSlug,
-      };
+    const tData: TopModel = {
+      title: post.title,
+      body: post.body,
+      createdAt: new Date(),
+      slug: postSlug,
+    };
 
-      if (post.isDuplicate === true) {
-        const formData = new FormData();
-        tData._id = post._id;
-        formData.append("updateData", JSON.stringify(tData));
-        const url = `${NEXT_PUBLIC_UPDATE_TOP}`;
-        try {
-          const response = await fetch(url, {
-            cache: "no-store",
-            method: "POST",
-            body: formData,
-          });
-          const result = await response.json();
-        } catch (error) {
-          console.log("error 7464664");
-        }
-      } else {
-        data.push(tData);
+    if (post.isDuplicate === true) {
+      const formData = new FormData();
+      tData._id = post._id;
+      formData.append("updateData", JSON.stringify(tData));
+      const url = `${NEXT_PUBLIC_UPDATE_TOP}`;
+      try {
+        const response = await fetch(url, {
+          cache: "no-store",
+          method: "POST",
+          body: formData,
+        });
+        const result = await response.json();
+
+        dataUpdate.push(tData);
+      } catch (error) {
+        console.log("error 7464664");
       }
+    } else {
+      data.push(tData);
     }
-  );
+  });
 
   try {
     if (Array.isArray(data) && data !== null && data.length > 0) {
-      const importId = await generateImportId("test", data);
+      const importId = await generateImportId(`${Date} top`, data);
       data.map((im, i) => {
         data[i].importId = importId;
       });
@@ -597,9 +486,10 @@ async function postTops(formData: any) {
       return await addTops(data);
     }
 
-    return { success: false, ids: [] };
-  } catch {
-    return "474646 error";
+    return { success: true, ids: [], data: dataUpdate };
+  } catch (e) {
+    console.log(`474646 error ${e}`);
+    return { success: true, ids: [], data: {} };
   }
 }
 

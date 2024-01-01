@@ -3,12 +3,15 @@ import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Papa from "papaparse";
 import ProgressBar from "@/app/components/progress_bar";
-import { postTopics } from "@/app/lib/repo/topics_repo";
+import { getTopicById, postTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
 import { postTemplates } from "@/app/lib/repo/templates_repo";
 import { postTops } from "@/app/lib/repo/tops_repo";
+import { beforeImport, beforePost } from "@/app/utils/custom_helpers";
+import { TopModel } from "@/app/models/top_model";
+import { customSlugify } from "@/app/utils/custom_slugify";
 
 export const dynamic = "force-dynamic";
 
@@ -21,23 +24,30 @@ const TopsImport = () => {
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [topics, setTopics] = useState([]);
-    const [csv, setCSV] = useState("");
+    const [csv, setCSV] = useState([]);
 
     const handleImport = async (e) => {
         e.preventDefault();
 
         // Check criteria
 
-        if (!data[0].title || data[0].title == undefined) {
-            return toast.error("'title' field is not present");
-        }
+        const title = data[0].title;
+        const slug = data[0].slug;
+        const metaTitle = data[0].metaTitle;
 
-        if (!data[0].top || data[0].top == undefined) {
-            return toast.error("'top' field is not present");
-        }
+        const requiredFields = { title, slug, metaTitle };
+        const errors = beforePost(requiredFields);
 
-        if (!data[0].body || data[0].body == undefined) {
-            return toast.error("'body' field is not present");
+
+
+        if (errors[0] !== true) {
+            if (Array.isArray(errors)) {
+                return errors.map((error) => {
+                    if (error !== true) {
+                        return error;
+                    }
+                });
+            }
         }
 
         if (!data) return;
@@ -46,11 +56,12 @@ const TopsImport = () => {
         let topics = new Array();
 
         data.map(async (t, i) => {
+
             const topicsD = {
                 title: t.title,
                 top: t.top,
-                body: t.body,
-                slug: t.title,
+                body: t.desc,
+                slug: t.slug,
                 isDuplicate: true,
                 _id: "",
             };
@@ -80,7 +91,7 @@ const TopsImport = () => {
         // Set progress
         setProgress(values.length - 1);
 
-        setCSV(result.response);
+        setCSV(result.data.data);
 
         setValuesEmpty(true);
 
@@ -92,7 +103,6 @@ const TopsImport = () => {
     const handleFileChange = (e) => {
         e.preventDefault();
 
-        console.log("file change");
         setData([]);
         setColumn([]);
         setValues([]);
@@ -128,6 +138,8 @@ const TopsImport = () => {
             csv={csv}
             progress={progress}
             columnArray={columnArray}
+            compulsory="title|string, top|string, desc|string, slug|string"
+            importType="Top"
         />
     );
 };

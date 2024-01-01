@@ -113,6 +113,50 @@ export async function getTopsByImport(importId, page = 1, perPage = 10, q = '') 
 }
 
 
+export async function getListsByImport(importId, page = 1, perPage = 10, q = '') {
+    const skip = (page - 1) * perPage;
+
+    const db = await connectDB();
+    let filter = { importId: importId };
+
+    if (!isNull(q)) {
+        filter = { title: { $regex: new RegExp(q, 'i') } }
+    } else {
+        filter = {};
+    }
+
+    let [result, total] = await Promise.all([
+        db.collection("lists").find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
+
+        db.collection("lists")
+            .estimatedDocumentCount(filter)
+    ]);
+
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+    if (!result) {
+        return "not_found";
+    }
+
+    return {
+        result: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
+}
+
+
 export async function getTopicsByImport(importId, page = 1, perPage = 10, process = 'yes') {
 
     const skip = (page - 1) * perPage;
@@ -485,7 +529,7 @@ export async function getLists(topicId, page = 1, perPage = 10, process = 'yes')
 
     const [result, total] = await Promise.all([
         db.collection("lists").find(filter)
-            .sort({ createdAt: -1 })
+            .sort({ rankingScore: -1 })
             .skip(skip)
             .limit(perPage)
             .toArray(),
@@ -504,6 +548,15 @@ export async function getLists(topicId, page = 1, perPage = 10, process = 'yes')
 
     if (process === 'yes') {
         await dataProcess(result)
+    }
+
+    if (!isNull(result)) {
+        const ids = result.map((t) => String(t.topicId));
+        const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
+        result.map((post, i) => {
+            result[i].topicData = topics[i]
+            result[i].postSlug = `${topics[i].slug}/${result[i].slug}`
+        })
     }
 
     return {
@@ -568,7 +621,7 @@ export async function getPopularTopics(excludeId = '', page = 1, perPage = 10, p
 
     const [result, total] = await Promise.all([
         db.collection("topics").find(filter)
-            .sort({ createdAt: -1 })
+            .sort({ views: -1 })
             .skip(skip)
             .limit(perPage)
             .toArray(),
@@ -587,6 +640,59 @@ export async function getPopularTopics(excludeId = '', page = 1, perPage = 10, p
 
     if (process === 'yes') {
         await dataProcess(result)
+    }
+
+    return {
+        result: result,
+        metadata: {
+            total,
+            page,
+            perPage,
+            hasNextPage,
+            hasPrevPage
+        }
+    };
+
+}
+
+
+export async function getPopularLists(excludeId = '', essentials = '', page = 1, perPage = 10, process = 'yes') {
+    const skip = (page - 1) * perPage;
+
+    const db = await connectDB();
+
+    const filter = excludeId ? { _id: { $ne: new ObjectId(excludeId) } } : {};
+
+    const [result, total] = await Promise.all([
+        db.collection("lists").find(filter)
+            .sort({ views: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .toArray(),
+
+        db.collection("lists")
+            .estimatedDocumentCount(filter)
+    ]);
+
+    const numPages = Math.ceil(total / perPage);
+    const hasNextPage = page < numPages;
+    const hasPrevPage = page > 1;
+
+    if (!result) {
+        return "not_found";
+    }
+
+    if (process === 'yes') {
+        await dataProcess(result)
+    }
+
+    if (!isNull(result)) {
+        const ids = result.map((t) => String(t.topicId));
+        const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
+        result.map((post, i) => {
+            result[i].topicData = topics[i]
+            result[i].postSlug = `${topics[i].slug}/${result[i].slug}`
+        })
     }
 
     return {
@@ -753,7 +859,7 @@ export async function addTops(data) {
 
     const result = await db.collection("tops").insertMany(data);
 
-    return result.insertedIds;
+    return { success: true, ids: result.insertedIds, data: data };
 }
 
 
@@ -905,6 +1011,13 @@ export async function removeList(id, topicId, importId) {
     try {
         if (importId) {
             result = await db.collection("lists").deleteMany({ importId: importId });
+            const res = await getListsByImport(importId, 1, 1000000, '');
+
+            if (!isNull(res.result)) {
+                const ids = res.result.map((t) => String(t._id));
+                const delLists = await Promise.all(ids.map((t) => removeQandA(t, null, null)));
+            }
+
         }
 
         if (topicId) {
@@ -913,6 +1026,7 @@ export async function removeList(id, topicId, importId) {
 
         if (id && isValidObjectId(id)) {
             result = await db.collection("lists").deleteMany({ _id: new ObjectId(id) });
+            await removeQandA(null, null, id)
         }
 
 
@@ -926,7 +1040,8 @@ export async function removeList(id, topicId, importId) {
 
 
 
-export async function removeQandA(id, importId) {
+
+export async function removeQandA(id, importId, listId) {
 
     const db = await connectDB();
 
@@ -935,9 +1050,16 @@ export async function removeQandA(id, importId) {
     try {
         if (importId) {
             result = await db.collection("qandas").deleteMany({ importId: importId });
+
+        }
+
+        if (listId) {
+            result = await db.collection("qandas").deleteMany({ listId: listId });
+
         }
 
         if (id && isValidObjectId(id)) {
+
             result = await db.collection("qandas").deleteMany({ _id: new ObjectId(id) });
         }
 

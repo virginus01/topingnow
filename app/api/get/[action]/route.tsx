@@ -13,6 +13,7 @@ import {
   fetchQandAs,
   fetchAQandA,
   fetchFiles,
+  getPopularLists,
 } from "@/app/api/mongodb/query";
 
 export async function GET(
@@ -36,6 +37,7 @@ export async function GET(
   let q = searchParams.get("q");
   let rand = searchParams.get("rand");
   let process = searchParams.get("process");
+  let essentials = searchParams.get("essentials");
   let page = parseInt(searchParams.get("page") as string, 10);
   let perPage = parseInt(searchParams.get("perPage") as string, 10);
   let action = params.action;
@@ -83,6 +85,15 @@ export async function GET(
   //fetching popular topic
   if (action == "get_popular_topics") {
     const data = await fetchPopularTopics(_id, page, perPage);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  //fetching popular topic
+  if (action == "get_popular_lists") {
+    const data = await fetchPopularLists(_id, essentials, page, perPage);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -216,6 +227,19 @@ async function fetchTopic(id: any, essentials: any, page: any, process: any) {
 async function fetchPopularTopics(_id: any, page: number, perPage: number) {
   try {
     return await getPopularTopics(_id, page, perPage);
+  } catch {
+    return { data: "87476 error" };
+  }
+}
+
+async function fetchPopularLists(
+  _id: any,
+  essentials: any,
+  page: number,
+  perPage: number
+) {
+  try {
+    return await getPopularLists(_id, essentials, page, perPage, "yes");
   } catch {
     return { data: "87476 error" };
   }

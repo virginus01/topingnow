@@ -14,7 +14,6 @@ import { notFound, useRouter } from "next/navigation";
 import ConfirmAction from "@/app/components/widgets/confirm";
 import { toast } from "sonner";
 import { ActionButtons } from "@/app/components/widgets/action_buttons";
-import { deleteTopicsWithLists } from "@/app/lib/repo/topics_repo";
 import { removeById } from "@/app/utils/custom_helpers";
 import Shimmer from "@/app/components/shimmer";
 import DataTable from "@/app/components/widgets/data_table";

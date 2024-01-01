@@ -9,6 +9,8 @@ export default function CsvImportSCR({
   csv,
   progress,
   columnArray,
+  compulsory = "title, description",
+  importType = "none",
 }) {
   function downloadReport() {
     JsonToCsvDownload(csv);
@@ -20,9 +22,16 @@ export default function CsvImportSCR({
         <div className="col-span-full">
           <label
             htmlFor="cover-photo"
-            className="block text-sm font-medium leading-6 text-gray-900"
+            className="block text-sm font-medium leading-6 text-gray-900 capitalize"
           >
-            Topics CSV File test
+            {importType} CSV File
+          </label>
+
+          <label
+            htmlFor="cover-photo"
+            className="block text-sm font-medium leading-6 text-gray-900 capitalize"
+          >
+            Compulsory: <code> {compulsory}</code>
           </label>
           <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-5">
             <div className="text-center">
@@ -54,9 +63,11 @@ export default function CsvImportSCR({
 
       <div className="overflow-x-auto py-11">
         <div className="flex justify-between py-5">
-          <div className="mr-4">Number of Topics {values.length}</div>
+          <div className="mr-4">
+            Number of {importType} {values.length}
+          </div>
 
-          {csv !== "" ? (
+          {csv.length > 0 ? (
             <button
               onClick={downloadReport}
               disabled={false}
@@ -70,8 +81,8 @@ export default function CsvImportSCR({
 
           <button
             onClick={handleImport}
-            disabled={false}
-            className="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-700 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition"
+            disabled={!values || values.length === 0}
+            className="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-700 disabled:bg-gray-400 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition"
           >
             import
           </button>

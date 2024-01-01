@@ -24,7 +24,7 @@ export async function getImports(page: number, perPage: any | "") {
   }
 }
 
-export async function deleteTopicsByImports(_id: string) {
+export async function deleteImports(_id: string) {
   try {
     const url = `${NEXT_PUBLIC_DELETE_IMPORT}`;
 

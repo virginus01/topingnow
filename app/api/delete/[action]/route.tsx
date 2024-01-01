@@ -19,7 +19,6 @@ export async function DELETE(request, { params }) {
 
   if (action === "delete_import") {
     const data = await deleteImport(formData);
-
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -74,6 +73,7 @@ async function deleteImport(formData: any) {
 
 async function deleteTopics(formData: any) {
   const deleteData = JSON.parse(formData.get("deleteData"));
+
   try {
     return await removeTopics(deleteData._id);
   } catch {

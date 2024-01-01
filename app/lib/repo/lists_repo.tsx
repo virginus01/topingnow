@@ -9,6 +9,7 @@ import {
   NEXT_PUBLIC_DELETE_LIST,
   NEXT_PUBLIC_GET_LIST,
   NEXT_PUBLIC_GET_LISTS,
+  NEXT_PUBLIC_GET_POPULAR_LISTS,
   NEXT_PUBLIC_POST_LISTS,
   NEXT_PUBLIC_UPDATE_LIST,
 } from "@/constants";
@@ -170,4 +171,28 @@ export async function listMetaTags(metadata, data) {
     };
   }
   return true;
+}
+
+export async function getPopularLists(_id, page, perPage) {
+  try {
+    const url = `${NEXT_PUBLIC_GET_POPULAR_LISTS}?_id=${_id}&page=${page}&perPage=${perPage}&essentials=yes`;
+
+    const res = await fetch(url, {
+      next: {
+        revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
+      },
+    });
+
+    if (!res.ok) {
+      console.log("Fetch failed");
+      return { error: res.statusText };
+    }
+    const result = await res.json();
+
+    return result.data;
+  } catch (error) {
+    return {
+      error: error.message || "Failed to fetch data",
+    };
+  }
 }

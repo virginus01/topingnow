@@ -2,17 +2,23 @@
 import React, { useEffect, useState } from "react";
 import { notFound, redirect, useRouter } from "next/navigation";
 import TinyMCEEditor from "@/app/utils/tinymce";
-import { UpdateTopic, postTopic, postTopics } from "@/app/lib/repo/topics_repo";
+import {
+  UpdateTopic,
+  getTopicById,
+  postTopic,
+  postTopics,
+} from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import SelectSearch from "@/app/components/widgets/select_search";
 import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
 import { usePaginatedSWR, usePaginatedSWRAdmin } from "@/app/utils/fetcher";
-import { isNull } from "@/app/utils/custom_helpers";
+import { beforeImport, beforePost, isNull } from "@/app/utils/custom_helpers";
 import { SingleShimmer } from "@/app/components/shimmer";
 import FeaturedImage from "@/app/components/widgets/featuredImage";
 import { FileModel } from "@/app/models/file_model";
 import { TopicModel } from "@/app/models/topic_model";
 import PostBasic from "@/app/components/forms/post_basic";
+import { customSlugify } from "@/app/utils/custom_slugify";
 
 export default function CreateTopic({ topData }) {
   const router = useRouter();
@@ -51,6 +57,7 @@ export default function CreateTopic({ topData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const topId = selectedParent._id;
     const basicData: TopicModel = {
       title,
       metaTitle,
@@ -61,8 +68,22 @@ export default function CreateTopic({ topData }) {
       slug,
       description,
       featuredImagePath,
-      topId: selectedParent._id,
+      topId,
     };
+
+    const requiredFields = { title, slug, metaTitle, topId, metaDesc };
+
+    const errors = beforePost(requiredFields);
+
+    if (errors[0] !== true) {
+      if (Array.isArray(errors)) {
+        return errors.map((error) => {
+          if (error !== true) {
+            return error;
+          }
+        });
+      }
+    }
 
     const submitData = {
       _id: "",
@@ -75,6 +96,8 @@ export default function CreateTopic({ topData }) {
       if (data.success) {
         toast.success("topic created");
         router.push("/dashboard/topics");
+      } else if (data.msg) {
+        toast.error(data.msg);
       } else {
         toast.error("error creating topic");
       }
@@ -110,6 +133,15 @@ export default function CreateTopic({ topData }) {
             setSelectedImage={setSelectedImage}
             setSelectedParent={setSelectedParent}
           />
+
+          <div className="flex justify-end">
+            <button
+              className="bg-blue-500 text-white px-2 py-2 rounded"
+              type="submit"
+            >
+              Create Topic
+            </button>
+          </div>
         </form>
       </div>
     </div>
