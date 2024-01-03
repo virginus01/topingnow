@@ -37,6 +37,7 @@ const TopicsImport = (top_id) => {
     const requiredFields = { title, slug, desc, metaDesc, metaTitle, body };
     const errors = beforePost(requiredFields);
 
+    //check before post
     if (errors !== true) {
       return errors
     }
