@@ -31,7 +31,10 @@ const TopsImport = () => {
 
         const title = data[0].title;
         const slug = data[0].slug;
+        const desc = data[0].desc;
+        const metaDesc = data[0].metaDesc;
         const metaTitle = data[0].metaTitle;
+        const body = data[0].body;
 
         const requiredFields = { title, slug, metaTitle };
         const errors = beforePost(requiredFields);
