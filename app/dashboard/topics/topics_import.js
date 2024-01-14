@@ -67,7 +67,7 @@ const TopicsImport = (top_id) => {
     });
 
     if (!Array.isArray(topics)) {
-      toast.error("Topics must be an array");
+      toast.error("Topics must be array");
       return;
     }
 
