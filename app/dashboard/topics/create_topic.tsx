@@ -38,7 +38,7 @@ export default function CreateTopic({ topData }) {
   const perPage = 5;
 
   let [selectSearchUrl, setselectSearchUrl] = useState(
-    `${NEXT_PUBLIC_GET_TOPS}?page=${"1"}&perPage=${"10"}`
+    `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`
   );
 
   const data: any = {};
