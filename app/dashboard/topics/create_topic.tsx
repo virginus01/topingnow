@@ -34,8 +34,8 @@ export default function CreateTopic({ topData }) {
   let [selectedImage, setSelectedImage] = useState<FileModel>({});
   let [isUpdating, setIsUpdating] = useState(false);
   let [selectedParent, setSelectedParent] = useState<TopicModel>({});
-  const [page, setPage] = useState(1);
-  const perPage = 5;
+  let [page, setPage] = useState(1);
+  let perPage = 5;
 
   let [selectSearchUrl, setselectSearchUrl] = useState(
     `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`
