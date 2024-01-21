@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { getTemplate } from "../lib/repo/templates_repo";
 import { placeholders } from "./templates";
+import { customSlugify } from "./custom_slugify";
 
 const textToHtml = (text: any) => {
   const elem = document.createElement("div");
@@ -38,6 +39,36 @@ export function isNull(text: any) {
     return true;
   }
   return false;
+}
+
+export function byDemo() {
+  const isDemo = true;
+
+  const words = [
+    "apple",
+    "banana",
+    "chocolate",
+    "dragon",
+    "elephant",
+    "flamingo",
+    "guitar",
+    "happiness",
+    "internet",
+    "jazz",
+    // Add more words as needed
+  ];
+
+  const randomWordsList = Array.from({ length: 3 }, () => {
+    const randomIndex = Math.floor(Math.random() * words.length);
+    const newWord = words[randomIndex];
+    return newWord;
+  });
+
+  const result = randomWordsList.join(" ");
+
+  const res = isDemo ? result : "";
+
+  return res;
 }
 
 export function dProcess(text, type = "none") {

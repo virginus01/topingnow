@@ -22,6 +22,7 @@ export default function ListBody({ post }) {
                 width={200}
                 height={200}
                 className="w-full rounded-sm object-cover"
+                priority
               />
             </div>
           )}

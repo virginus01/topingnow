@@ -68,12 +68,11 @@ export default function TopicsView({ topId }) {
     setData(updatedImports);
 
     const res = await deleteTopics(_id);
-    if (res.data) {
-      const updatedData = removeById(paginatedData, _id);
-      data = updatedData;
-      toast.success(`${res.data} items deleted`);
+
+    if (res.data.success == true) {
+      toast.success(`${res.data.msg}`);
     } else {
-      toast.error(`items not deleted`);
+      toast.error(`${res.data.msg}`);
     }
   }
   async function viewAction(slug: string) {

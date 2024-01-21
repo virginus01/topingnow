@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 
-export default function TabbedContents({ title = "Dashboard", tabComponents }) {
-  const [activeTab, setActiveTab] = useState(1);
+export default function TabbedContents({
+  title = "Dashboard",
+  tabComponents,
+  active = 1,
+}) {
+  const [activeTab, setActiveTab] = useState(active);
 
   const handleTabClick = (tabNumber) => {
     setActiveTab(tabNumber);

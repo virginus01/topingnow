@@ -1,4 +1,5 @@
 export type TopicModel = {
+  [key: string]: string | Date | any | null | undefined;
   title?: string | null;
   _id?: string | null;
   description?: string | null;

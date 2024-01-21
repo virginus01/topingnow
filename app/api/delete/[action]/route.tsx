@@ -9,57 +9,62 @@ import {
 export async function DELETE(request, { params }) {
   const headers = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
 
   let action = params.action;
+  const { searchParams } = new URL(request.url);
+  let id = searchParams.get("id");
 
-  const formData = await request.formData();
+  try {
+    if (action === "delete_import") {
+      const data = await deleteImport(id);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
 
-  if (action === "delete_import") {
-    const data = await deleteImport(formData);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
+    if (action === "delete_list") {
+      const data = await deleteList(id);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    if (action === "delete_top") {
+      const data = await deleteTop(id);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    if (action === "delete_topics") {
+      const data = await deleteTopics(id);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    if (action === "delete_qanda") {
+      const data = await deleteQandA(id);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return new Response(JSON.stringify({ success: false, msg: `${error}` }));
   }
-
-  if (action === "delete_list") {
-    const data = await deleteList(formData);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  if (action === "delete_top") {
-    const data = await deleteTop(formData);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  if (action === "delete_topics") {
-    const data = await deleteTopics(formData);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  if (action === "delete_qanda") {
-    const data = await deleteQandA(formData);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
   //...............GET........................
 
-  return new Response(JSON.stringify({ msg: "Can't process your request" }));
+  return new Response(
+    JSON.stringify({ success: false, msg: "Can't process your request" })
+  );
 }
 
 async function deleteImport(formData: any) {
@@ -71,13 +76,11 @@ async function deleteImport(formData: any) {
   }
 }
 
-async function deleteTopics(formData: any) {
-  const deleteData = JSON.parse(formData.get("deleteData"));
-
+async function deleteTopics(id: any) {
   try {
-    return await removeTopics(deleteData._id);
-  } catch {
-    return { data: "not_found" };
+    return await removeTopics(id);
+  } catch (e) {
+    return { success: false, msg: String(e), data: "" };
   }
 }
 

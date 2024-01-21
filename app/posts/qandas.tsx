@@ -63,6 +63,7 @@ export default function QandAs({ listData }) {
                       width={500}
                       height={200}
                       className="w-full rounded-sm object-cover"
+                      priority
                     />
                   </div>
                 )}

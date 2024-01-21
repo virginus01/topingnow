@@ -1,35 +1,30 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { notFound, redirect, useRouter } from "next/navigation";
-import TinyMCEEditor from "@/app/utils/tinymce";
-import {
-  UpdateTopic,
-  getTopicById,
-  postTopic,
-  postTopics,
-} from "@/app/lib/repo/topics_repo";
+import { redirect, useRouter } from "next/navigation";
+import { postTopics, TopicModel } from "@/app/roadmap/topics_roadmap";
 import { toast } from "sonner";
-import SelectSearch from "@/app/components/widgets/select_search";
 import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
-import { usePaginatedSWR, usePaginatedSWRAdmin } from "@/app/utils/fetcher";
-import { beforeImport, beforePost, isNull } from "@/app/utils/custom_helpers";
-import { SingleShimmer } from "@/app/components/shimmer";
-import FeaturedImage from "@/app/components/widgets/featuredImage";
+import {
+  beforeImport,
+  beforePost,
+  byDemo,
+  isNull,
+} from "@/app/utils/custom_helpers";
 import { FileModel } from "@/app/models/file_model";
-import { TopicModel } from "@/app/models/topic_model";
 import PostBasic from "@/app/components/forms/post_basic";
+
 import { customSlugify } from "@/app/utils/custom_slugify";
 
 export default function CreateTopic({ topData }) {
   const router = useRouter();
-  let [title, setTitle] = useState("");
-  let [description, setDescription] = useState("");
-  let [metaTitle, setMetaTitle] = useState("");
-  let [metaDesc, setMetaDesc] = useState("");
-  let [rankingScore, setRankingScore] = useState("");
-  let [ratingScore, setRatingScore] = useState("");
-  let [views, setViews] = useState("");
-  let [slug, setSlug] = useState("");
+  let [title, setTitle] = useState(byDemo);
+  let [description, setDescription] = useState(byDemo);
+  let [metaTitle, setMetaTitle] = useState(byDemo);
+  let [metaDesc, setMetaDesc] = useState(byDemo);
+  let [rankingScore, setRankingScore] = useState("0");
+  let [ratingScore, setRatingScore] = useState("0");
+  let [views, setViews] = useState("0");
+  let [slug, setSlug] = useState(customSlugify(byDemo()));
   let [featuredImagePath, setFeaturedImagePath] = useState("");
   let [selectedImage, setSelectedImage] = useState<FileModel>({});
   let [isUpdating, setIsUpdating] = useState(false);
@@ -41,7 +36,17 @@ export default function CreateTopic({ topData }) {
     `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`
   );
 
-  const data: any = {};
+  const data: any = {
+    title,
+    metaTitle,
+    metaDesc,
+    rankingScore,
+    ratingScore,
+    views,
+    slug,
+    description,
+    featuredImagePath,
+  };
 
   if (selectedImage.path) {
     data.featuredImagePath = `${selectedImage.path}/${selectedImage.slug}`;
@@ -87,13 +92,13 @@ export default function CreateTopic({ topData }) {
     try {
       const { data } = await postTopics([submitData], "no");
 
+      console.log(data);
       if (data.success) {
-        toast.success("topic created");
+        toast.success(data.msg);
         router.push("/dashboard/topics");
-      } else if (data.msg) {
-        toast.error(data.msg);
+        window.location.reload();
       } else {
-        toast.error("error creating topic");
+        toast.error(data.msg);
       }
     } catch (error) {
       console.log(error);

@@ -53,6 +53,7 @@ export const UserNavbar = () => {
                     alt="Your Company"
                     width={100}
                     height={100}
+                    priority
                   />
                 </div>
               </div>

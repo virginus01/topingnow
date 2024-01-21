@@ -13,6 +13,7 @@ export const NEXT_PUBLIC_GET_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get
 export const NEXT_PUBLIC_GET_POST = "/api/get/get_post";
 export const NEXT_PUBLIC_GET_POPULAR_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_popular_topics`;
 export const NEXT_PUBLIC_GET_IMPORTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_imports`;
+export const NEXT_PUBLIC_DELETE_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_topics`;
 
 //lists
 export const NEXT_PUBLIC_GET_POPULAR_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_popular_lists`;
@@ -41,7 +42,7 @@ export const NEXT_PUBLIC_GET_TEMPLATE = `${process.env.NEXT_PUBLIC_BASE_URL}/api
 export const NEXT_PUBLIC_POST_POST_STEPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_steps`;
 export const NEXT_PUBLIC_POST_UPDATE_STEPS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_steps`;
 
-//QnadA
+//QandA
 export const NEXT_PUBLIC_POST_POST_QANDAS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_qandas`;
 export const NEXT_PUBLIC_POST_UPDATE_QANDA = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_qanda`;
 export const NEXT_PUBLIC_GET_QANDAS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_qandas`;
@@ -50,7 +51,6 @@ export const NEXT_PUBLIC_DELETE_QANDA = `${process.env.NEXT_PUBLIC_BASE_URL}/api
 
 // Endpoints delete
 export const NEXT_PUBLIC_DELETE_IMPORT = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_import`;
-export const NEXT_PUBLIC_DELETE_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_topics`;
 export const NEXT_PUBLIC_DELETE_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_list`;
 
 // User

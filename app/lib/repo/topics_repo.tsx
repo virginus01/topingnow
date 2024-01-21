@@ -114,22 +114,9 @@ export async function justGetTopicWithEssentials(topicId: string, page = 1) {
 
 export async function postTopics(tData: any, isImport = "no") {
   try {
-    const slugs = tData.map((t) => customSlugify(t.slug));
-
-    // Fetch existing topics by slug
-    const topics = await Promise.all(slugs.map(getTopicById));
-
-    // Assign isDuplicate and id
     tData.forEach((t, i) => {
       tData[i].isUpdated = true;
       tData[i].isImport = isImport;
-      tData[i]._id = topics[i]._id ? topics[i]._id : null;
-
-      if (topics[i] === "not_found" || topics[i] === "undefined") {
-        tData[i].isDuplicate = false;
-        tData[i]._id = topics[i]._id ? topics[i]._id : null;
-        tData[i].isUpdated = false;
-      }
     });
     const url = `${NEXT_PUBLIC_POST_TOPICS}`;
 
@@ -145,11 +132,11 @@ export async function postTopics(tData: any, isImport = "no") {
     if (result.status === 200) {
       return await result.json();
     } else {
-      return { error: "Failed to fetch topic" };
+      return { status: false, msg: "Failed to fetch topic" };
     }
   } catch (error) {
     console.log(error);
-    return { error: "An error occurred while posting topics" };
+    return { status: false, msg: "An error occurred while posting topics" };
   }
 }
 
@@ -204,25 +191,27 @@ export async function UpdateTopic(tData: any) {
   }
 }
 
-export async function deleteTopics(_id) {
+export async function deleteTopics(_id: any) {
   try {
-    const url = `${NEXT_PUBLIC_DELETE_TOPICS}`;
+    const url = `${NEXT_PUBLIC_DELETE_TOPICS}?id=${_id}`;
 
     const formData = new FormData();
     formData.append("deleteData", JSON.stringify(_id));
 
-    const response = await fetch(url, {
-      method: "DELETE",
-      body: formData,
-    });
+    const response = await (
+      await fetch(url, {
+        method: "DELETE",
+        body: formData,
+      })
+    ).json();
 
-    if (response.status === 200) {
-      return await response.json();
+    if (response.data) {
+      return response;
     } else {
-      return { error: "Failed to delete topic" };
+      return { success: false, msg: "Failed to delete topic" };
     }
   } catch (error) {
-    return { error: "An error occurred while deleting topic" };
+    return { success: false, msg: `Failed to delete topic: ${error}` };
   }
 }
 

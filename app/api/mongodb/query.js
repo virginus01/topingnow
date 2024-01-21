@@ -869,7 +869,13 @@ export async function addTopics(data) {
 
     const result = await db.collection("topics").insertMany(data);
 
-    return { success: true, ids: result.insertedIds };
+
+    if (result.insertedCount > 0) {
+        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} inserted` };
+    } else {
+        return { success: false, ids: result.insertedIds, msg: `no data inserted` };
+    }
+
 }
 
 export async function addLists(data) {
@@ -959,12 +965,10 @@ export async function addImport(data) {
 //DELETE
 
 export async function removeTopics(id, topId, importId) {
-
-
     const db = await connectDB();
 
     let result;
-
+    const _id = new ObjectId(id);
 
     try {
 
@@ -986,18 +990,22 @@ export async function removeTopics(id, topId, importId) {
             result = await db.collection("topics").deleteMany({ topId: topId });
         }
 
-        if (id && isValidObjectId(id)) {
-            result = await db.collection("topics").deleteMany({ _id: new ObjectId(id) });
-            const delLists = await removeList(null, id, null);
+        if (id && isValidObjectId(_id)) {
+            result = await db.collection("topics").deleteMany({ _id: _id });
+            await removeList(null, id, null);
         }
 
 
     } catch (error) {
         console.log('Error removing topics:', error);
-        return 0;
+        return { success: false, msg: `${error}` };
     }
 
-    return result;
+    if (result.deletedCount > 0) {
+        return { success: true, msg: `successfully deleted`, data: result };
+    } else {
+        return { success: false, msg: `unknown error`, data: result };
+    }
 }
 
 

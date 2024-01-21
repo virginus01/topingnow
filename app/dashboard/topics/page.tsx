@@ -1,10 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import TabbedContents from "@/app/components/widgets/tabbed_contents";
-import TopicsView from "./topics_view";
-import CreateTopic from "./create_topic";
-
-export const dynamic = "force-dynamic";
+import { CreateTopic, TopicsView } from "../../roadmap/topics_roadmap";
 
 function Index() {
   const tabComponents = [
