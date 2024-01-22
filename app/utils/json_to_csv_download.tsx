@@ -1,7 +1,6 @@
 import Papa from "papaparse";
 
 export function JsonToCsvDownload(data: any) {
-  console.log(data);
   const csv = Papa.unparse(data, {
     delimiter: ",",
     quoteChar: '"',

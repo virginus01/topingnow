@@ -2,14 +2,11 @@
 import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Papa from "papaparse";
-import ProgressBar from "@/app/components/progress_bar";
-import { postTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
-import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
-import { beforePost } from "@/app/utils/custom_helpers";
+import { beforePost, dataToast } from "@/app/utils/custom_helpers";
+import { postTopics } from "@/app/roadmap/topics_roadmap";
 
-export const dynamic = "force-dynamic";
 
 const TopicsImport = (top_id) => {
   const [file, setFile] = useState(null);
@@ -29,12 +26,12 @@ const TopicsImport = (top_id) => {
 
     const title = data[0].title;
     const slug = data[0].slug;
-    const desc = data[0].desc;
-    const metaDesc = data[0].metaDesc;
+    const description = data[0].description;
+    const metaDescription = data[0].metaDescription;
     const metaTitle = data[0].metaTitle;
     const body = data[0].body;
 
-    const requiredFields = { title, slug, desc, metaDesc, metaTitle, body };
+    const requiredFields = { title, slug, description, metaDescription, metaTitle, body };
     const errors = beforePost(requiredFields);
 
     //check before post
@@ -76,18 +73,17 @@ const TopicsImport = (top_id) => {
       return;
     }
 
-    const result = await postTopics(topics);
+    const { success, msg, dataBody } = await postTopics(topics);
 
-    // Set progress
-    setProgress(values.length - 1);
+    if (success) {
+      // Set progress
+      setProgress(values.length - 1);
+      setCSV(dataBody);
+      setValuesEmpty(true);
+      setUploading(false);
+    }
 
-    setCSV(result.data);
-
-    setValuesEmpty(true);
-
-    setUploading(false);
-
-    toast.success(`${topics.length} topics imported`);
+    dataToast(success, msg);
   };
 
   const handleFileChange = (e) => {
@@ -129,7 +125,7 @@ const TopicsImport = (top_id) => {
       csv={csv}
       progress={progress}
       columnArray={columnArray}
-      compulsory="title|string, desc|string, slug|string"
+      compulsory="title|string, description|string, slug|string"
       importType="Topics"
     />
   );

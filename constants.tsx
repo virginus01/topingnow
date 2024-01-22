@@ -17,6 +17,7 @@ export const NEXT_PUBLIC_DELETE_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/ap
 
 //lists
 export const NEXT_PUBLIC_GET_POPULAR_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_popular_lists`;
+export const NEXT_PUBLIC_POST_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_lists`;
 
 //files
 export const NEXT_PUBLIC_GET_FILES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_files`;
@@ -27,7 +28,6 @@ export const NEXT_PUBLIC_POST_FILES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/p
 export const NEXT_PUBLIC_POST_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_topics`;
 export const NEXT_PUBLIC_POST_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/create_topic`;
 export const NEXT_PUBLIC_UPDATE_TOPIC = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_topic`;
-export const NEXT_PUBLIC_POST_LISTS = "/api/post/post_lists";
 export const NEXT_PUBLIC_POST_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_list`;
 export const NEXT_PUBLIC_UPDATE_LIST = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/update_list`;
 export const NEXT_PUBLIC_CREATE_IMPORT = "/api/post/create_import";

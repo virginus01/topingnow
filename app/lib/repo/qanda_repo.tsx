@@ -1,4 +1,3 @@
-import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_DELETE_QANDA,
   NEXT_PUBLIC_GET_QANDA,
@@ -33,46 +32,31 @@ export async function getQandA(id: string) {
     };
   }
 }
-export async function postQandAs(tData: any) {
+
+export async function postQandAs(
+  postData: any,
+  isImport = "no",
+  update = false
+) {
   try {
-    const slugs = tData.map((t) => customSlugify(t.slug));
-
-    // Fetch existing topics by slug
-    const topics = await Promise.all(slugs.map(getQandA));
-
-    // Assign isDuplicate and id
-    tData.forEach((t, i) => {
-      tData[i].isUpdated = true;
-      tData[i]._id = topics[i]._id ? topics[i]._id : null;
-      if (topics[i] === "not_found" || topics[i] === "undefined") {
-        tData[i].isDuplicate = false;
-        tData[i]._id = topics[i]._id ? topics[i]._id : null;
-        tData[i].isUpdated = false;
-        tData[i].body = tData[i].body ? JSON.stringify(tData[i].body) : [];
-      } else {
-        tData[i].body = [...JSON.parse(topics[i].body), ...tData[i].body];
-      }
-    });
-
     const url = `${NEXT_PUBLIC_POST_POST_QANDAS}`;
-
     let formData = new FormData();
-    formData.append("postData", JSON.stringify(tData));
+    formData.append("postData", JSON.stringify({ postData, isImport, update }));
 
-    const result = await fetch(url, {
-      cache: "no-store",
-      method: "POST",
-      body: formData,
-    });
+    console.log(postData);
 
-    if (result.status === 200) {
-      return await result.json();
-    } else {
-      return { error: "Failed to fetch topic" };
-    }
+    const result = await (
+      await fetch(url, {
+        cache: "no-store",
+        method: "POST",
+        body: formData,
+      })
+    ).json();
+
+    return result;
   } catch (error) {
     console.log(error);
-    return { error: "An error occurred while posting topics" };
+    return { success: false, msg: "An error occurred while posting list" };
   }
 }
 

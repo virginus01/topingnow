@@ -1,16 +1,10 @@
 "use client";
-import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Papa from "papaparse";
-import ProgressBar from "@/app/components/progress_bar";
-import { postTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
-import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
-import { postTemplates } from "@/app/lib/repo/templates_repo";
 import { postQandAs } from "@/app/lib/repo/qanda_repo";
-
-export const dynamic = "force-dynamic";
+import { dataToast, beforePost } from "@/app/utils/custom_helpers";
 
 const QandAsImport = ({ listId }) => {
   const [file, setFile] = useState(null);
@@ -28,13 +22,23 @@ const QandAsImport = ({ listId }) => {
 
     // Check criteria
 
-    if (!data[0].title || data[0].title == undefined) {
-      return toast.error("'title' field is not present");
+    // Check criteria
+    const title = data[0].title;
+    const slug = data[0].slug;
+    const description = data[0].description;
+    const metaDescription = data[0].metaDescription;
+    const metaTitle = data[0].metaTitle;
+    const body = data[0].body;
+
+    const requiredFields = { title, slug, description, metaDescription, metaTitle, body };
+    const errors = beforePost(requiredFields);
+
+    //check before post
+    if (errors !== true) {
+      return errors
     }
 
-    if (!data[0].body || data[0].body == undefined) {
-      return toast.error("'body' field is not present");
-    }
+
 
     if (!data) return;
     setUploading(true);
@@ -72,18 +76,17 @@ const QandAsImport = ({ listId }) => {
     }
 
 
-    const result = await postQandAs(topics);
+    const { success, msg, dataBody } = await postQandAs(topics);
 
-    // Set progress
-    setProgress(values.length - 1);
+    if (success) {
+      // Set progress
+      setProgress(values.length - 1);
+      setCSV(dataBody);
+      setValuesEmpty(true);
+      setUploading(false);
+    }
 
-    setCSV(result.response);
-
-    setValuesEmpty(true);
-
-    setUploading(false);
-
-    toast.success(`${topics.length} topics imported`);
+    dataToast(success, msg);
   };
 
   const handleFileChange = (e) => {

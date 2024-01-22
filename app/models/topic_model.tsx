@@ -13,7 +13,7 @@ export type TopicModel = {
   catId?: string | null;
   image?: string | null;
   metaTitle?: string | null;
-  metaDesc?: string | null;
+  metaDescription?: string | null;
   importId?: string | null;
   featuredImagePath?: string | null;
   rankingScore?: string | null;

@@ -5,9 +5,8 @@ import Loading from "@/app/dashboard/loading";
 import { NEXT_PUBLIC_GET_LIST, NEXT_PUBLIC_GET_TOPICS } from "@/constants";
 import { useSingleSWRAdmin } from "@/app/utils/fetcher";
 import TinyMCEEditor from "@/app/utils/tinymce";
-import { UpdateTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
-import { UpdateList } from "@/app/lib/repo/lists_repo";
+import { UpdateList, postLists } from "@/app/lib/repo/lists_repo";
 import { getS3Url } from "@/app/lib/repo/files_repo";
 import Image from "next/image";
 import { FileModel } from "@/app/models/file_model";
@@ -16,13 +15,14 @@ import FeaturedImage from "@/app/components/widgets/featuredImage";
 import PostBasic from "@/app/components/forms/post_basic";
 import { ListsModel } from "@/app/models/lists_model";
 import { SingleShimmer } from "@/app/components/shimmer";
+import { dataToast } from "@/app/utils/custom_helpers";
 
 export default function EditList({ params }: { params: { list_id: string } }) {
   const router = useRouter();
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
   let [metaTitle, setMetaTitle] = useState("");
-  let [metaDesc, setMetaDesc] = useState("");
+  let [metaDescription, setMetaDescription] = useState("");
   let [rankingScore, setRankingScore] = useState("");
   let [ratingScore, setRatingScore] = useState("");
   let [views, setViews] = useState("");
@@ -30,13 +30,13 @@ export default function EditList({ params }: { params: { list_id: string } }) {
   let [featuredImagePath, setFeaturedImagePath] = useState("/");
   let [selectedImage, setSelectedImage] = useState<FileModel>({});
   let [isUpdating, setIsUpdating] = useState(false);
-  const [selectedParent, setSelectedParent] = useState({} ?? SingleShimmer(1));
+  let [selectedParent, setSelectedParent] = useState<any>({});
 
   let [selectSearchUrl, setselectSearchUrl] = useState(
     `${NEXT_PUBLIC_GET_TOPICS}?page=${"1"}&perPage=${"10"}`
   );
 
-  const url = `${NEXT_PUBLIC_GET_LIST}?listId=${params.list_id}`;
+  const url = `${NEXT_PUBLIC_GET_LIST}?listId=${params.list_id}&process=no`;
 
   // Slice topics array for current page
   const { result, loading } = useSingleSWRAdmin(url);
@@ -58,10 +58,17 @@ export default function EditList({ params }: { params: { list_id: string } }) {
   }
   featuredImagePath = data.featuredImagePath;
 
+  if (selectedParent.title) {
+    data.selectedParent = selectedParent;
+    selectedParent = data.selectedParent;
+  } else {
+    selectedParent = data.topicData;
+  }
+
   const search = {
     selectSearchUrl,
     showParentSearch: true,
-    selectedParent: data.topicData,
+    selectedParent,
     isDisabled: true,
     label: "Select Topic",
   };
@@ -70,13 +77,13 @@ export default function EditList({ params }: { params: { list_id: string } }) {
     e.preventDefault();
 
     const basicData: ListsModel = {
-      title,
-      metaTitle,
-      metaDesc,
+      title: title ? title : data.title,
+      metaTitle: metaTitle ? metaTitle : data.metaTitle,
+      metaDescription,
       rankingScore,
       ratingScore,
       views,
-      slug,
+      slug: slug ? slug : data.slug,
       description,
       featuredImagePath,
     };
@@ -87,13 +94,9 @@ export default function EditList({ params }: { params: { list_id: string } }) {
     };
 
     try {
-      const response = await UpdateList(submitData);
-
-      if (response.data) {
-        toast.success(`${title} updated`);
-      } else {
-        toast.error(`${title} not updated`);
-      }
+      const { success, msg } = await postLists([submitData], "no", true);
+      dataToast(success, msg);
+      router.refresh();
     } catch (error) {
       console.log(error);
     }
@@ -110,7 +113,7 @@ export default function EditList({ params }: { params: { list_id: string } }) {
             data={data}
             setTitle={setTitle}
             setMetaTitle={setMetaTitle}
-            setMetaDesc={setMetaDesc}
+            setMetaDescription={setMetaDescription}
             setRankingScore={setRankingScore}
             setRatingScore={setRatingScore}
             setViews={setViews}
@@ -119,6 +122,14 @@ export default function EditList({ params }: { params: { list_id: string } }) {
             setSelectedImage={setSelectedImage}
             setSelectedParent={setSelectedParent}
           />
+          <div className="flex justify-end">
+            <button
+              className="bg-blue-500 text-white px-2 py-2 rounded"
+              type="submit"
+            >
+              Edit Topic
+            </button>
+          </div>
         </form>
       </div>
     </div>

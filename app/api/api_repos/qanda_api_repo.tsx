@@ -1,20 +1,26 @@
 import generateImportId from "@/app/lib/repo/import_repo";
 import { TopicModel } from "@/app/models/topic_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
-import { NEXT_PUBLIC_GET_TOPIC, NEXT_PUBLIC_UPDATE_TOPIC } from "@/constants";
-import { addTopics } from "../mongodb/query";
+import {
+  NEXT_PUBLIC_GET_QANDA,
+  NEXT_PUBLIC_GET_TOPIC,
+  NEXT_PUBLIC_POST_UPDATE_QANDA,
+  NEXT_PUBLIC_UPDATE_TOPIC,
+} from "@/constants";
+import { addQandAs, addTopics } from "../mongodb/query";
 import { isNull } from "@/app/utils/custom_helpers";
 import { checkSinglePost } from "./check_single_post";
 import { PostData } from "./post_data";
+import { QandAModel } from "@/app/models/qanda_model";
 
-export async function postTopics(formData: any) {
+export async function postQandaApi(formData: any) {
   try {
     const { postData, isImport, update } = JSON.parse(formData.get("postData"));
     const data: any[] = [];
     const updatedData: any[] = [];
 
     if (postData.length === 1) {
-      const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${customSlugify(
+      const url = `${NEXT_PUBLIC_GET_QANDA}?id=${customSlugify(
         postData[0].slug
       )}`;
       const check = await checkSinglePost(postData, url, update);
@@ -27,29 +33,16 @@ export async function postTopics(formData: any) {
       let postSlug = customSlugify(post.slug);
       let _id = post._id ? post._id : postSlug;
 
-      const tData: TopicModel = {
+      const tData: QandAModel = {
         title: post.title,
-        description: post.description,
         body: post.body,
+        steps: post.steps,
+        listId: post.listId,
         createdAt: new Date(),
-        updatedAt: post.updatedAt,
-        topId: post.topId,
-        status: post.status,
-        subTitle: post.subTitle,
         slug: postSlug,
-        catId: post.catId,
-        image: post.image,
-        metaTitle: post.metaTitle,
-        metaDescription: post.metaDescription,
-        importId: post.importId,
-        featuredImagePath: post.featuredImagePath,
-        rankingScore: post.rankingScore,
-        ratingScore: post.ratingScore,
-        views: post.views,
-        selectedImage: post.selectedImage,
       };
 
-      const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${_id}`;
+      const url = `${NEXT_PUBLIC_GET_QANDA}?id=${_id}`;
       const result = await (
         await fetch(url, {
           next: {
@@ -66,7 +59,7 @@ export async function postTopics(formData: any) {
           const formData = new FormData();
           tData._id = result.data._id;
           formData.append("updateData", JSON.stringify(tData));
-          const url = `${NEXT_PUBLIC_UPDATE_TOPIC}`;
+          const url = `${NEXT_PUBLIC_POST_UPDATE_QANDA}`;
           const response = await (
             await fetch(url, {
               cache: "no-store",
@@ -81,6 +74,7 @@ export async function postTopics(formData: any) {
           updatedData.push(tData);
         } else {
           tData.isUpdated = false;
+          tData.body = JSON.stringify(tData.body);
           tData.msg = "success";
           data.push(tData);
           updatedData.push(tData);
@@ -96,7 +90,7 @@ export async function postTopics(formData: any) {
 
     try {
       await Promise.all(promises);
-      res = await PostData(data, updatedData, () => addTopics(data), isImport);
+      res = await PostData(data, updatedData, () => addQandAs(data), isImport);
     } catch (e) {
       console.error("Error:", e);
       return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };

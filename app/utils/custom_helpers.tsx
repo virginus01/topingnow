@@ -71,7 +71,7 @@ export function byDemo() {
   return res;
 }
 
-export function dProcess(text, type = "none") {
+export function defaultProcess(text, type = "none") {
   let output;
   try {
     output = text;
@@ -101,24 +101,24 @@ export async function dataProcess(text, type = "none") {
       if (Array.isArray(text)) {
         for (let t of text) {
           try {
-            t.title = await tProcess(t.title, type);
+            t.title = await tProcess(t.title, type, text);
           } catch (error) {
             console.log(error);
           }
           try {
-            t.description = await tProcess(t.description, type);
+            t.description = await tProcess(t.description, type, text);
           } catch (error) {
             console.log(error);
           }
         }
       } else {
         try {
-          text.title = await tProcess(text.title, type);
+          text.title = await tProcess(text.title, type, text);
         } catch (error) {
           console.log(error);
         }
         try {
-          text.description = await tProcess(text.description, type);
+          text.description = await tProcess(text.description, type, text);
         } catch (error) {
           console.log(error);
         }
@@ -131,9 +131,9 @@ export async function dataProcess(text, type = "none") {
   return text;
 }
 
-export async function tProcess(text, type = "none") {
+export async function tProcess(text, type = "none", data) {
   if (!isNull(text)) {
-    text = await dProcess(text, type);
+    text = await defaultProcess(text, type);
 
     const regex = /\{([^}]*)\}/g; // Match words within curly braces
 
@@ -153,6 +153,9 @@ export async function tProcess(text, type = "none") {
     let description = text;
 
     for (let i = 0; i < extractedWords.length; i++) {
+      if (extractedWords[i] == "{top}" && data.topData) {
+        description = description.replace(extractedWords[i], data.topData.top);
+      }
       if (temps[i] != "not_found") {
         const { title, body } = temps[i];
         const bodyD = JSON.parse(body);
@@ -173,6 +176,14 @@ export async function tProcess(text, type = "none") {
 
 export function removeById(data, id) {
   return data.filter((item) => item._id !== id);
+}
+
+export function dataToast(success, msg) {
+  if (success == true) {
+    return toast.success(`${msg}`);
+  } else {
+    return toast.error(`${msg}`);
+  }
 }
 
 async function getRandomDataBody(body) {
@@ -307,8 +318,8 @@ export function beforeUpdate(updateData, uData) {
     uData.metaTitle = updateData.metaTitle;
   }
 
-  if (!isNull(updateData.metaDesc)) {
-    uData.metaDesc = updateData.metaDesc;
+  if (!isNull(updateData.metaDescription)) {
+    uData.metaDescription = updateData.metaDescription;
   }
 
   if (!isNull(updateData.importId)) {

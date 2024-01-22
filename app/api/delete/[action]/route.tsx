@@ -43,7 +43,7 @@ export async function DELETE(request, { params }) {
 
     if (action === "delete_topics") {
       const data = await deleteTopics(id);
-      return new Response(JSON.stringify({ data }), {
+      return new Response(JSON.stringify(data), {
         status: 200,
         headers: headers,
       });

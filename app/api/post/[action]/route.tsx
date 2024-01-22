@@ -8,19 +8,15 @@ import {
   addTemplate,
   addQandAs,
   updateAQandA,
-  addTops,
   updateATop,
   addFiles,
 } from "@/app/api/mongodb/query";
 
 import { TopicModel } from "@/app/models/topic_model";
-import { ListsModel } from "@/app/models/lists_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_POST_UPDATE_QANDA,
   NEXT_PUBLIC_POST_UPDATE_TEMPLATE,
-  NEXT_PUBLIC_UPDATE_LIST,
-  NEXT_PUBLIC_UPDATE_TOP,
 } from "@/constants";
 import { beforeUpdate, isNull } from "@/app/utils/custom_helpers";
 import { TempModel } from "@/app/models/templates_model";
@@ -29,6 +25,9 @@ import { TopModel } from "@/app/models/top_model";
 import generateImportId from "@/app/lib/repo/import_repo";
 import { FileModel } from "@/app/models/file_model";
 import { postTopics } from "../../api_repos/topics_api_repo";
+import { postTops } from "../../api_repos/tops_api_repo";
+import { ListsModel, postLists } from "@/app/roadmap/lists_roadmap";
+import { postQandaApi } from "../../api_repos/qanda_api_repo";
 
 export async function POST(
   request: Request,
@@ -46,7 +45,7 @@ export async function POST(
   //creating topics
   if (action == "post_tops") {
     const data = await postTops(formData);
-    return new Response(JSON.stringify({ data }), {
+    return new Response(JSON.stringify(data), {
       status: 200,
       headers: headers,
     });
@@ -64,7 +63,7 @@ export async function POST(
   //creating topics
   if (action == "post_topics") {
     const data = await postTopics(formData);
-    return new Response(JSON.stringify({ data }), {
+    return new Response(JSON.stringify(data), {
       status: 200,
       headers: headers,
     });
@@ -73,7 +72,6 @@ export async function POST(
   //creating topics
   if (action == "update_topic") {
     const data = await updateTopic(formData);
-
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -83,16 +81,7 @@ export async function POST(
   //creating list
   if (action == "post_lists") {
     const data = await postLists(formData);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //creating list
-  if (action == "post_list") {
-    const data = await postList(formData);
-    return new Response(JSON.stringify({ data }), {
+    return new Response(JSON.stringify(data), {
       status: 200,
       headers: headers,
     });
@@ -135,8 +124,8 @@ export async function POST(
   }
 
   if (action == "post_qandas") {
-    const data = await postQandAs(formData);
-    return new Response(JSON.stringify({ data }), {
+    const data = await postQandaApi(formData);
+    return new Response(JSON.stringify(data), {
       status: 200,
       headers: headers,
     });
@@ -241,7 +230,7 @@ async function postList(formData: any) {
     subTitle: "",
     catId: "",
     image: "",
-    metaDesc: "",
+    metaDescription: "",
     metaTitle: "",
   };
 
@@ -357,58 +346,6 @@ async function postTemplates(formData: any) {
   }
 }
 
-async function postQandAs(formData: any) {
-  const postData = JSON.parse(formData.get("postData"));
-
-  const data: QandAModel[] = new Array();
-
-  postData.map(async (post) => {
-    let postSlug = customSlugify(post.slug);
-
-    const tData: QandAModel = {
-      title: post.title,
-      body: post.body,
-      listId: post.listId,
-      createdAt: new Date(),
-      slug: postSlug,
-    };
-
-    if (post.isDuplicate === true) {
-      const formData = new FormData();
-      tData._id = post._id;
-      formData.append("updateData", JSON.stringify(tData));
-      const url = `${NEXT_PUBLIC_POST_UPDATE_QANDA}`;
-      try {
-        const response = await fetch(url, {
-          cache: "no-store",
-          method: "POST",
-          body: formData,
-        });
-        const result = await response.json();
-      } catch (error) {
-        console.log("error 7464664");
-      }
-    } else {
-      data.push(tData);
-    }
-  });
-
-  try {
-    if (Array.isArray(data) && data !== null && data.length > 0) {
-      const importId = await generateImportId("test", data);
-      data.map((im, i) => {
-        data[i].importId = importId;
-      });
-
-      return await addQandAs(data);
-    }
-    return { success: true };
-  } catch (e) {
-    console.log(`error 774764 ${e}`);
-    return { success: false };
-  }
-}
-
 async function postFiles(formData: any) {
   const postData = JSON.parse(formData.get("postData"));
 
@@ -435,125 +372,5 @@ async function postFiles(formData: any) {
     return postData;
   } catch {
     return "4773646 error";
-  }
-}
-
-async function postTops(formData: any) {
-  const postData = JSON.parse(formData.get("postData"));
-
-  const data: TopModel[] = new Array();
-  const dataUpdate: TopModel[] = new Array();
-
-  postData.map(async (post) => {
-    let postSlug = customSlugify(post.slug, "-", "no");
-
-    const tData: TopModel = {
-      title: post.title,
-      body: post.body,
-      createdAt: new Date(),
-      slug: postSlug,
-    };
-
-    if (post.isDuplicate === true) {
-      const formData = new FormData();
-      tData._id = post._id;
-      formData.append("updateData", JSON.stringify(tData));
-      const url = `${NEXT_PUBLIC_UPDATE_TOP}`;
-      try {
-        const response = await fetch(url, {
-          cache: "no-store",
-          method: "POST",
-          body: formData,
-        });
-        const result = await response.json();
-
-        dataUpdate.push(tData);
-      } catch (error) {
-        console.log("error 7464664");
-      }
-    } else {
-      data.push(tData);
-    }
-  });
-
-  try {
-    if (Array.isArray(data) && data !== null && data.length > 0) {
-      const importId = await generateImportId(`${Date} top`, data);
-      data.map((im, i) => {
-        data[i].importId = importId;
-      });
-
-      return await addTops(data);
-    }
-
-    return { success: true, ids: [], data: dataUpdate };
-  } catch (e) {
-    console.log(`474646 error ${e}`);
-    return { success: true, ids: [], data: {} };
-  }
-}
-
-async function postLists(formData: any) {
-  const postData = JSON.parse(formData.get("postData"));
-
-  const data: ListsModel[] = new Array();
-
-  postData.map(async (post, i) => {
-    let postSlug = customSlugify(post.slug);
-
-    const tData: ListsModel = {
-      title: post.title,
-      _id: post._id,
-      description: post.description,
-      body: post.body,
-      createdAt: new Date(),
-      updatedAt: post.updatedAt,
-      topicId: post.topicId,
-      status: post.status,
-      subTitle: post.subTitle,
-      slug: postSlug,
-      catId: post.catId,
-      image: post.image,
-      metaTitle: post.metaTitle,
-      metaDesc: post.metaDesc,
-      importId: post.importId,
-      featuredImagePath: post.featuredImagePath,
-      rankingScore: post.rankingScore,
-      ratingScore: post.ratingScore,
-      views: post.views,
-      selectedImage: post.selectedImage,
-    };
-
-    if (post.isDuplicate) {
-      const formData = new FormData();
-      formData.append("_id", post._id);
-      formData.append("updateData", JSON.stringify(tData));
-      const url = `${NEXT_PUBLIC_UPDATE_LIST}`;
-      const response = await fetch(url, {
-        cache: "no-store",
-        method: "POST",
-        body: formData,
-      });
-    } else {
-      data.push(tData);
-    }
-  });
-
-  try {
-    if (Array.isArray(data) && data !== null && data.length > 0) {
-      if (postData[0].isImport === "yes") {
-        const importId = await generateImportId("test", data);
-        data.map((im, i) => {
-          data[i].importId = importId;
-        });
-      }
-
-      return await addLists(data);
-    }
-
-    return { success: true, ids: [] };
-  } catch (e) {
-    console.log(`error 983744664 ${e}`);
-    return { success: false, ids: [] };
   }
 }

@@ -25,16 +25,21 @@ export default function SelectSearch({
   function handleOnChange(e) {
     onChange(e), setQuery(e.target.value);
   }
+
   return (
     <div className="block text-sm font-medium leading-6 text-gray-900">
-      <Combobox value={selected} onChange={setSelected} disabled={isDisabled}>
+      <Combobox
+        value={(selected && selected.title) || ""}
+        onChange={setSelected}
+        disabled={isDisabled}
+      >
         <div className="relative mt-2">
           <Combobox.Label> {label}</Combobox.Label>
           <div className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 mt-2 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
             <Combobox.Input
               className="w-full px-1 border-none outline-none appearance-none"
-              displayValue={selected.title ?? label}
-              placeholder={selected.title ?? "search...."}
+              displayValue={(selected && selected.title) || label}
+              placeholder={(selected && selected.title) || "search...."}
               onChange={handleOnChange}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">

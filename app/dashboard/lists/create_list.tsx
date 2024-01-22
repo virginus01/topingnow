@@ -8,21 +8,23 @@ import PostBasic from "@/app/components/forms/post_basic";
 import { FileModel } from "@/app/models/file_model";
 import { TopicModel } from "@/app/models/topic_model";
 import { ListsModel } from "@/app/models/lists_model";
+import { beforePost, byDemo, dataToast } from "@/app/utils/custom_helpers";
+import { customSlugify } from "@/app/utils/custom_slugify";
 
 export default function CreateList({ topicData }) {
   const router = useRouter();
-  let [title, setTitle] = useState("");
-  let [description, setDescription] = useState("");
-  let [metaTitle, setMetaTitle] = useState("");
-  let [metaDesc, setMetaDesc] = useState("");
+  let [title, setTitle] = useState(byDemo);
+  let [description, setDescription] = useState(byDemo);
+  let [metaTitle, setMetaTitle] = useState(byDemo);
+  let [metaDescription, setMetaDescription] = useState(byDemo);
   let [rankingScore, setRankingScore] = useState("");
   let [ratingScore, setRatingScore] = useState("");
   let [views, setViews] = useState("");
-  let [slug, setSlug] = useState("");
+  let [slug, setSlug] = useState(customSlugify(byDemo()));
   let [featuredImagePath, setFeaturedImagePath] = useState("");
   let [selectedImage, setSelectedImage] = useState<FileModel>({});
   let [isUpdating, setIsUpdating] = useState(false);
-  let [selectedParent, setSelectedParent] = useState<TopicModel>({});
+  let [selectedParent, setSelectedParent] = useState<any>(topicData ?? {});
   const [page, setPage] = useState(1);
   const perPage = 5;
 
@@ -30,7 +32,18 @@ export default function CreateList({ topicData }) {
     `${NEXT_PUBLIC_GET_TOPICS}?page=${"1"}&perPage=${"10"}`
   );
 
-  const data: any = {};
+  const data: any = {
+    title,
+    metaTitle,
+    metaDescription,
+    rankingScore,
+    ratingScore,
+    views,
+    slug,
+    description,
+    featuredImagePath,
+    update: false,
+  };
 
   if (selectedImage.path) {
     data.featuredImagePath = `${selectedImage.path}/${selectedImage.slug}`;
@@ -43,34 +56,44 @@ export default function CreateList({ topicData }) {
     selectedParent = data.selectedParent;
   }
 
-  console.log(slug);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const topicId = data.selectedParent._id;
     const basicData: ListsModel = {
       title,
       metaTitle,
-      metaDesc,
+      metaDescription,
       rankingScore,
       ratingScore,
       views,
       slug,
       description,
       featuredImagePath,
+      topicId,
     };
+
+    const requiredFields = { title, slug, metaTitle, topicId, metaDescription };
+
+    const errors = beforePost(requiredFields);
+
+    if (errors !== true) {
+      return errors;
+    }
+
     const submitData = {
-      topicId: data._id,
+      _id: "",
       ...basicData,
     };
 
     try {
-      const { data } = await postLists([submitData], "no");
-      console.log(data);
-      if (data.success) {
-        toast.success("list created");
+      const { success, msg } = await postLists([submitData], "no");
+
+      dataToast(success, msg);
+
+      if (success) {
         router.push("/dashboard/lists");
-      } else {
-        toast.error("error creating list");
+        window.location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -89,13 +112,13 @@ export default function CreateList({ topicData }) {
     <div className="space-y-12">
       <div className="border-b border-gray-900/10 pb-12">
         <p className="my-10">Topic: {title}</p>
-        <form method="POST" className=" px-1" onSubmit={handleSubmit}>
+        <form method="POST" className="px-1" onSubmit={handleSubmit}>
           <PostBasic
             search={search}
             data={data}
             setTitle={setTitle}
             setMetaTitle={setMetaTitle}
-            setMetaDesc={setMetaDesc}
+            setMetaDescription={setMetaDescription}
             setRankingScore={setRankingScore}
             setRatingScore={setRatingScore}
             setViews={setViews}
@@ -104,6 +127,15 @@ export default function CreateList({ topicData }) {
             setSelectedImage={setSelectedImage}
             setSelectedParent={setSelectedParent}
           />
+
+          <div className="flex justify-end">
+            <button
+              className="bg-blue-500 text-white px-2 py-2 rounded"
+              type="submit"
+            >
+              Create List
+            </button>
+          </div>
         </form>
       </div>
     </div>

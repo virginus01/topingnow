@@ -274,6 +274,7 @@ export function customSlugify(
     "thru",
     "thus",
     "to",
+    "want",
     "together",
     "too",
     "top",

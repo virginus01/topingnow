@@ -5,7 +5,6 @@ import Loading from "@/app/dashboard/loading";
 import { NEXT_PUBLIC_GET_TOPIC, NEXT_PUBLIC_GET_TOPS } from "@/constants";
 import { useSingleSWRAdmin } from "@/app/utils/fetcher";
 import TinyMCEEditor from "@/app/utils/tinymce";
-import { UpdateTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import { TopicModel } from "@/app/models/topic_model";
 import MediaModal from "@/app/dashboard/media/media_modal";
@@ -16,7 +15,8 @@ import Image from "next/image";
 import FeaturedImage from "@/app/components/widgets/featuredImage";
 import { SingleShimmer } from "@/app/components/shimmer";
 import PostBasic from "@/app/components/forms/post_basic";
-import { isNull } from "@/app/utils/custom_helpers";
+import { dataToast, isNull } from "@/app/utils/custom_helpers";
+import { postTopics } from "@/app/roadmap/topics_roadmap";
 
 export default function FromTopic({
   params,
@@ -27,7 +27,7 @@ export default function FromTopic({
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
   let [metaTitle, setMetaTitle] = useState("");
-  let [metaDesc, setMetaDesc] = useState("");
+  let [metaDescription, setMetaDescription] = useState("");
   let [rankingScore, setRankingScore] = useState("");
   let [ratingScore, setRatingScore] = useState("");
   let [views, setViews] = useState("");
@@ -55,6 +55,7 @@ export default function FromTopic({
   }
 
   const data = result;
+  data.update = true;
 
   if (selectedImage.path) {
     data.featuredImagePath = `${selectedImage.path}/${selectedImage.slug}`;
@@ -68,14 +69,14 @@ export default function FromTopic({
     data.selectedParent = selectedParent;
     selectedParent = data.selectedParent;
   } else {
-    selectedParent = data.topicTop;
+    selectedParent = data.topData;
   }
 
   const search = {
     selectSearchUrl,
     showParentSearch: true,
     selectedParent,
-    isDisabled: false,
+    isDisabled: true,
     label: "Select Top",
   };
 
@@ -83,13 +84,14 @@ export default function FromTopic({
     e.preventDefault();
 
     const basicData: TopicModel = {
-      title,
-      metaTitle,
-      metaDesc,
+      _id: data._id,
+      title: title ? title : data.title,
+      metaTitle: metaTitle ? metaTitle : data.metaTitle,
+      metaDescription,
       rankingScore,
       ratingScore,
       views,
-      slug,
+      slug: slug ? slug : data.slug,
       description,
       featuredImagePath,
       topId: selectedParent._id,
@@ -101,11 +103,9 @@ export default function FromTopic({
     };
 
     try {
-      const { data } = await UpdateTopic(submitData);
-
-      if (data.success) {
-        toast.success(`${title} updated`);
-      }
+      const { success, msg } = await postTopics([submitData], "no", true);
+      dataToast(success, msg);
+      router.refresh();
     } catch (error) {
       console.log(error);
     }
@@ -121,7 +121,7 @@ export default function FromTopic({
             data={data}
             setTitle={setTitle}
             setMetaTitle={setMetaTitle}
-            setMetaDesc={setMetaDesc}
+            setMetaDescription={setMetaDescription}
             setRankingScore={setRankingScore}
             setRatingScore={setRatingScore}
             setViews={setViews}
@@ -130,6 +130,14 @@ export default function FromTopic({
             setSelectedImage={setSelectedImage}
             setSelectedParent={setSelectedParent}
           />
+          <div className="flex justify-end">
+            <button
+              className="bg-blue-500 text-white px-2 py-2 rounded"
+              type="submit"
+            >
+              Edit Topic
+            </button>
+          </div>
         </form>
       </div>
     </div>

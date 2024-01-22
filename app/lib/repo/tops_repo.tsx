@@ -63,28 +63,12 @@ export async function getTop(id: string) {
   }
 }
 
-export async function postTops(tData: any) {
+export async function postTops(postData: any, isImport = "no", update = false) {
   try {
-    const slugs = tData.map((t) => customSlugify(t.slug, "-", "no"));
-
-    // Fetch existing topics by slug
-    const topics = await Promise.all(slugs.map(getTop));
-
-    // Assign isDuplicate and id
-    tData.forEach((t, i) => {
-      tData[i].isUpdated = true;
-      tData[i]._id = topics[i]._id ? topics[i]._id : null;
-
-      if (topics[i] === "not_found" || topics[i] === "undefined") {
-        tData[i].isDuplicate = false;
-        tData[i]._id = topics[i]._id ? topics[i]._id : null;
-        tData[i].isUpdated = false;
-      }
-    });
     const url = `${NEXT_PUBLIC_POST_TOPS}`;
 
     let formData = new FormData();
-    formData.append("postData", JSON.stringify(tData));
+    formData.append("postData", JSON.stringify({ postData, isImport, update }));
 
     const result = await fetch(url, {
       cache: "no-store",
@@ -92,14 +76,10 @@ export async function postTops(tData: any) {
       body: formData,
     });
 
-    if (result.status === 200) {
-      return await result.json();
-    } else {
-      return { error: "Failed to fetch topic" };
-    }
+    return await result.json();
   } catch (error) {
     console.log(error);
-    return { error: "An error occurred while posting topics" };
+    return { status: false, msg: "An error occurred while posting tops" };
   }
 }
 

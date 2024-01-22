@@ -15,7 +15,7 @@ import ConfirmAction from "@/app/components/widgets/confirm";
 import { toast } from "sonner";
 import { ActionButtons } from "@/app/components/widgets/action_buttons";
 import { deleteTopics } from "@/app/lib/repo/topics_repo";
-import { removeById } from "@/app/utils/custom_helpers";
+import { dataToast, removeById } from "@/app/utils/custom_helpers";
 import Shimmer from "@/app/components/shimmer";
 import DataTable from "@/app/components/widgets/data_table";
 import { TopicModel } from "@/app/models/topic_model";
@@ -67,13 +67,8 @@ export default function TopicsView({ topId }) {
     const updatedImports = removeById(data, _id);
     setData(updatedImports);
 
-    const res = await deleteTopics(_id);
-
-    if (res.data.success == true) {
-      toast.success(`${res.data.msg}`);
-    } else {
-      toast.error(`${res.data.msg}`);
-    }
+    const { success, msg } = await deleteTopics(_id);
+    dataToast(success, msg);
   }
   async function viewAction(slug: string) {
     router.push(`/${slug}`);

@@ -13,7 +13,7 @@ export type ListsModel = {
   catId?: string | null;
   image?: string | null;
   metaTitle?: string | null;
-  metaDesc?: string | null;
+  metaDescription?: string | null;
   importId?: string | null;
   rankingScore?: string | null;
   ratingScore?: string | null;

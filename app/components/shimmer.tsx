@@ -6,6 +6,7 @@ export default function Shimmer(length: number) {
     slug: "#",
     postSlug: "#",
     body: [],
+    topTopics: {},
     extraClass: "bg-gray-200 animate-pulse px-2 w-full text-transparent",
   }));
 }

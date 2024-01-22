@@ -51,7 +51,7 @@ export const BodyList = ({ bodies, setBodies }) => (
                   }}
                   className="bg-red-500 text-white px-2 py-1 rounded"
                 >
-                  Delete
+                  remove
                 </button>
               </div>
             </div>

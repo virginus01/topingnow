@@ -1,4 +1,5 @@
 export type TopModel = {
+  [key: string]: string | Date | any | null | undefined;
   title?: string | null;
   _id?: string | null;
   top?: string | null;
@@ -11,6 +12,6 @@ export type TopModel = {
   slug?: string | null;
   image?: string | null;
   metaTitle?: string | null;
-  metaDescriptio?: string | null;
+  metaDescription?: string | null;
   importId?: string | null;
 };

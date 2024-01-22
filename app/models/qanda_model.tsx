@@ -1,4 +1,5 @@
 export type QandAModel = {
+  [key: string]: string | Date | any | null | undefined;
   title?: string | null;
   description?: string | null;
   _id?: string | null;

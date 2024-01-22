@@ -11,6 +11,7 @@ import {
   NEXT_PUBLIC_GET_LISTS,
   NEXT_PUBLIC_GET_POPULAR_LISTS,
   NEXT_PUBLIC_POST_LISTS,
+  NEXT_PUBLIC_POST_TOPICS,
   NEXT_PUBLIC_UPDATE_LIST,
 } from "@/constants";
 
@@ -68,46 +69,6 @@ export async function getListById(id: string) {
   }
 }
 
-export async function postLists(lData: any, isImport = "yes") {
-  try {
-    const slugs = lData.map((t) => customSlugify(t.slug));
-
-    const lists = await Promise.all(slugs.map(getListById));
-
-    lData.forEach((t, i) => {
-      lData[i].isUpdated = true;
-      lData[i].isImport = isImport;
-      lData[i]._id = lists[i]._id ? lists[i]._id : null;
-      if (lists[i] === "not_found" || lists[i] === "undefined") {
-        lData[i].isDuplicate = false;
-        lData[i]._id = lists[i]._id ? lists[i]._id : null;
-        lData[i].isUpdated = false;
-      }
-    });
-
-    console.log(lData);
-
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}${NEXT_PUBLIC_POST_LISTS}`;
-
-    let formData = new FormData();
-    formData.append("postData", JSON.stringify(lData));
-
-    const response = await fetch(url, {
-      cache: "no-store",
-      method: "POST",
-      body: formData,
-    });
-
-    if (response.status === 200) {
-      return await response.json();
-    } else {
-      return { error: "Failed to fetch lists" };
-    }
-  } catch (error) {
-    return { error: "An error occurred while fetching lists" };
-  }
-}
-
 export async function UpdateList(tData: any) {
   try {
     const url = `${NEXT_PUBLIC_UPDATE_LIST}`;
@@ -129,6 +90,31 @@ export async function UpdateList(tData: any) {
   } catch (error) {
     console.log(error);
     return { error: "An error occurred while updating list" };
+  }
+}
+
+export async function postLists(
+  postData: any,
+  isImport = "no",
+  update = false
+) {
+  try {
+    const url = `${NEXT_PUBLIC_POST_LISTS}`;
+    let formData = new FormData();
+    formData.append("postData", JSON.stringify({ postData, isImport, update }));
+
+    const result = await (
+      await fetch(url, {
+        cache: "no-store",
+        method: "POST",
+        body: formData,
+      })
+    ).json();
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    return { success: false, msg: "An error occurred while posting list" };
   }
 }
 

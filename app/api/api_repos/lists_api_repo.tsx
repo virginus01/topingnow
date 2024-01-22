@@ -1,20 +1,23 @@
-import generateImportId from "@/app/lib/repo/import_repo";
 import { TopicModel } from "@/app/models/topic_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
-import { NEXT_PUBLIC_GET_TOPIC, NEXT_PUBLIC_UPDATE_TOPIC } from "@/constants";
-import { addTopics } from "../mongodb/query";
+import {
+  NEXT_PUBLIC_GET_LIST,
+  NEXT_PUBLIC_GET_TOPIC,
+  NEXT_PUBLIC_UPDATE_LIST,
+} from "@/constants";
+import { addLists, addTopics } from "../mongodb/query";
 import { isNull } from "@/app/utils/custom_helpers";
 import { checkSinglePost } from "./check_single_post";
 import { PostData } from "./post_data";
 
-export async function postTopics(formData: any) {
+export async function postLists(formData: any) {
   try {
     const { postData, isImport, update } = JSON.parse(formData.get("postData"));
     const data: any[] = [];
     const updatedData: any[] = [];
 
     if (postData.length === 1) {
-      const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${customSlugify(
+      const url = `${NEXT_PUBLIC_GET_LIST}?listId=${customSlugify(
         postData[0].slug
       )}`;
       const check = await checkSinglePost(postData, url, update);
@@ -33,7 +36,7 @@ export async function postTopics(formData: any) {
         body: post.body,
         createdAt: new Date(),
         updatedAt: post.updatedAt,
-        topId: post.topId,
+        topicId: post.topicId,
         status: post.status,
         subTitle: post.subTitle,
         slug: postSlug,
@@ -49,7 +52,7 @@ export async function postTopics(formData: any) {
         selectedImage: post.selectedImage,
       };
 
-      const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${_id}`;
+      const url = `${NEXT_PUBLIC_GET_LIST}?listId=${_id}`;
       const result = await (
         await fetch(url, {
           next: {
@@ -66,7 +69,7 @@ export async function postTopics(formData: any) {
           const formData = new FormData();
           tData._id = result.data._id;
           formData.append("updateData", JSON.stringify(tData));
-          const url = `${NEXT_PUBLIC_UPDATE_TOPIC}`;
+          const url = `${NEXT_PUBLIC_UPDATE_LIST}`;
           const response = await (
             await fetch(url, {
               cache: "no-store",
@@ -96,7 +99,7 @@ export async function postTopics(formData: any) {
 
     try {
       await Promise.all(promises);
-      res = await PostData(data, updatedData, () => addTopics(data), isImport);
+      res = await PostData(data, updatedData, () => addLists(data), isImport);
     } catch (e) {
       console.error("Error:", e);
       return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };

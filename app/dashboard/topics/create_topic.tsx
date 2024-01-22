@@ -8,6 +8,7 @@ import {
   beforeImport,
   beforePost,
   byDemo,
+  dataToast,
   isNull,
 } from "@/app/utils/custom_helpers";
 import { FileModel } from "@/app/models/file_model";
@@ -20,7 +21,7 @@ export default function CreateTopic({ topData }) {
   let [title, setTitle] = useState(byDemo);
   let [description, setDescription] = useState(byDemo);
   let [metaTitle, setMetaTitle] = useState(byDemo);
-  let [metaDesc, setMetaDesc] = useState(byDemo);
+  let [metaDescription, setMetaDescription] = useState(byDemo);
   let [rankingScore, setRankingScore] = useState("0");
   let [ratingScore, setRatingScore] = useState("0");
   let [views, setViews] = useState("0");
@@ -39,13 +40,14 @@ export default function CreateTopic({ topData }) {
   const data: any = {
     title,
     metaTitle,
-    metaDesc,
+    metaDescription,
     rankingScore,
     ratingScore,
     views,
     slug,
     description,
     featuredImagePath,
+    update: false,
   };
 
   if (selectedImage.path) {
@@ -66,7 +68,7 @@ export default function CreateTopic({ topData }) {
     const basicData: TopicModel = {
       title,
       metaTitle,
-      metaDesc,
+      metaDescription,
       rankingScore,
       ratingScore,
       views,
@@ -76,7 +78,7 @@ export default function CreateTopic({ topData }) {
       topId,
     };
 
-    const requiredFields = { title, slug, metaTitle, topId, metaDesc };
+    const requiredFields = { title, slug, metaTitle, topId, metaDescription };
 
     const errors = beforePost(requiredFields);
 
@@ -90,18 +92,14 @@ export default function CreateTopic({ topData }) {
     };
 
     try {
-      const { data } = await postTopics([submitData], "no");
-
-      console.log(data);
-      if (data.success) {
-        toast.success(data.msg);
+      const { success, msg } = await postTopics([submitData], "no");
+      dataToast(success, msg);
+      if (success) {
         router.push("/dashboard/topics");
         window.location.reload();
-      } else {
-        toast.error(data.msg);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -123,7 +121,7 @@ export default function CreateTopic({ topData }) {
             data={data}
             setTitle={setTitle}
             setMetaTitle={setMetaTitle}
-            setMetaDesc={setMetaDesc}
+            setMetaDescription={setMetaDescription}
             setRankingScore={setRankingScore}
             setRatingScore={setRatingScore}
             setViews={setViews}

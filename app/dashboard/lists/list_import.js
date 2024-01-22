@@ -1,13 +1,10 @@
 "use client";
-import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Papa from "papaparse";
-import ProgressBar from "@/app/components/progress_bar";
-import { postTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
-import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
 import { postLists } from "@/app/lib/repo/lists_repo";
+import { beforePost, dataToast } from "@/app/utils/custom_helpers";
 
 
 const ListsImport = (topicId) => {
@@ -26,14 +23,21 @@ const ListsImport = (topicId) => {
         e.preventDefault();
 
         // Check criteria
+        const title = data[0].title;
+        const slug = data[0].slug;
+        const description = data[0].description;
+        const metaDescription = data[0].metaDescription;
+        const metaTitle = data[0].metaTitle;
+        const body = data[0].body;
 
-        if (!data[0].title || data[0].title == undefined) {
-            return toast.error("'title' field is not present");
+        const requiredFields = { title, slug, description, metaDescription, metaTitle, body };
+        const errors = beforePost(requiredFields);
+
+        //check before post
+        if (errors !== true) {
+            return errors
         }
 
-        if (!data[0].description || data[0].description == undefined) {
-            return toast.error("'description' field is not present");
-        }
 
         if (!data) return;
         setUploading(true);
@@ -47,8 +51,6 @@ const ListsImport = (topicId) => {
                 description: t.description,
                 topicId: topicId.topicId,
                 slug: t.title,
-                isDuplicate: true,
-                _id: "",
             };
 
             if (topicsD.title && topicsD.description) {
@@ -61,27 +63,26 @@ const ListsImport = (topicId) => {
         });
 
         if (!Array.isArray(topics)) {
-            toast.error("Topics must be an array");
+            toast.error("List must be an array");
             return;
         }
 
         if (topics.length === 0) {
-            toast.error("No topics to insert");
+            toast.error("No list to insert");
             return;
         }
 
-        const result = await postLists(topics);
+        const { success, msg, dataBody } = await postLists(topics);
 
-        // Set progress
-        setProgress(values.length - 1);
+        if (success) {
+            // Set progress
+            setProgress(values.length - 1);
+            setCSV(dataBody);
+            setValuesEmpty(true);
+            setUploading(false);
+        }
 
-        setCSV(result.response);
-
-        setValuesEmpty(true);
-
-        setUploading(false);
-
-        toast.success(`${topics.length} topics imported`);
+        dataToast(success, msg);
     };
 
     const handleFileChange = (e) => {

@@ -10,8 +10,8 @@ import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
 import { postTemplates } from "@/app/lib/repo/templates_repo";
 import { postTops } from "@/app/lib/repo/tops_repo";
 import { beforePost } from "@/app/utils/custom_helpers";
+import { dataToast } from "@/app/utils/custom_helpers";
 
-export const dynamic = "force-dynamic";
 
 const TopsImport = () => {
     const [file, setFile] = useState(null);
@@ -31,24 +31,17 @@ const TopsImport = () => {
 
         const title = data[0].title;
         const slug = data[0].slug;
-        const desc = data[0].desc;
-        const metaDesc = data[0].metaDesc;
+        const metaDescription = data[0].metaDescription;
         const metaTitle = data[0].metaTitle;
         const body = data[0].body;
+        const top = data[0].top;
 
-        const requiredFields = { title, slug, metaTitle };
+        const requiredFields = { title, slug, metaTitle, top };
         const errors = beforePost(requiredFields);
 
-
-
-        if (errors[0] !== true) {
-            if (Array.isArray(errors)) {
-                return errors.map((error) => {
-                    if (error !== true) {
-                        return error;
-                    }
-                });
-            }
+        //check before post
+        if (errors !== true) {
+            return errors
         }
 
         if (!data) return;
@@ -57,18 +50,15 @@ const TopsImport = () => {
         let topics = new Array();
 
         data.map(async (t, i) => {
-
             const topicsD = {
                 title: t.title,
                 top: t.top,
                 body: t.desc,
                 slug: t.slug,
-                isDuplicate: true,
-                _id: "",
             };
 
 
-            if (topicsD.title && topicsD.body) {
+            if (topicsD.title) {
                 topics.push(topicsD);
             }
 
@@ -82,23 +72,23 @@ const TopsImport = () => {
             return;
         }
 
+
         if (topics.length === 0) {
-            toast.error("No topics to insert");
+            toast.error("No top to insert");
             return;
         }
 
-        const result = await postTops(topics);
+        const { success, msg, dataBody } = await postTops(topics);
 
-        // Set progress
-        setProgress(values.length - 1);
+        if (success) {
+            // Set progress
+            setProgress(values.length - 1);
+            setCSV(dataBody);
+            setValuesEmpty(true);
+            setUploading(false);
+        }
 
-        setCSV(result.data.data);
-
-        setValuesEmpty(true);
-
-        setUploading(false);
-
-        toast.success(`${topics.length} topics imported`);
+        dataToast(success, msg);
     };
 
     const handleFileChange = (e) => {

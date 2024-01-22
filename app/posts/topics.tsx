@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePaginatedSWR } from "@/app/utils/fetcher";
 import { useState } from "react";
 import Shimmer from "../components/shimmer";
-import { getTopics } from "../lib/repo/topics_repo";
 import usePagination from "../utils/pagination";
 
 export default function Topics({ topId, topicData }) {

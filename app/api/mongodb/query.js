@@ -737,7 +737,7 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
 
         if (essentials == 'yes') {
             const tTop = await getTop(String(topic.topId))
-            topic.topicTop = tTop;
+            topic.topData = tTop;
 
             const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10), "yes")
 
@@ -840,7 +840,12 @@ export async function addQandAs(data) {
 
     const result = await db.collection("qandas").insertMany(data);
 
-    return { success: true, ids: result.insertedIds };
+
+    if (result.insertedCount > 0) {
+        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
+    } else {
+        return { success: false, ids: result.insertedIds, msg: `no data added` };
+    }
 }
 
 export async function addFiles(data) {
@@ -859,7 +864,11 @@ export async function addTops(data) {
 
     const result = await db.collection("tops").insertMany(data);
 
-    return { success: true, ids: result.insertedIds, data: data };
+    if (result.insertedCount > 0) {
+        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} inserted` };
+    } else {
+        return { success: false, ids: result.insertedIds, msg: `no data inserted` };
+    }
 }
 
 
@@ -871,9 +880,9 @@ export async function addTopics(data) {
 
 
     if (result.insertedCount > 0) {
-        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} inserted` };
+        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
     } else {
-        return { success: false, ids: result.insertedIds, msg: `no data inserted` };
+        return { success: false, ids: result.insertedIds, msg: `no data added` };
     }
 
 }
@@ -884,7 +893,12 @@ export async function addLists(data) {
 
     const result = await db.collection("lists").insertMany(data);
 
-    return { success: true, ids: result.insertedIds };
+    if (result.insertedCount > 0) {
+        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
+    } else {
+        return { success: false, ids: result.insertedIds, msg: `no data added` };
+    }
+
 }
 
 export async function updateATopic(id, data) {
@@ -998,7 +1012,7 @@ export async function removeTopics(id, topId, importId) {
 
     } catch (error) {
         console.log('Error removing topics:', error);
-        return { success: false, msg: `${error}` };
+        return { success: false, msg: `${error}`, data: {} };
     }
 
     if (result.deletedCount > 0) {

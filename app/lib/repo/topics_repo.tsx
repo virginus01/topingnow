@@ -112,16 +112,16 @@ export async function justGetTopicWithEssentials(topicId: string, page = 1) {
   }
 }
 
-export async function postTopics(tData: any, isImport = "no") {
+export async function postTopics(
+  postData: any,
+  isImport = "no",
+  update = false
+) {
   try {
-    tData.forEach((t, i) => {
-      tData[i].isUpdated = true;
-      tData[i].isImport = isImport;
-    });
     const url = `${NEXT_PUBLIC_POST_TOPICS}`;
 
     let formData = new FormData();
-    formData.append("postData", JSON.stringify(tData));
+    formData.append("postData", JSON.stringify({ postData, isImport, update }));
 
     const result = await fetch(url, {
       cache: "no-store",
@@ -129,65 +129,10 @@ export async function postTopics(tData: any, isImport = "no") {
       body: formData,
     });
 
-    if (result.status === 200) {
-      return await result.json();
-    } else {
-      return { status: false, msg: "Failed to fetch topic" };
-    }
+    return await result.json();
   } catch (error) {
     console.log(error);
-    return { status: false, msg: "An error occurred while posting topics" };
-  }
-}
-
-export async function postTopic(tData: any) {
-  try {
-    const slug = customSlugify(tData.title);
-
-    const url = `${NEXT_PUBLIC_POST_TOPIC}`;
-    tData.slug = slug;
-
-    let formData = new FormData();
-    formData.append("postData", JSON.stringify(tData));
-
-    const result = await fetch(url, {
-      cache: "no-store",
-      method: "POST",
-      body: formData,
-    });
-
-    if (result.status === 200) {
-      return await result.json();
-    } else {
-      return { error: "Failed to post topic" };
-    }
-  } catch (error) {
-    console.log(error);
-    return { error: "An error occurred while posting topic" };
-  }
-}
-
-export async function UpdateTopic(tData: any) {
-  try {
-    const url = `${NEXT_PUBLIC_UPDATE_TOPIC}`;
-
-    let formData = new FormData();
-    formData.append("updateData", JSON.stringify(tData));
-
-    const result = await fetch(url, {
-      cache: "no-store",
-      method: "POST",
-      body: formData,
-    });
-
-    if (result.status === 200) {
-      return await result.json();
-    } else {
-      return { error: "Failed to update a topic" };
-    }
-  } catch (error) {
-    console.log(error);
-    return { error: "An error occurred while updating topic" };
+    return { success: false, msg: "An error occurred while posting topics" };
   }
 }
 

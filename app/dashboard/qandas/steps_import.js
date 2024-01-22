@@ -1,15 +1,10 @@
 "use client";
-import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Papa from "papaparse";
-import ProgressBar from "@/app/components/progress_bar";
-import { postTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
-import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";
-import { updateQandA } from "@/app/lib/repo/qanda_repo";
-
-export const dynamic = "force-dynamic";
+import { beforePost, dataToast } from "@/app/utils/custom_helpers";
+import { postQandAs } from "@/app/lib/repo/qanda_repo";
 
 const StepsImport = ({ qanda }) => {
     const [file, setFile] = useState(null);
@@ -26,14 +21,18 @@ const StepsImport = ({ qanda }) => {
         e.preventDefault();
 
         // Check criteria
+        const title = data[0].title;
+        const position = data[0].position;
+        const body = data[0].body;
 
-        if (!data[0].title || data[0].title == undefined) {
-            return toast.error("'title' field is not present");
+        const requiredFields = { title, position, body };
+        const errors = beforePost(requiredFields);
+
+        //check before post
+        if (errors !== true) {
+            return errors
         }
 
-        if (!data[0].body || data[0].body == undefined) {
-            return toast.error("'body' field is not present");
-        }
 
         if (!data) return;
         setUploading(true);
@@ -42,9 +41,7 @@ const StepsImport = ({ qanda }) => {
 
         data.map(async (t, i) => {
 
-
-            topics.push({ step: t.title, dataBody: t.body, slug: t.title });
-
+            topics.push({ step: t.title, position: t.position, dataBody: t.body, slug: t.title });
 
             setTimeout(() => {
                 setProgress(i - 1);
@@ -67,19 +64,20 @@ const StepsImport = ({ qanda }) => {
 
         updateData._id = qanda._id;
 
+        updateData.slug = qanda.slug;
 
-        const result = await updateQandA(updateData);
 
-        // Set progress
-        setProgress(values.length - 1);
+        const { success, msg, dataBody } = await postQandAs([updateData], 'no', true);
 
-        setCSV(result.response);
+        if (success) {
+            // Set progress
+            setProgress(values.length - 1);
+            setCSV(dataBody);
+            setValuesEmpty(true);
+            setUploading(false);
+        }
 
-        setValuesEmpty(true);
-
-        setUploading(false);
-
-        toast.success(`${topics.length} topics imported`);
+        dataToast(success, msg);
     };
 
     const handleFileChange = (e) => {
