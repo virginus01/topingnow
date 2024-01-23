@@ -26,8 +26,10 @@ import generateImportId from "@/app/lib/repo/import_repo";
 import { FileModel } from "@/app/models/file_model";
 import { postTopics } from "../../api_repos/topics_api_repo";
 import { postTops } from "../../api_repos/tops_api_repo";
-import { ListsModel, postLists } from "@/app/roadmap/lists_roadmap";
+//import { ListsModel, postListsApi } from "@/app/roadmap/lists_roadmap";
 import { postQandaApi } from "../../api_repos/qanda_api_repo";
+import { ListsModel } from "@/app/models/lists_model";
+import { postListsApi } from "../../api_repos/lists_api_repo";
 
 export async function POST(
   request: Request,
@@ -71,7 +73,7 @@ export async function POST(
 
   //creating topics
   if (action == "update_topic") {
-    const data = await updateTopic(formData);
+    const data = await updateTopicApi(formData);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -80,7 +82,7 @@ export async function POST(
 
   //creating list
   if (action == "post_lists") {
-    const data = await postLists(formData);
+    const data = await postListsApi(formData);
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: headers,
@@ -154,7 +156,7 @@ export async function POST(
   });
 }
 
-export async function updateTopic(formData: any) {
+export async function updateTopicApi(formData: any) {
   const updateData = JSON.parse(formData.get("updateData"));
 
   let uData: TopicModel = {};

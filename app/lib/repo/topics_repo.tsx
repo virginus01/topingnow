@@ -6,9 +6,7 @@ import {
   NEXT_PUBLIC_GET_POPULAR_TOPICS,
   NEXT_PUBLIC_GET_TOPIC,
   NEXT_PUBLIC_GET_TOPICS,
-  NEXT_PUBLIC_POST_TOPIC,
   NEXT_PUBLIC_POST_TOPICS,
-  NEXT_PUBLIC_UPDATE_TOPIC,
 } from "@/constants";
 
 export async function getTopics(topId: any | "", page: any, perPage: any | "") {

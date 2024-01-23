@@ -5,8 +5,11 @@ import { getTopicById } from "@/app/lib/repo/topics_repo";
 import Loading from "@/app/dashboard/loading";
 import { TopicModel } from "@/app/models/topic_model";
 import { toast } from "sonner";
-import { ListsView, AddList, ListsImport } from "@/app/roadmap/lists_roadmap";
+//import { ListsView, AddList, ListsImport } from "@/app/roadmap/lists_roadmap";
 import TabbedContents from "@/app/components/widgets/tabbed_contents";
+import ListsView from "../../lists_view";
+import ListsImport from "../../list_import";
+import AddList from "@/app/dashboard/lists/create_list";
 
 export default function CreatList({
   params,

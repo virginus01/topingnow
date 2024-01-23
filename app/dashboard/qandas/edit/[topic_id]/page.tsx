@@ -5,9 +5,9 @@ import Loading from "@/app/dashboard/loading";
 import { NEXT_PUBLIC_GET_TOPIC } from "@/constants";
 import { useSingleSWRAdmin } from "@/app/utils/fetcher";
 import TinyMCEEditor from "@/app/utils/tinymce";
-import { UpdateTopic } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import { TopicModel } from "@/app/models/topic_model";
+import { postTopics } from "@/app/roadmap/topics_roadmap";
 
 export default function FromTopic({
   params,
@@ -45,7 +45,7 @@ export default function FromTopic({
     };
 
     try {
-      const { response } = await UpdateTopic(submitData);
+      const { response } = await postTopics(submitData);
 
       if (response.success) {
         toast.success(`${title} updated`);

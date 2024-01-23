@@ -1,16 +1,12 @@
 import { TopicModel } from "@/app/models/topic_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
-import {
-  NEXT_PUBLIC_GET_LIST,
-  NEXT_PUBLIC_GET_TOPIC,
-  NEXT_PUBLIC_UPDATE_LIST,
-} from "@/constants";
-import { addLists, addTopics } from "../mongodb/query";
+import { NEXT_PUBLIC_GET_LIST, NEXT_PUBLIC_UPDATE_LIST } from "@/constants";
+import { addLists } from "@/app/api/mongodb/query";
 import { isNull } from "@/app/utils/custom_helpers";
 import { checkSinglePost } from "./check_single_post";
 import { PostData } from "./post_data";
 
-export async function postLists(formData: any) {
+export async function postListsApi(formData: any) {
   try {
     const { postData, isImport, update } = JSON.parse(formData.get("postData"));
     const data: any[] = [];

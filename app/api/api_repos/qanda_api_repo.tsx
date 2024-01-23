@@ -5,7 +5,6 @@ import {
   NEXT_PUBLIC_GET_QANDA,
   NEXT_PUBLIC_GET_TOPIC,
   NEXT_PUBLIC_POST_UPDATE_QANDA,
-  NEXT_PUBLIC_UPDATE_TOPIC,
 } from "@/constants";
 import { addQandAs, addTopics } from "../mongodb/query";
 import { isNull } from "@/app/utils/custom_helpers";

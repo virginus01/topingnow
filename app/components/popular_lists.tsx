@@ -4,6 +4,7 @@ import { NEXT_PUBLIC_GET_POPULAR_LISTS } from "@/constants";
 import { usePaginatedSWR } from "../utils/fetcher";
 import Shimmer from "./shimmer";
 import { getPopularLists } from "../lib/repo/lists_repo";
+//import { getPopularLists } from "../lib/repo/lists_repo";
 
 export default async function PopularLists({ _id }) {
   const perPage = 3;

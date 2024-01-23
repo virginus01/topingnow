@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PopularTopics from "@/app/components/popular_topics";
 import { notFound } from "next/navigation";
 import { SingleShimmer } from "@/app/components/shimmer";
-import { getListById, listMetaTags } from "@/app/lib/repo/lists_repo";
+//import { getListById, listMetaTags } from "@/app/lib/repo/lists_repo";
 import {
   countWords,
   getViewUrl,
