@@ -8,6 +8,7 @@ import { NEXT_PUBLIC_GET_TOPS } from "@/constants";
 import Shimmer from "@/app/components/shimmer";
 import { usePaginatedSWR, usePaginatedSWRAdmin } from "@/app/utils/fetcher";
 import { isNull } from "@/app/utils/custom_helpers";
+import { postTopics } from "@/app/roadmap/topics_roadmap";
 
 export default function AddTopic({ topData }) {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function AddTopic({ topData }) {
     };
 
     try {
-      const response = await postTopic(submitData);
+      const response = await postTopics(submitData);
 
       if (response.data) {
         toast.success("topic created");

@@ -29,8 +29,9 @@ const ListsImport = (topicId) => {
         const metaDescription = data[0].metaDescription;
         const metaTitle = data[0].metaTitle;
         const body = data[0].body;
+        const rankingScore = data[0].rankingScore;
 
-        const requiredFields = { title, slug, description, metaDescription, metaTitle, body };
+        const requiredFields = { title, slug, description, metaDescription, metaTitle, rankingScore, body };
         const errors = beforePost(requiredFields);
 
         //check before post
@@ -51,6 +52,7 @@ const ListsImport = (topicId) => {
                 description: t.description,
                 topicId: topicId.topicId,
                 slug: t.title,
+                rankingScore: t.rankingScore,
             };
 
             if (topicsD.title && topicsD.description) {

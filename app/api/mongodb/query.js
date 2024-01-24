@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { dataProcess, removeById } from '@/app/utils/custom_helpers';
 import { isNull } from '@/app/utils/custom_helpers';
 
-export async function getTops(page = 1, perPage = 10, q = '') {
+export async function getTops(page = 1, perPage = 10, essentials = 'yes', q = '', process = 'yes') {
     const skip = (page - 1) * perPage;
 
     const db = await connectDB();
@@ -34,15 +34,18 @@ export async function getTops(page = 1, perPage = 10, q = '') {
         return "not_found";
     }
 
-    const topTopicsPromises = result.map(async (data) => {
-        const tTopics = await getTopics(String(data._id), 1, 10);
-        return {
-            ...data,
-            topTopics: tTopics
-        };
-    });
+    if (essentials == 'yes') {
+        for (let i = 0; i < result.length; i++) {
+            result[i].topTopics = await getTopics(String(result[i]._id), 1, 10, "yes");
+        }
+    }
 
-    result = await Promise.all(topTopicsPromises);
+    if (process === 'yes') {
+        for (let i = 0; i < result.length; i++) {
+            result[i] = await dataProcess(result[i]);
+        }
+    }
+
 
 
     return {
@@ -186,7 +189,10 @@ export async function getTopicsByImport(importId, page = 1, perPage = 10, proces
 
 
     if (process === 'yes') {
-        await dataProcess(result)
+        const promise = await result.map(async (r, i) => {
+            result[i] = await dataProcess(result[i]);
+        })
+        Promise.all(promise);
     }
 
     return {
@@ -204,50 +210,62 @@ export async function getTopicsByImport(importId, page = 1, perPage = 10, proces
 
 export async function getTopics(topId, page = 1, perPage = 10, process = 'yes', q) {
 
-    const skip = (page - 1) * perPage;
+    try {
 
-    const db = await connectDB();
+        const skip = (page - 1) * perPage;
 
-    let filter = topId ? { topId } : {};
+        const db = await connectDB();
 
-    if (!isNull(q)) {
-        filter = { title: { $regex: new RegExp(q, 'i') } }
-    }
+        let filter = topId ? { topId } : {};
 
-    const [result, total] = await Promise.all([
-        db.collection("topics").find(filter)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(perPage)
-            .toArray(),
-
-        db.collection("topics")
-            .estimatedDocumentCount(filter)
-    ]);
-
-    const numPages = Math.ceil(total / perPage);
-    const hasNextPage = page < numPages;
-    const hasPrevPage = page > 1;
-
-    if (!result) {
-        return "not_found";
-    }
-
-
-    if (process === 'yes') {
-        await dataProcess(result)
-    }
-
-    return {
-        result: result,
-        metadata: {
-            total,
-            page,
-            perPage,
-            hasNextPage,
-            hasPrevPage
+        if (!isNull(q)) {
+            filter = { title: { $regex: new RegExp(q, 'i') } }
         }
-    };
+
+        const [result, total] = await Promise.all([
+            db.collection("topics").find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
+
+            db.collection("topics")
+                .estimatedDocumentCount(filter)
+        ]);
+
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
+
+        if (!result) {
+            return "not_found";
+        }
+
+
+        if (process === 'yes') {
+
+            for (let i = 0; i < result.length; i++) {
+
+                const tTop = await getTop(String(result[i].topId))
+                result[i].topData = tTop;
+                result[i] = await dataProcess(result[i]);
+            }
+        }
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+
+    } catch (error) {
+        console.log(error)
+    }
 
 }
 
@@ -284,6 +302,7 @@ export async function fetchImports(page = 1, perPage = 10) {
 
 
         return {
+            success: true,
             result: result,
             metadata: {
                 total,
@@ -432,9 +451,7 @@ export async function fetchTemplate(templateId, rand = 'no') {
 }
 
 
-export async function fetchAQandA(id, rand = 'no') {
-
-
+export async function fetchAQandA(id, rand = 'no', process = 'yes') {
     try {
 
         const db = await connectDB();
@@ -452,6 +469,11 @@ export async function fetchAQandA(id, rand = 'no') {
         if (!temp) {
             return "not_found";
         }
+
+        if (process === 'yes') {
+            temp = await dataProcess(temp)
+        }
+
 
         return temp;
 
@@ -494,7 +516,9 @@ export async function fetchQandAs(listId, page = 1, perPage = 10, process = 'yes
         }
 
         if (process === 'yes') {
-            await dataProcess(result)
+            for (let i = 0; i < result.length; i++) {
+                result[i] = await dataProcess(result[i]);
+            }
         }
 
         return {
@@ -518,7 +542,7 @@ export async function fetchQandAs(listId, page = 1, perPage = 10, process = 'yes
 }
 
 
-export async function getLists(topicId, page = 1, perPage = 10, process = 'yes') {
+export async function getLists(topicId, page = 1, perPage = 10, essentials = 'yes', process = 'yes') {
 
 
     const skip = (page - 1) * perPage;
@@ -546,17 +570,22 @@ export async function getLists(topicId, page = 1, perPage = 10, process = 'yes')
         return "not_found";
     }
 
-    if (process === 'yes') {
-        await dataProcess(result)
-    }
 
-    if (!isNull(result)) {
+
+    if (essentials == 'yes') {
         const ids = result.map((t) => String(t.topicId));
         const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
-        result.map((post, i) => {
+
+        for (let i = 0; i < result.length; i++) {
             result[i].topicData = topics[i]
             result[i].postSlug = `${topics[i].slug}/${result[i].slug}`
-        })
+        }
+    }
+
+    if (process === 'yes') {
+        for (let i = 0; i < result.length; i++) {
+            result[i] = await dataProcess(result[i]);
+        }
     }
 
     return {
@@ -590,6 +619,7 @@ export async function getList(listId, essentials = 'yes', process = "yes") {
         if (!topic) {
             return "not_found";
         }
+
         if (process === 'yes') {
             await dataProcess(topic)
         }
@@ -639,7 +669,10 @@ export async function getPopularTopics(excludeId = '', page = 1, perPage = 10, p
     }
 
     if (process === 'yes') {
-        await dataProcess(result)
+        const promise = await result.map(async (r, i) => {
+            result[i] = await dataProcess(result[i]);
+        })
+        Promise.all(promise);
     }
 
     return {
@@ -683,7 +716,10 @@ export async function getPopularLists(excludeId = '', essentials = '', page = 1,
     }
 
     if (process === 'yes') {
-        await dataProcess(result)
+        const promise = await result.map(async (r, i) => {
+            result[i] = await dataProcess(result[i]);
+        })
+        Promise.all(promise);
     }
 
     if (!isNull(result)) {
@@ -739,7 +775,7 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
             const tTop = await getTop(String(topic.topId))
             topic.topData = tTop;
 
-            const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10), "yes")
+            const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10), "yes", "yes")
 
             topic.lists = tLists;
 
@@ -1110,7 +1146,7 @@ export async function removeTop(id, importId) {
         }
 
         if (importId) {
-            const res = await getTopsByImport(importId, 1, 1000000, '');
+            const res = await getTopsByImport(importId, 1, 1000000, 'yes', '');
 
             if (!isNull(res.result)) {
                 const ids = res.result.map((t) => String(t._id));

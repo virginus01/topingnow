@@ -101,7 +101,7 @@ export async function GET(
   }
   //fetching lists
   if (action == "get_lists") {
-    const data = await fetchLists(topicId, page, perPage, process);
+    const data = await fetchLists(topicId, page, perPage, essentials, process);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -109,7 +109,7 @@ export async function GET(
   }
   //fetching list info
   if (action == "get_list") {
-    const data = await fetchList(listId);
+    const data = await fetchList(listId, essentials, process);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -188,7 +188,7 @@ export async function GET(
 
 async function fetchTops(page: number, perPage: number, q: any) {
   try {
-    return await getTops(page, perPage, q);
+    return await getTops(page, perPage, "yes", q);
   } catch (e) {
     return { data: "839847 error" };
   }
@@ -249,18 +249,19 @@ async function fetchLists(
   topicId: string | number | null,
   page: number,
   perPage: number,
+  essentials: any,
   process: any
 ) {
   try {
-    return await getLists(topicId, page, perPage, process);
+    return await getLists(topicId, page, perPage, essentials, process);
   } catch {
     return { msg: "74746 error" };
   }
 }
 
-async function fetchList(listId: string | number | null) {
+async function fetchList(listId: string | number | null, essentials, process) {
   try {
-    return await getList(listId);
+    return await getList(listId, essentials, process);
   } catch {
     return { msg: "error: 6454554" };
   }

@@ -38,7 +38,7 @@ export default function QandAs({ listData }) {
           index: number
         ) => {
           const data = JSON.parse(body);
-          const dataTitle = ` ${title} in ${data.length} steps`;
+          const dataTitle = ` ${title} `;
           const url = `/${topicSlug}/${listSlug}/${slug}`;
           return (
             <li key={_id} id={slug}>

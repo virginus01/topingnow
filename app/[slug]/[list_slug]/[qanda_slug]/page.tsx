@@ -79,8 +79,8 @@ export default async function ListView({
 
   let postTitle = data.title;
   let postSteps = JSON.parse(data.steps);
-  if (postSteps.length > 0) {
-    postTitle = `${data.title} in ${postSteps.length} Steps`;
+  if (Array.isArray(postSteps) && postSteps.length > 0) {
+    postTitle = `${data.title}`;
   }
 
   return (

@@ -73,7 +73,7 @@ export default function QandAView({ listId }) {
   }
 
   async function editAction(_id: string) {
-    router.push(`/dashboard/topics/edit/${_id}`);
+    router.push(`/dashboard/qandas/edit/${_id}`);
   }
 
   async function addAction(_id: string) {

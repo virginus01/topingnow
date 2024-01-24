@@ -97,33 +97,32 @@ export function defaultProcess(text, type = "none") {
 
 export async function dataProcess(text, type = "none") {
   try {
-    if (!isNull(text)) {
-      if (Array.isArray(text)) {
-        for (let t of text) {
-          try {
-            t.title = await tProcess(t.title, type, text);
-          } catch (error) {
-            console.log(error);
-          }
-          try {
-            t.description = await tProcess(t.description, type, text);
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      } else {
-        try {
-          text.title = await tProcess(text.title, type, text);
-        } catch (error) {
-          console.log(error);
-        }
-        try {
-          text.description = await tProcess(text.description, type, text);
-        } catch (error) {
-          console.log(error);
-        }
-      }
+    let data: any = {};
+
+    if (text && text.steps && Array.isArray(JSON.parse(text.steps))) {
+      data.steps =
+        JSON.parse(text.steps).length > 0 ? JSON.parse(text.steps).length : 1;
     }
+    if (text.topData && text.topData.top) {
+      data.top = text.topData.top;
+    }
+
+    console.log(text);
+    if (text.topicData) {
+      console.log(text.topicData);
+      data.topic = text.topicData.title;
+    }
+
+    //for title
+    if (!isNull(text.title)) {
+      text.title = await tProcess(text.title, type, data);
+    }
+
+    if (!isNull(text.description)) {
+      text.description = await tProcess(text.description, type, data);
+    }
+
+    //for question and answer
   } catch (error) {
     console.log(error);
   }
@@ -153,9 +152,21 @@ export async function tProcess(text, type = "none", data) {
     let description = text;
 
     for (let i = 0; i < extractedWords.length; i++) {
-      if (extractedWords[i] == "{top}" && data.topData) {
-        description = description.replace(extractedWords[i], data.topData.top);
+      if (extractedWords[i] === "{top}" && data.top) {
+        description = description.replace(extractedWords[i], data.top);
       }
+
+      if (extractedWords[i] === "{topic}" && data.topic) {
+        description = description.replace(extractedWords[i], data.topic);
+      }
+
+      if (extractedWords[i] === "{steps}" && data.steps) {
+        description = description.replace(
+          extractedWords[i],
+          data.steps === 1 ? `${data.steps} Step` : `${data.steps} Steps`
+        );
+      }
+
       if (temps[i] != "not_found") {
         const { title, body } = temps[i];
         const bodyD = JSON.parse(body);

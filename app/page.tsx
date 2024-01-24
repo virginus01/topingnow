@@ -9,7 +9,7 @@ export default async function Page() {
   const page = 1;
 
   const url = `${NEXT_PUBLIC_GET_TOPS}`;
-  let data: any = Shimmer(perPage);
+  let data: any = [];
 
   const res = await getTops();
 
@@ -27,8 +27,8 @@ export default async function Page() {
             </h2>
           </div>
           <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-            {data.map(({ name, _id, extraClass, topTopics }, i) => {
-              if (topTopics.result.length > 0) {
+            {data.map(({ title, _id, extraClass, topTopics }, i) => {
+              if (topTopics && topTopics.result.length > 0) {
                 return (
                   <article
                     key={_id}
@@ -38,7 +38,7 @@ export default async function Page() {
                       <div
                         className={`${extraClass} bg-gray-500 flex items-center justify-center gap-x-4 px-4 py-2 text-xs font-bold text-center text-white`}
                       >
-                        Top {name} Best all over the world
+                        Top {title} Best all over the world
                       </div>
                       <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
                         <div className="mt-1 line-clamp-3 text-sm leading-6 text-gray-600">

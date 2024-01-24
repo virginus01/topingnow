@@ -36,7 +36,7 @@ export default function EditList({ params }: { params: { list_id: string } }) {
     `${NEXT_PUBLIC_GET_TOPICS}?page=${"1"}&perPage=${"10"}`
   );
 
-  const url = `${NEXT_PUBLIC_GET_LIST}?listId=${params.list_id}&process=no`;
+  const url = `${NEXT_PUBLIC_GET_LIST}?listId=${params.list_id}&process=no&essentials=yes`;
 
   // Slice topics array for current page
   const { result, loading } = useSingleSWRAdmin(url);

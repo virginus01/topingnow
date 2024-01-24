@@ -5,8 +5,6 @@ import ListsView from "./lists_view";
 import CreateTopic from "../topics/create_topic";
 import CreateList from "./create_list";
 
-export const dynamic = "force-dynamic";
-
 function Index() {
   const tabComponents = [
     {

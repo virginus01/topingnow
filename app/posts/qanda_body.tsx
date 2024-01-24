@@ -15,9 +15,8 @@ export default function QandABody({ post }) {
 
   let postTitle = title;
 
-  if (postSteps.length > 0) {
-    postTitle = `${title} in ${postSteps.length}`;
-  }
+  postTitle = `${title}`;
+
   return (
     <div className="relative flex sm:py-7">
       <div className="relative px-1 pb-2 pt-2 sm:mx-auto w-full sm:px-2">
@@ -43,7 +42,7 @@ export default function QandABody({ post }) {
             />
           </div>
         </div>
-        <StepsBody postSteps={postSteps} />
+        {Array.isArray(postSteps) && <StepsBody postSteps={postSteps} />}
       </div>
     </div>
   );

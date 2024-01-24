@@ -8,13 +8,16 @@ export default function StepsBody({ postSteps }) {
     <div>
       <ul>
         {postSteps.map(
-          ({ dataBody, slug, featuredImagePath, step }: any, index: number) => (
+          (
+            { dataBody, slug, featuredImagePath, step, position }: any,
+            index: number
+          ) => (
             <li key={slug} id={slug}>
               <article className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
                 <div
                   className={` bg-gray-500 flex items-left justify-left gap-x-4 px-2 py-2 text-xs font-bold text-left text-white`}
                 >
-                  Step {step}
+                  Step {position}: {step}
                 </div>
                 {featuredImagePath && (
                   <div className="mb-1">
