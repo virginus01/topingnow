@@ -55,7 +55,7 @@ export async function GET(request: any) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              backgroundImage: "url('http://localhost:3000/images/beams.jpg')", // Adjust the path as needed
+              backgroundImage: `url("${process.env.NEXT_PUBLIC_BASE_URL}/images/beams.jpg")`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
