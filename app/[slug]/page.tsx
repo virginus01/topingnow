@@ -16,6 +16,8 @@ import { schema } from "../layout";
 import { buildSchema } from "@/app/seo/schema";
 import { Metadata } from "next";
 import { ConstructMetadata } from "../seo/metadata";
+import Image from "next/image";
+import { TOPIC_IMAGE } from "@/constants";
 
 export async function generateMetadata({
   params,
@@ -66,7 +68,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
   const repeat = 2;
   const page = 1;
 
-  let data = SingleShimmer(repeat);
+  let data: any = {};
   const result = await justGetTopicWithEssentials(params.slug, page);
 
   if (result) {
@@ -85,6 +87,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
         <h1 className="text-2xl font-bold text-center py-12 bg-white">
           {data.title}
         </h1>
+
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
             <ListTable key="left" topicData={data} />

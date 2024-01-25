@@ -95,22 +95,15 @@ export function defaultProcess(text, type = "none") {
   return output;
 }
 
-export async function dataProcess(text, type = "none") {
+export async function dataProcess(text, type = "none", iniData = {}) {
   try {
-    let data: any = {};
+    let data: any = iniData;
+
+    // console.log(iniData);
 
     if (text && text.steps && Array.isArray(JSON.parse(text.steps))) {
       data.steps =
         JSON.parse(text.steps).length > 0 ? JSON.parse(text.steps).length : 1;
-    }
-    if (text.topData && text.topData.top) {
-      data.top = text.topData.top;
-    }
-
-    console.log(text);
-    if (text.topicData) {
-      console.log(text.topicData);
-      data.topic = text.topicData.title;
     }
 
     //for title
@@ -175,7 +168,10 @@ export async function tProcess(text, type = "none", data) {
           await getRandomDataBody(bodyD)
         );
       } else {
-        description = description.replace(extractedWords[i], "...");
+        description = description.replace(
+          extractedWords[i],
+          `${extractedWords[i]}{n_f}`
+        );
       }
     }
 

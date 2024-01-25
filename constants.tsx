@@ -63,6 +63,7 @@ export const NEXT_PUBLIC_DASHBOARD_LINK = "/dashboard";
 export const NEXT_PUBLIC_S3_UPLOADER = `${process.env.NEXT_PUBLIC_BASE_URL}/api/s3_uploader`;
 
 //Routing
+export const TOPIC_IMAGE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/og`;
 
 //dasboard topics
 export const DASH_TOPICS = "/dasboard/topics/";

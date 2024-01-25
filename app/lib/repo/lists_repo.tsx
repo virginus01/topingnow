@@ -43,7 +43,7 @@ export async function getLists(
 
 export async function getListById(id: string) {
   try {
-    const url = `${NEXT_PUBLIC_GET_LIST}?listId=${id}`;
+    const url = `${NEXT_PUBLIC_GET_LIST}?listId=${id}&essentials=yes&process=yes`;
 
     const res = await fetch(url, {
       next: {

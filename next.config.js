@@ -1,7 +1,7 @@
 
 module.exports = {
     images: {
-        domains: ['topingnow.s3.eu-north-1.amazonaws.com'],
+        domains: ['topingnow.s3.eu-north-1.amazonaws.com', 'localhost'],
     },
     i18n: {
         locales: ['en', 'fr', 'nl'],

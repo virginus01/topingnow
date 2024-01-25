@@ -71,14 +71,17 @@ export default async function ListView({
 }) {
   const result = await getListById(params.list_slug);
 
-  if (isNull(result) || params.slug !== result.topicData.slug) {
+  if (
+    isNull(result) ||
+    !result.topicData ||
+    params.slug !== result.topicData.slug
+  ) {
     notFound();
   }
 
   const data = result;
 
   const metadata = await generateMetadata({ params });
-
 
   const breadcrumb: {
     "@type": string;

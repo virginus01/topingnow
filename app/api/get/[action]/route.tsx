@@ -66,7 +66,14 @@ export async function GET(
 
   //fetching topics
   if (action == "get_topics") {
-    const data = await fetchTopics(topId, page, perPage, q);
+    const data = await fetchTopics(
+      topId,
+      page,
+      perPage,
+      essentials,
+      process,
+      q
+    );
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -206,10 +213,12 @@ async function fetchTopics(
   topId: string | number | null,
   page: number,
   perPage: number,
+  essentials: any,
+  process: any,
   q: string | number | null
 ) {
   try {
-    return await getTopics(topId, page, perPage, "no", q);
+    return await getTopics(topId, page, perPage, essentials, process, q);
   } catch {
     return { msg: "84746 error" };
   }
