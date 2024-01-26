@@ -493,7 +493,29 @@ export async function fetchAQandA(id, rand = 'no', process = 'yes') {
         }
 
         if (process === 'yes') {
-            temp = await dataProcess(temp)
+            const steps = JSON.parse(temp.steps);
+            temp = await dataProcess(temp, "qanda", { steps: steps.length })
+
+            if (temp.body) {
+                const bodies = JSON.parse(temp.body);
+                const tBody = [];
+                for (let i = 0; i < bodies.length; i++) {
+                    const { dataBody } = await dataProcess({ dataBody: bodies[i].dataBody }, "qanda", { steps: steps.length })
+                    tBody.push({ dataBody: dataBody });
+                }
+                temp.body = JSON.stringify(tBody)
+            }
+
+            if (temp.steps) {
+                const steps = JSON.parse(temp.steps);
+                const tSteps = [];
+                for (let i = 0; i < steps.length; i++) {
+                    const { dataBody } = await dataProcess({ dataBody: steps[i].dataBody }, "qanda", { steps: steps.length })
+                    tSteps.push({ dataBody: dataBody });
+                }
+                temp.steps = JSON.stringify(tSteps)
+            }
+
         }
 
 

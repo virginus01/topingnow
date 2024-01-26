@@ -79,8 +79,8 @@ export default async function Post({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  const metadata = await generateMetadata({ params });
-
+  let metadata = await generateMetadata({ params });
+  metaTags(metadata, data);
   return (
     <>
       <div className="mt-10">

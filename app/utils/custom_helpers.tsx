@@ -115,6 +115,10 @@ export async function dataProcess(text, type = "none", iniData = {}) {
       text.description = await tProcess(text.description, type, data);
     }
 
+    if (!isNull(text.dataBody)) {
+      text.dataBody = await tProcess(text.dataBody, type, data);
+    }
+
     //for question and answer
   } catch (error) {
     console.log(error);
@@ -255,6 +259,7 @@ export function beforePost(data) {
   let errors: string[] = [];
 
   requiredFields.forEach((field) => {
+    field = field.toLowerCase();
     if (!data[field]) {
       errors.push(`${field} is required`);
     }
