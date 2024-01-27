@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 //import puppeteer from "puppeteer-core";
 import chromium from "chrome-aws-lambda";
 
@@ -20,7 +19,6 @@ export async function GET(
   //}
 
   const page = await browser.newPage();
-  let res = NextResponse.next();
 
   const newHeaders = new Headers(request.headers);
 
