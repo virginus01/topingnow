@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer-core";
-import chrome from "chrome-aws-lambda";
+//import puppeteer from "puppeteer-core";
+import chromium from "chrome-aws-lambda";
 
 export async function GET(
   request: any,
@@ -8,17 +8,16 @@ export async function GET(
 ) {
   let browser: any = null;
 
-  if (process.env.NEXT_PUBLIC_BASE_URL) {
-    browser = puppeteer.launch({
-      args: chrome.args,
-      executablePath: await chrome.executablePath,
-      headless: chrome.headless,
-    });
-  } else {
-    browser = await puppeteer.launch({
-      headless: "new",
-    });
-  }
+  // if (process.env.NEXT_PUBLIC_BASE_URL) {
+  browser = await chromium.puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+    ignoreHTTPSErrors: true,
+  });
+
+  //}
 
   const page = await browser.newPage();
   let res = NextResponse.next();

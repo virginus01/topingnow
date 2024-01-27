@@ -41,7 +41,6 @@
     "node-fetch": "^3.3.2",
     "nookies": "^2.5.2",
     "papaparse": "^5.4.1",
-    "puppeteer-core": "^21.9.0",
     "rc-pagination": "^4.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
