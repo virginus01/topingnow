@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import puppeteer from "puppeteer";
+import chrome from "chrome-aws-lambda";
 
 export async function GET(
   request: any,
