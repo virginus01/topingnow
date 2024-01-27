@@ -30,7 +30,7 @@ export async function GET(
 
   const buffer = await page.screenshot({
     omitBackground: true,
-    fullPage: true,
+    fullPage: true, //
   });
 
   await browser.close();
