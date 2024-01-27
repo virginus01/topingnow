@@ -362,3 +362,44 @@ export function beforeUpdate(updateData, uData) {
 
   return uData;
 }
+
+export async function processInner(temp, type) {
+  const steps = JSON.parse(temp.steps);
+  temp = await dataProcess(temp, "qanda", { steps: steps.length });
+
+  if (temp.body) {
+    const bodies = JSON.parse(temp.body);
+    const tBody: any = [];
+    for (let i = 0; i < bodies.length; i++) {
+      const { dataBody } = await dataProcess(
+        { dataBody: bodies[i].dataBody },
+        "qanda",
+        { steps: steps.length }
+      );
+      tBody.push({ dataBody: dataBody });
+    }
+    temp.body = JSON.stringify(tBody);
+  }
+
+  if (temp.steps) {
+    const steps = JSON.parse(temp.steps);
+    const tSteps: any = [];
+    for (let i = 0; i < steps.length; i++) {
+      const { dataBody, step, position, slug } = await dataProcess(
+        {
+          dataBody: steps[i].dataBody,
+          step: steps[i].step,
+          position: steps[i].position,
+          slug: steps[i].slug,
+        },
+        "qanda",
+        { steps: steps.length }
+      );
+      tSteps.push({ dataBody, step, position, slug });
+    }
+
+    temp.steps = JSON.stringify(tSteps);
+  }
+
+  return temp;
+}

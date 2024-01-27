@@ -1,162 +1,181 @@
 import { connectDB } from '@/app/utils/mongodb'
 import { ObjectId } from 'mongodb';
-import { dataProcess, removeById } from '@/app/utils/custom_helpers';
+import { dataProcess, processInner } from '@/app/utils/custom_helpers';
 import { isNull } from '@/app/utils/custom_helpers';
 
 export async function getTops(page = 1, perPage = 10, essentials = 'yes', q = '', process = 'yes') {
     const skip = (page - 1) * perPage;
 
-    const db = await connectDB();
-    let filter = {};
+    try {
+        const db = await connectDB();
 
-    if (!isNull(q)) {
-        filter = { title: { $regex: new RegExp(q, 'i') } }
-    } else {
-        filter = {};
-    }
+        let filter = {};
 
-    let [result, total] = await Promise.all([
-        db.collection("tops").find(filter)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(perPage)
-            .toArray(),
-
-        db.collection("tops")
-            .estimatedDocumentCount(filter)
-    ]);
-
-    const numPages = Math.ceil(total / perPage);
-    const hasNextPage = page < numPages;
-    const hasPrevPage = page > 1;
-
-    if (!result) {
-        return "not_found";
-    }
-
-    if (essentials == 'yes') {
-        for (let i = 0; i < result.length; i++) {
-            result[i].topTopics = await getTopics(String(result[i]._id), 1, 10, "no", "yes", '', {});
+        if (!isNull(q)) {
+            filter = { title: { $regex: new RegExp(q, 'i') } }
+        } else {
+            filter = {};
         }
-    }
 
-    if (process === 'yes') {
-        for (let i = 0; i < result.length; i++) {
-            result[i] = await dataProcess(result[i]);
+        let [result, total] = await Promise.all([
+            db.collection("tops").find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
+
+            db.collection("tops")
+                .estimatedDocumentCount(filter)
+        ]);
+
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
+
+        if (!result) {
+            return "not_found";
         }
-    }
 
-
-
-    return {
-        result: result,
-        metadata: {
-            total,
-            page,
-            perPage,
-            hasNextPage,
-            hasPrevPage
+        if (essentials == 'yes') {
+            for (let i = 0; i < result.length; i++) {
+                result[i].topTopics = await getTopics(String(result[i]._id), 1, 10, "no", "yes", '', {});
+            }
         }
-    };
+
+        if (process === 'yes') {
+            for (let i = 0; i < result.length; i++) {
+                result[i] = await dataProcess(result[i]);
+            }
+        }
+
+
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
 export async function getTopsByImport(importId, page = 1, perPage = 10, q = '') {
     const skip = (page - 1) * perPage;
 
-    const db = await connectDB();
-    let filter = { importId: importId };
+    try {
+        const db = await connectDB();
+        let filter = { importId: importId };
 
-    if (!isNull(q)) {
-        filter = { title: { $regex: new RegExp(q, 'i') } }
-    } else {
-        filter = {};
-    }
-
-    let [result, total] = await Promise.all([
-        db.collection("tops").find(filter)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(perPage)
-            .toArray(),
-
-        db.collection("tops")
-            .estimatedDocumentCount(filter)
-    ]);
-
-    const numPages = Math.ceil(total / perPage);
-    const hasNextPage = page < numPages;
-    const hasPrevPage = page > 1;
-
-    if (!result) {
-        return "not_found";
-    }
-
-    const topTopicsPromises = result.map(async (data) => {
-        const tTopics = await getTopics(String(data._id), 1, 10);
-        return {
-            ...data,
-            topTopics: tTopics
-        };
-    });
-
-    result = await Promise.all(topTopicsPromises);
-
-
-    return {
-        result: result,
-        metadata: {
-            total,
-            page,
-            perPage,
-            hasNextPage,
-            hasPrevPage
+        if (!isNull(q)) {
+            filter = { title: { $regex: new RegExp(q, 'i') } }
+        } else {
+            filter = {};
         }
-    };
+
+        let [result, total] = await Promise.all([
+            db.collection("tops").find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
+
+            db.collection("tops")
+                .estimatedDocumentCount(filter)
+        ]);
+
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
+
+        if (!result) {
+            return "not_found";
+        }
+
+        const topTopicsPromises = result.map(async (data) => {
+            const tTopics = await getTopics(String(data._id), 1, 10);
+            return {
+                ...data,
+                topTopics: tTopics
+            };
+        });
+
+        result = await Promise.all(topTopicsPromises);
+
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
 export async function getListsByImport(importId, page = 1, perPage = 10, q = '') {
     const skip = (page - 1) * perPage;
 
-    const db = await connectDB();
-    let filter = { importId: importId };
+    try {
+        const db = await connectDB();
+        let filter = { importId: importId };
 
-    if (!isNull(q)) {
-        filter = { title: { $regex: new RegExp(q, 'i') } }
-    } else {
-        filter = {};
-    }
-
-    let [result, total] = await Promise.all([
-        db.collection("lists").find(filter)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(perPage)
-            .toArray(),
-
-        db.collection("lists")
-            .estimatedDocumentCount(filter)
-    ]);
-
-    const numPages = Math.ceil(total / perPage);
-    const hasNextPage = page < numPages;
-    const hasPrevPage = page > 1;
-
-    if (!result) {
-        return "not_found";
-    }
-
-    return {
-        result: result,
-        metadata: {
-            total,
-            page,
-            perPage,
-            hasNextPage,
-            hasPrevPage
+        if (!isNull(q)) {
+            filter = { title: { $regex: new RegExp(q, 'i') } }
+        } else {
+            filter = {};
         }
-    };
+
+        let [result, total] = await Promise.all([
+            db.collection("lists").find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
+
+            db.collection("lists")
+                .estimatedDocumentCount(filter)
+        ]);
+
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
+
+        if (!result) {
+            return "not_found";
+        }
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
@@ -164,55 +183,62 @@ export async function getTopicsByImport(importId, page = 1, perPage = 10, proces
 
     const skip = (page - 1) * perPage;
 
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const filter = importId ? { importId } : {};
+        const filter = importId ? { importId } : {};
 
-    const [result, total] = await Promise.all([
-        db.collection("topics").find(filter)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(perPage)
-            .toArray(),
+        const [result, total] = await Promise.all([
+            db.collection("topics").find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
 
-        db.collection("topics")
-            .estimatedDocumentCount(filter)
-    ]);
+            db.collection("topics")
+                .estimatedDocumentCount(filter)
+        ]);
 
-    const numPages = Math.ceil(total / perPage);
-    const hasNextPage = page < numPages;
-    const hasPrevPage = page > 1;
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
 
-    if (!result) {
-        return "not_found";
-    }
-
-
-    if (process === 'yes') {
-        const promise = await result.map(async (r, i) => {
-            result[i] = await dataProcess(result[i]);
-        })
-        Promise.all(promise);
-    }
-
-    return {
-        result: result,
-        metadata: {
-            total,
-            page,
-            perPage,
-            hasNextPage,
-            hasPrevPage
+        if (!result) {
+            return "not_found";
         }
-    };
 
+
+        if (process === 'yes') {
+            const promise = await result.map(async (r, i) => {
+                result[i] = await dataProcess(result[i]);
+            })
+            Promise.all(promise);
+        }
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes', process = 'yes', q, others = {}) {
 
-    try {
-        const skip = (page - 1) * perPage;
 
+    const skip = (page - 1) * perPage;
+
+    try {
         const db = await connectDB();
 
         let filter = topId ? { topId } : {};
@@ -289,17 +315,17 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
         console.log(error)
     }
 
+
 }
-
-
 
 
 export async function fetchImports(page = 1, perPage = 10) {
 
+
+
+    const skip = (page - 1) * perPage;
+
     try {
-
-        const skip = (page - 1) * perPage;
-
         const db = await connectDB();
 
         const [result, total] = await Promise.all([
@@ -347,10 +373,11 @@ export async function fetchImports(page = 1, perPage = 10) {
 
 export async function fetchFiles(page = 1, perPage = 10) {
 
+
+
+    const skip = (page - 1) * perPage;
+
     try {
-
-        const skip = (page - 1) * perPage;
-
         const db = await connectDB();
 
         const [result, total] = await Promise.all([
@@ -396,10 +423,10 @@ export async function fetchFiles(page = 1, perPage = 10) {
 
 export async function fetchTemplates(page = 1, perPage = 10) {
 
+
+    const skip = (page - 1) * perPage;
+
     try {
-
-        const skip = (page - 1) * perPage;
-
         const db = await connectDB();
 
         const [result, total] = await Promise.all([
@@ -445,8 +472,9 @@ export async function fetchTemplates(page = 1, perPage = 10) {
 
 export async function fetchTemplate(templateId, rand = 'no') {
 
-    try {
 
+
+    try {
         const db = await connectDB();
 
         let temp = await db.collection("templates").findOne({
@@ -474,8 +502,9 @@ export async function fetchTemplate(templateId, rand = 'no') {
 
 
 export async function fetchAQandA(id, rand = 'no', process = 'yes') {
-    try {
 
+
+    try {
         const db = await connectDB();
 
         let temp = await db.collection("qandas").findOne({
@@ -493,28 +522,8 @@ export async function fetchAQandA(id, rand = 'no', process = 'yes') {
         }
 
         if (process === 'yes') {
-            const steps = JSON.parse(temp.steps);
-            temp = await dataProcess(temp, "qanda", { steps: steps.length })
-
-            if (temp.body) {
-                const bodies = JSON.parse(temp.body);
-                const tBody = [];
-                for (let i = 0; i < bodies.length; i++) {
-                    const { dataBody } = await dataProcess({ dataBody: bodies[i].dataBody }, "qanda", { steps: steps.length })
-                    tBody.push({ dataBody: dataBody });
-                }
-                temp.body = JSON.stringify(tBody)
-            }
-
-            if (temp.steps) {
-                const steps = JSON.parse(temp.steps);
-                const tSteps = [];
-                for (let i = 0; i < steps.length; i++) {
-                    const { dataBody } = await dataProcess({ dataBody: steps[i].dataBody }, "qanda", { steps: steps.length })
-                    tSteps.push({ dataBody: dataBody });
-                }
-                temp.steps = JSON.stringify(tSteps)
-            }
+            // console.log(temp)
+            temp = processInner(temp, "qanda");
 
         }
 
@@ -530,12 +539,13 @@ export async function fetchAQandA(id, rand = 'no', process = 'yes') {
 
 
 export async function fetchQandAs(listId, page = 1, perPage = 10, process = 'yes') {
+
+
+    listId = String(listId);
+
+    const skip = (page - 1) * perPage;
+
     try {
-
-        listId = String(listId);
-
-        const skip = (page - 1) * perPage;
-
         const db = await connectDB();
 
         const filter = listId ? { listId } : {};
@@ -562,6 +572,8 @@ export async function fetchQandAs(listId, page = 1, perPage = 10, process = 'yes
         if (process === 'yes') {
             for (let i = 0; i < result.length; i++) {
                 result[i] = await dataProcess(result[i]);
+                result[i] = await processInner(result[i], "qanda");
+
             }
         }
 
@@ -591,75 +603,82 @@ export async function getLists(topicId, page = 1, perPage = 10, essentials = 'ye
 
     const skip = (page - 1) * perPage;
 
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const filter = topicId ? { topicId } : {};
+        const filter = topicId ? { topicId } : {};
 
-    const [result, total] = await Promise.all([
-        db.collection("lists").find(filter)
-            .sort({ rankingScore: -1 })
-            .skip(skip)
-            .limit(perPage)
-            .toArray(),
+        const [result, total] = await Promise.all([
+            db.collection("lists").find(filter)
+                .sort({ rankingScore: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
 
-        db.collection("lists")
-            .estimatedDocumentCount(filter)
-    ]);
+            db.collection("lists")
+                .estimatedDocumentCount(filter)
+        ]);
 
-    const numPages = Math.ceil(total / perPage);
-    const hasNextPage = page < numPages;
-    const hasPrevPage = page > 1;
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
 
-    if (!result) {
-        return "not_found";
-    }
-
-
-
-    if (essentials == 'yes') {
-        const ids = result.map((t) => String(t.topicId));
-        const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
-
-        for (let i = 0; i < result.length; i++) {
-            result[i].topicData = topics[i]
-            result[i].postSlug = `${topics[i].slug}/${result[i].slug}`
+        if (!result) {
+            return "not_found";
         }
-    }
 
-    if (process === 'yes') {
-        for (let i = 0; i < result.length; i++) {
 
-            let proData = {};
-            if (result[i].topicData) {
-                proData = { topic: result[i].topicData.title }
-            } else {
 
-                const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
+        if (essentials == 'yes') {
+            const ids = result.map((t) => String(t.topicId));
+            const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
 
-                proData = { topic: topics[i].topicData.title }
-
+            for (let i = 0; i < result.length; i++) {
+                result[i].topicData = topics[i]
+                result[i].postSlug = `${topics[i].slug}/${result[i].slug}`
             }
-
-            result[i] = await dataProcess(result[i], 'list', proData);
         }
+
+        if (process === 'yes') {
+            for (let i = 0; i < result.length; i++) {
+
+                let proData = {};
+                if (result[i].topicData) {
+                    proData = { topic: result[i].topicData.title }
+                } else {
+
+                    const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
+
+                    proData = { topic: topics[i].topicData.title }
+
+                }
+
+                result[i] = await dataProcess(result[i], 'list', proData);
+            }
+        }
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
     }
-
-    return {
-        result: result,
-        metadata: {
-            total,
-            page,
-            perPage,
-            hasNextPage,
-            hasPrevPage
-        }
-    };
 }
 
 export async function getList(listId, essentials = 'yes', process = "yes") {
 
-    try {
 
+
+    try {
         const db = await connectDB();
 
         let topic = await db.collection("lists").findOne({
@@ -721,69 +740,83 @@ export async function getPopularTopics(excludeId = '', page = 1, perPage = 10, p
 export async function getPopularLists(excludeId = '', essentials = '', page = 1, perPage = 10, process = 'yes') {
     const skip = (page - 1) * perPage;
 
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const filter = excludeId ? { _id: { $ne: new ObjectId(excludeId) } } : {};
+        const filter = excludeId ? { _id: { $ne: new ObjectId(excludeId) } } : {};
 
-    const [result, total] = await Promise.all([
-        db.collection("lists").find(filter)
-            .sort({ views: -1 })
-            .skip(skip)
-            .limit(perPage)
-            .toArray(),
+        const [result, total] = await Promise.all([
+            db.collection("lists").find(filter)
+                .sort({ views: -1 })
+                .skip(skip)
+                .limit(perPage)
+                .toArray(),
 
-        db.collection("lists")
-            .estimatedDocumentCount(filter)
-    ]);
+            db.collection("lists")
+                .estimatedDocumentCount(filter)
+        ]);
 
-    const numPages = Math.ceil(total / perPage);
-    const hasNextPage = page < numPages;
-    const hasPrevPage = page > 1;
+        const numPages = Math.ceil(total / perPage);
+        const hasNextPage = page < numPages;
+        const hasPrevPage = page > 1;
 
-    if (!result) {
-        return "not_found";
-    }
-
-    if (process === 'yes') {
-        const promise = await result.map(async (r, i) => {
-            result[i] = await dataProcess(result[i]);
-        })
-        Promise.all(promise);
-    }
-
-    if (!isNull(result)) {
-        const ids = result.map((t) => String(t.topicId));
-        const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
-        result.map((post, i) => {
-            result[i].topicData = topics[i]
-            result[i].postSlug = `${topics[i].slug}/${result[i].slug}`
-        })
-    }
-
-    return {
-        result: result,
-        metadata: {
-            total,
-            page,
-            perPage,
-            hasNextPage,
-            hasPrevPage
+        if (!result) {
+            return "not_found";
         }
-    };
 
+        if (process === 'yes') {
+            const promise = await result.map(async (r, i) => {
+                result[i] = await dataProcess(result[i]);
+            })
+            Promise.all(promise);
+        }
+
+        if (!isNull(result)) {
+            const ids = result.map((t) => String(t.topicId));
+            const topics = await Promise.all(ids.map((t) => getTopic(t, 'no', 1, 10, 'yes')));
+            result.map((post, i) => {
+                result[i].topicData = topics[i]
+                result[i].postSlug = `${topics[i].slug}/${result[i].slug}`
+            })
+        }
+
+        return {
+            result: result,
+            metadata: {
+                total,
+                page,
+                perPage,
+                hasNextPage,
+                hasPrevPage
+            }
+        };
+
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 export async function stat() {
-    const db = await connectDB();
-    const result = await db.collection.find().explain("executionStats");
-    return result;
+    try {
+        const db = await connectDB();
+        const result = await db.collection.find().explain("executionStats");
+        return result;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
+
 }
 
 
 export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, process = 'yes',) {
 
-    try {
 
+
+    try {
         const db = await connectDB();
 
         let topic = await db.collection("topics").findOne({
@@ -833,8 +866,9 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
 
 export async function getTop(id, process = 'yes') {
 
-    try {
 
+
+    try {
         const db = await connectDB();
 
         let topic = await db.collection("tops").findOne({
@@ -866,11 +900,17 @@ export async function getTop(id, process = 'yes') {
 
 
 export async function getUser(uid) {
-    const db = await connectDB();
-    const user = await db
-        .collection("users")
-        .findOne({ uid: uid })
-    return user;
+    try {
+        const db = await connectDB();
+        const user = await db
+            .collection("users")
+            .findOne({ uid: uid })
+        return user;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
@@ -880,101 +920,150 @@ export async function addTopic(data) {
 
     const _id = new ObjectId();
     data._id = _id;
-    const db = await connectDB();
-    await db.collection("topics").insertOne(data);
-    return _id;
+    try {
+        const db = await connectDB();
+        await db.collection("topics").insertOne(data);
+        return _id;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 export async function addList(data) {
 
     const _id = new ObjectId();
     data._id = _id;
-    const db = await connectDB();
-    await db.collection("lists").insertOne(data);
-    return _id;
+    try {
+        const db = await connectDB();
+        await db.collection("lists").insertOne(data);
+        return _id;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
 export async function addTemplate(data) {
 
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const result = await db.collection("templates").insertMany(data);
+        const result = await db.collection("templates").insertMany(data);
 
-    return result.insertedIds;
+        return result.insertedIds;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
 export async function addQandAs(data) {
 
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const result = await db.collection("qandas").insertMany(data);
+        const result = await db.collection("qandas").insertMany(data);
 
 
-    if (result.insertedCount > 0) {
-        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
-    } else {
-        return { success: false, ids: result.insertedIds, msg: `no data added` };
+        if (result.insertedCount > 0) {
+            return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
+        } else {
+            return { success: false, ids: result.insertedIds, msg: `no data added` };
+        }
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
     }
 }
 
 export async function addFiles(data) {
 
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const result = await db.collection("files").insertMany(data);
+        const result = await db.collection("files").insertMany(data);
 
-    return result.insertedIds;
+        return result.insertedIds;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
 export async function addTops(data) {
 
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const result = await db.collection("tops").insertMany(data);
+        const result = await db.collection("tops").insertMany(data);
 
-    if (result.insertedCount > 0) {
-        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} inserted` };
-    } else {
-        return { success: false, ids: result.insertedIds, msg: `no data inserted` };
+        if (result.insertedCount > 0) {
+            return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} inserted` };
+        } else {
+            return { success: false, ids: result.insertedIds, msg: `no data inserted` };
+        }
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
     }
 }
 
 
 
 export async function addTopics(data) {
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const result = await db.collection("topics").insertMany(data);
+        const result = await db.collection("topics").insertMany(data);
 
 
-    if (result.insertedCount > 0) {
-        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
-    } else {
-        return { success: false, ids: result.insertedIds, msg: `no data added` };
+        if (result.insertedCount > 0) {
+            return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
+        } else {
+            return { success: false, ids: result.insertedIds, msg: `no data added` };
+        }
+
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
     }
-
 }
 
 export async function addLists(data) {
 
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    const result = await db.collection("lists").insertMany(data);
+        const result = await db.collection("lists").insertMany(data);
 
-    if (result.insertedCount > 0) {
-        return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
-    } else {
-        return { success: false, ids: result.insertedIds, msg: `no data added` };
+        if (result.insertedCount > 0) {
+            return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
+        } else {
+            return { success: false, ids: result.insertedIds, msg: `no data added` };
+        }
+
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
     }
-
 }
 
 export async function updateATopic(id, data) {
+
+    const _id = new ObjectId(id);
     try {
-        const _id = new ObjectId(id);
         const db = await connectDB();
         await db.collection("topics")
             .updateOne({ _id: _id }, { $set: data });
@@ -990,30 +1079,43 @@ export async function updateATemplate(id, data) {
 
 
     const _id = new ObjectId(id);
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    await db.collection("templates")
-        .updateOne({ _id: _id }, { $set: data });
+        await db.collection("templates")
+            .updateOne({ _id: _id }, { $set: data });
 
-    return true;
+        return true;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 export async function updateAQandA(id, data) {
 
     const _id = new ObjectId(id);
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    await db.collection("qandas")
-        .updateOne({ _id: _id }, { $set: data });
+        await db.collection("qandas")
+            .updateOne({ _id: _id }, { $set: data });
 
-    return true;
+        return true;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
 export async function updateAList(id, data) {
 
+
+    const _id = new ObjectId(String(id));
     try {
-        const _id = new ObjectId(String(id));
         const db = await connectDB();
         await db.collection("lists")
             .updateOne({ _id: _id }, { $set: data });
@@ -1028,13 +1130,19 @@ export async function updateAList(id, data) {
 export async function updateATop(id, data) {
 
     const _id = new ObjectId(id);
-    const db = await connectDB();
+    try {
+        const db = await connectDB();
 
-    await db.collection("tops")
-        .updateOne({ _id: _id }, { $set: data });
+        await db.collection("tops")
+            .updateOne({ _id: _id }, { $set: data });
 
-    return true;
+        return true;
 
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 
@@ -1042,54 +1150,66 @@ export async function updateATop(id, data) {
 export async function addImport(data) {
     const _id = new ObjectId();
     data._id = _id;
-    const db = await connectDB();
-    await db.collection("imports").insertOne(data);
-    return _id;
+    try {
+        const db = await connectDB();
+        await db.collection("imports").insertOne(data);
+        return _id;
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
+
+    }
 }
 
 //DELETE
 
 export async function removeTopics(id, topId, importId) {
-    const db = await connectDB();
-
-    let result;
-    const _id = new ObjectId(id);
-
     try {
+        const db = await connectDB();
 
-        if (importId) {
-            const res = await getTopicsByImport(importId, 1, 1000000, 'no');
-            if (!isNull(res.result)) {
-                const ids = res.result.map((t) => String(t._id));
-                const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
+        let result;
+        const _id = new ObjectId(id);
+
+        try {
+
+            if (importId) {
+                const res = await getTopicsByImport(importId, 1, 1000000, 'no');
+                if (!isNull(res.result)) {
+                    const ids = res.result.map((t) => String(t._id));
+                    const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
+                }
+                result = await db.collection("topics").deleteMany({ importId: importId });
             }
-            result = await db.collection("topics").deleteMany({ importId: importId });
-        }
 
-        if (topId) {
-            const res = await getTopics(topId, 1, 1000000, 'no');
-            if (!isNull(res.result)) {
-                const ids = res.result.map((t) => String(t._id));
-                const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
+            if (topId) {
+                const res = await getTopics(topId, 1, 1000000, 'no');
+                if (!isNull(res.result)) {
+                    const ids = res.result.map((t) => String(t._id));
+                    const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
+                }
+                result = await db.collection("topics").deleteMany({ topId: topId });
             }
-            result = await db.collection("topics").deleteMany({ topId: topId });
+
+            if (id && isValidObjectId(_id)) {
+                result = await db.collection("topics").deleteMany({ _id: _id });
+                await removeList(null, id, null);
+            }
+
+
+        } catch (error) {
+            console.log('Error removing topics:', error);
+            return { success: false, msg: `${error}`, data: {} };
         }
 
-        if (id && isValidObjectId(_id)) {
-            result = await db.collection("topics").deleteMany({ _id: _id });
-            await removeList(null, id, null);
+        if (result.deletedCount > 0) {
+            return { success: true, msg: `successfully deleted`, data: result };
+        } else {
+            return { success: false, msg: `unknown error`, data: result };
         }
-
-
     } catch (error) {
-        console.log('Error removing topics:', error);
-        return { success: false, msg: `${error}`, data: {} };
-    }
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
 
-    if (result.deletedCount > 0) {
-        return { success: true, msg: `successfully deleted`, data: result };
-    } else {
-        return { success: false, msg: `unknown error`, data: result };
     }
 }
 
@@ -1097,38 +1217,44 @@ export async function removeTopics(id, topId, importId) {
 
 export async function removeList(id, topicId, importId) {
 
-    const db = await connectDB();
-
-    let result;
-
     try {
-        if (importId) {
-            result = await db.collection("lists").deleteMany({ importId: importId });
-            const res = await getListsByImport(importId, 1, 1000000, '');
+        const db = await connectDB();
 
-            if (!isNull(res.result)) {
-                const ids = res.result.map((t) => String(t._id));
-                const delLists = await Promise.all(ids.map((t) => removeQandA(t, null, null)));
+        let result;
+
+        try {
+            if (importId) {
+                result = await db.collection("lists").deleteMany({ importId: importId });
+                const res = await getListsByImport(importId, 1, 1000000, '');
+
+                if (!isNull(res.result)) {
+                    const ids = res.result.map((t) => String(t._id));
+                    const delLists = await Promise.all(ids.map((t) => removeQandA(t, null, null)));
+                }
+
             }
 
+            if (topicId) {
+                result = await db.collection("lists").deleteMany({ topicId: topicId });
+            }
+
+            if (id && isValidObjectId(id)) {
+                result = await db.collection("lists").deleteMany({ _id: new ObjectId(id) });
+                await removeQandA(null, null, id)
+            }
+
+
+        } catch (error) {
+            console.log('Error removing lists:', error);
+            return 0;
         }
 
-        if (topicId) {
-            result = await db.collection("lists").deleteMany({ topicId: topicId });
-        }
-
-        if (id && isValidObjectId(id)) {
-            result = await db.collection("lists").deleteMany({ _id: new ObjectId(id) });
-            await removeQandA(null, null, id)
-        }
-
-
+        return result.deletedCount;
     } catch (error) {
-        console.log('Error removing lists:', error);
-        return 0;
-    }
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
 
-    return result.deletedCount;
+    }
 }
 
 
@@ -1136,79 +1262,90 @@ export async function removeList(id, topicId, importId) {
 
 export async function removeQandA(id, importId, listId) {
 
-    const db = await connectDB();
-
-    let result;
-
     try {
-        if (importId) {
-            result = await db.collection("qandas").deleteMany({ importId: importId });
+        const db = await connectDB();
 
+        let result;
+
+        try {
+            if (importId) {
+                result = await db.collection("qandas").deleteMany({ importId: importId });
+
+            }
+
+            if (listId) {
+                result = await db.collection("qandas").deleteMany({ listId: listId });
+
+            }
+
+            if (id && isValidObjectId(id)) {
+
+                result = await db.collection("qandas").deleteMany({ _id: new ObjectId(id) });
+            }
+
+
+        } catch (error) {
+            console.log('Error removing lists:', error);
+            return 0;
         }
 
-        if (listId) {
-            result = await db.collection("qandas").deleteMany({ listId: listId });
-
-        }
-
-        if (id && isValidObjectId(id)) {
-
-            result = await db.collection("qandas").deleteMany({ _id: new ObjectId(id) });
-        }
-
-
+        return { success: true, count: result.deletedCount };
     } catch (error) {
-        console.log('Error removing lists:', error);
-        return 0;
-    }
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
 
-    return { success: true, count: result.deletedCount };
+    }
 }
 
 
 
 export async function removeTop(id, importId) {
 
-    const db = await connectDB();
-
-    let result = 0;
-    let result2 = 0;
-
     try {
-        if (id) {
-            result = await db.collection("tops").deleteOne({ _id: new ObjectId(id) });
-            await removeTopics(null, id, null);
-        }
+        const db = await connectDB();
 
-        if (importId) {
-            const res = await getTopsByImport(importId, 1, 1000000, 'yes', '');
+        let result = 0;
+        let result2 = 0;
 
-            if (!isNull(res.result)) {
-                const ids = res.result.map((t) => String(t._id));
-                const delLists = await Promise.all(ids.map((t) => removeTopics(null, t, null)));
+        try {
+            if (id) {
+                result = await db.collection("tops").deleteOne({ _id: new ObjectId(id) });
+                await removeTopics(null, id, null);
             }
-            result = await db.collection("tops").deleteMany({ importId: importId });
+
+            if (importId) {
+                const res = await getTopsByImport(importId, 1, 1000000, 'yes', '');
+
+                if (!isNull(res.result)) {
+                    const ids = res.result.map((t) => String(t._id));
+                    const delLists = await Promise.all(ids.map((t) => removeTopics(null, t, null)));
+                }
+                result = await db.collection("tops").deleteMany({ importId: importId });
+            }
+
+            return { success: true }
+
+        } catch (e) {
+            console.log(`${e} error 88364575`)
+            return { success: false }
         }
+    } catch (error) {
+        console.log(error)
+        return { success: false, msg: "error: 847746" }
 
-        return { success: true }
-
-    } catch (e) {
-        console.log(`${e} error 88364575`)
-        return { success: false }
     }
 }
 
 
 export async function removeImport(importId) {
 
-    const db = await connectDB();
-
-    const filter = {
-        _id: new ObjectId(importId)
-    };
-
-
     try {
+        const db = await connectDB();
+
+        const filter = {
+            _id: new ObjectId(importId)
+        };
+
         const result = await db.collection("imports").deleteMany(filter);
         await removeTop(null, importId);
         await removeList(null, null, importId);
@@ -1219,8 +1356,8 @@ export async function removeImport(importId) {
     }
 
     return result;
-}
 
+}
 
 
 function isValidObjectId(id) {

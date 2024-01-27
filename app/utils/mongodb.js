@@ -27,8 +27,13 @@ async function connectToDatabase(uri) {
 }
 
 async function connectDB() {
-  const client = await connectToDatabase(MONGODB_URI);
-  return client;
+  try {
+    const client = await connectToDatabase(MONGODB_URI);
+    return client;
+  } catch (error) {
+    throw new Error(error);
+
+  }
 }
 
 export { connectDB };

@@ -1,10 +1,32 @@
-export default async function TTx() {
-  let lists = [
-    { title: "Virginus Alajekwu C" },
-    { title: "Alajekwu Paschal O" },
-    { title: "Chijioke Onwuachu M" },
-    { title: "Virginus Alajekwu C" },
-  ];
+import { justGetTopicWithEssentials } from "@/app/lib/repo/topics_repo";
+import { isNull } from "@/app/utils/custom_helpers";
+
+export default async function TopicImage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  let data: any = {};
+  const result = await justGetTopicWithEssentials(
+    params.id.replace(".png", ""),
+    10
+  );
+
+  if (result) {
+    data = result;
+  }
+
+  if (isNull(result)) {
+    return { success: false, msg: "not found" };
+  }
+
+  let lists: any = [];
+
+  if (data.lists && data.lists.result) {
+    data.lists.result.map((l, i) => {
+      lists.push({ title: l.title });
+    });
+  }
 
   const heights = [
     "h-96",
@@ -73,7 +95,9 @@ export default async function TTx() {
         <div className="flex border-t-4 border-red-500"></div>
 
         <div className="flex justify-center text-center items-center font-extrabold text-3xl text-blue-900 m-1">
-          {lists[0].title} is the Overral Best
+          {lists[0] && lists[0].title
+            ? `${lists[0].title} is the Overral Best`
+            : "no list yet"}
           <img
             src={`/images/top_1.png`}
             alt={""}

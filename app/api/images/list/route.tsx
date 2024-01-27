@@ -6,9 +6,11 @@ export async function GET(request: any) {
   const { searchParams } = new URL(request.url);
 
   const hasLists = searchParams.has("lists");
+  const hasList = searchParams.has("list");
   let lists: any = hasLists
     ? JSON.parse(String(searchParams.get("lists")))
     : [];
+  let list: any = hasList ? JSON.parse(String(searchParams.get("list"))) : {};
 
   const heights = [
     "h-96",
@@ -72,7 +74,14 @@ export async function GET(request: any) {
                       rate = "100";
                     }
 
-                    const d = 800 / lists.length;
+                    let color = "bg-blue-300";
+
+                    let d = 300 / lists.length;
+                    if (list && list.title && list.title === post.title) {
+                      color = "bg-red-600";
+                      d = 800 / lists.length;
+                    }
+
                     let w = heights.length - lists.length + d;
 
                     if (heights.length > i) {
@@ -84,7 +93,7 @@ export async function GET(request: any) {
                             <div tw="overflow-hidden flex text-sm">{rate}%</div>
                           </div>
                           <div
-                            tw={`${height} bg-blue-600 m-2 rounded p-2 shadow-xl  flex text-white font-bold items-end inline-block w-[${w}px] overflow-hidden`}
+                            tw={`${height} ${color} m-2 rounded p-2 shadow-xl  flex text-white font-bold items-end inline-block w-[${w}px] overflow-hidden`}
                           >
                             <div tw="overflow-hidden flex text-sm">
                               {post.title}

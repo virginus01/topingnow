@@ -1,10 +1,48 @@
-export default async function TTx() {
-  let lists = [
-    { title: "Virginus Alajekwu C" },
-    { title: "Alajekwu Paschal O" },
-    { title: "Chijioke Onwuachu M" },
-    { title: "Virginus Alajekwu C" },
-  ];
+import { getListById } from "@/app/lib/repo/lists_repo";
+import { justGetTopicWithEssentials } from "@/app/lib/repo/topics_repo";
+import { isNull } from "@/app/utils/custom_helpers";
+
+export default async function TopicImage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  let listData: any = {};
+
+  let title: any = "";
+
+  const listResult = await getListById(params.id.replace(".png", ""));
+
+  if (listResult) {
+    listData = listResult;
+  }
+
+  if (isNull(listResult)) {
+    return { success: false, msg: "not found" };
+  }
+
+  let data: any = {};
+
+  const result = await justGetTopicWithEssentials(
+    listData.topicData.slug.replace(".png", "10"),
+    10
+  );
+
+  if (result) {
+    data = result;
+  }
+
+  let lists: any = [];
+  let listIndex = "1";
+
+  if (data.lists && data.lists.result) {
+    data.lists.result.map((l, i) => {
+      if (l.title === listData.title) {
+        listIndex = i + 1;
+      }
+      lists.push({ title: l.title });
+    });
+  }
 
   const heights = [
     "h-96",
@@ -68,19 +106,18 @@ export default async function TTx() {
 
       <div className="flex h-screen flex-col">
         <div className="flex justify-center text-center font-extrabold text-6xl text-blue-900 m-5">
-          Top 10 Best Flutter Developers in Lagos, Nigeria in 2024 now
+          {listData.title}
         </div>
         <div className="flex border-t-4 border-red-500"></div>
 
         <div className="flex justify-center text-center items-center font-extrabold text-3xl text-blue-900 m-1">
-          {lists[0].title} is the Overral Best
-          <img
-            src={`/images/top_1.png`}
-            alt={""}
-            width={100}
-            height={100}
-            className=" rounded-sm object-cover"
-          />
+          <span className="text-red-900">
+            {listData.title} {", "}
+          </span>
+
+          <span className="text-green-900">
+            is No. {listIndex} in the list: {listData.topicData.title}
+          </span>
         </div>
         <div className="flex justify-center text-center items-center m-1">
           <img
@@ -99,7 +136,14 @@ export default async function TTx() {
               rate = "100";
             }
 
-            const d = 400 / lists.length;
+            let color = "bg-blue-300";
+
+            let d = 300 / lists.length;
+            if (listData && listData.title && listData.title === post.title) {
+              color = "bg-red-600";
+              d = 800 / lists.length;
+            }
+
             let w = heights.length - lists.length + d;
 
             if (heights.length > i) {
@@ -111,7 +155,7 @@ export default async function TTx() {
                     <div className="overflow-hidden flex text-sm">{rate}%</div>
                   </div>
                   <div
-                    className={`${height} bg-blue-600 m-2 rounded p-2 shadow-xl  flex text-white font-bold items-end w-[${w}px] overflow-hidden`}
+                    className={`${height} ${color} m-2 rounded p-2 shadow-xl  flex text-white font-bold items-end w-[${w}px] overflow-hidden`}
                   >
                     <div className="overflow-hidden flex text-sm">
                       {post.title}
