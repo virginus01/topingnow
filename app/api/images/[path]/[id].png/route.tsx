@@ -2,7 +2,9 @@ export async function GET(
   request: any,
   { params }: { params: { path: string; id: string } }
 ) {
-  let imgUrl = `${process.env.NEXT_PUBLIC_SCREENSHOT_URL}?url=${process.env.NEXT_PUBLIC_BASE_URL}/gimages/${params.path}/${params.id}`;
+  let imgUrl = `${process.env.NEXT_PUBLIC_SCREENSHOT_URL}/?url=${process.env.NEXT_PUBLIC_BASE_URL}/gimages/${params.path}/${params.id}`;
+
+  //imgUrl = "https://topingnow.com/gimages/topic/best-fullstack-developers-lagos-nigeria";
 
   const response: any = await fetch(imgUrl);
 
