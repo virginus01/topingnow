@@ -29,7 +29,7 @@ import { postTops } from "../../api_repos/tops_api_repo";
 //import { ListsModel, postListsApi } from "@/app/roadmap/lists_roadmap";
 import { postQandaApi } from "../../api_repos/qanda_api_repo";
 import { ListsModel } from "@/app/models/lists_model";
-import { postListsApi } from "../../api_repos/lists_api_repo";
+import { postListsApi, updateList } from "../../api_repos/lists_api_repo";
 
 export async function POST(
   request: Request,
@@ -42,7 +42,13 @@ export async function POST(
   };
 
   let action = params.action;
-  const formData = await request.formData();
+
+  let formData: any = {};
+  try {
+    formData = await request.formData();
+  } catch (error) {
+    formData = await request.json();
+  }
 
   //creating topics
   if (action == "post_tops") {
@@ -240,20 +246,6 @@ async function postList(formData: any) {
     return await addList(uData);
   } catch {
     return "489747 error";
-  }
-}
-
-async function updateList(formData: any) {
-  const updateData = JSON.parse(formData.get("updateData"));
-
-  let uData: ListsModel = {};
-  uData = beforeUpdate(updateData, uData);
-
-  try {
-    return await updateAList(updateData._id, uData);
-  } catch {
-    console.log("error 746464");
-    return { success: false };
   }
 }
 

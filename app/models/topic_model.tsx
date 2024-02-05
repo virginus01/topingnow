@@ -1,7 +1,7 @@
 export type TopicModel = {
   [key: string]: string | Date | any | null | undefined;
   title?: string | null;
-  _id?: string | null;
+  _id?: any;
   description?: string | null;
   body?: string | null;
   createdAt?: Date | null;
@@ -20,4 +20,5 @@ export type TopicModel = {
   ratingScore?: string | null;
   views?: string | null;
   selectedImage?: any;
+  lists?: any;
 };

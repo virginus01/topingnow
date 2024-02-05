@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "types": [
+      "puppeteer"
+    ],
     "lib": [
       "dom",
       "dom.iterable",

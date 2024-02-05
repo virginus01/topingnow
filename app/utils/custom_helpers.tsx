@@ -241,6 +241,15 @@ export function cleanFileName(filename) {
   return cleanName.trim();
 }
 
+export async function preFetch(url: any) {
+  await fetch(url, {
+    next: {
+      revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
+    },
+  });
+  return url;
+}
+
 export function beforeImport(data, requiredFields) {
   const missingFields = requiredFields.filter((field) => !data[0][field]);
 
@@ -271,6 +280,18 @@ export function beforePost(data) {
   }
 
   return true;
+}
+export function beforeUpdatePend(updateData, uData) {
+  for (const key in updateData) {
+    if (!isNull(updateData[key])) {
+      uData[key] = updateData[key];
+    }
+  }
+
+  uData._id = "";
+  uData.updatedAt = new Date();
+  console.log(uData);
+  return uData;
 }
 
 export function beforeUpdate(updateData, uData) {
@@ -356,6 +377,46 @@ export function beforeUpdate(updateData, uData) {
 
   if (!isNull(updateData.topId)) {
     uData.topId = updateData.topId;
+  }
+
+  if (!isNull(updateData.category)) {
+    uData.category = updateData.category;
+  }
+
+  if (!isNull(updateData.type)) {
+    uData.type = updateData.type;
+  }
+
+  if (!isNull(updateData.phone)) {
+    uData.phone = updateData.phone;
+  }
+
+  if (!isNull(updateData.website)) {
+    uData.website = updateData.website;
+  }
+
+  if (!isNull(updateData.place_id)) {
+    uData.place_id = updateData.place_id;
+  }
+
+  if (!isNull(updateData.tags)) {
+    uData.tags = updateData.tags;
+  }
+
+  if (!isNull(updateData.location_city)) {
+    uData.location_city = updateData.location_city;
+  }
+
+  if (!isNull(updateData.location_country)) {
+    uData.location_country = updateData.location_country;
+  }
+
+  if (!isNull(updateData.location_state)) {
+    uData.location_state = updateData.location_state;
+  }
+
+  if (!isNull(updateData.external_image)) {
+    uData.external_image = updateData.external_image;
   }
 
   uData.updatedAt = new Date();

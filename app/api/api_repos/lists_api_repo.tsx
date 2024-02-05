@@ -1,18 +1,40 @@
 import { TopicModel } from "@/app/models/topic_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import { NEXT_PUBLIC_GET_LIST, NEXT_PUBLIC_UPDATE_LIST } from "@/constants";
-import { addLists } from "@/app/api/mongodb/query";
-import { isNull } from "@/app/utils/custom_helpers";
+import { addLists, updateAList } from "@/app/api/mongodb/query";
+import { beforeUpdate, isNull, preFetch } from "@/app/utils/custom_helpers";
 import { checkSinglePost } from "./check_single_post";
 import { PostData } from "./post_data";
+import { ListsModel } from "@/app/models/lists_model";
 
 export async function postListsApi(formData: any) {
   try {
-    const { postData, isImport, update } = JSON.parse(formData.get("postData"));
+    let postData: any, isImport: any, update: any, source: any;
+
+    try {
+      const parsedData = JSON.parse(formData.get("postData"));
+      postData = parsedData.postData;
+      isImport = parsedData.isImport;
+      update = parsedData.update;
+    } catch (error) {
+      postData = formData.postData;
+      isImport = formData.isImport;
+      update = formData.update;
+      source = formData.source;
+    }
+
     const data: any[] = [];
     const updatedData: any[] = [];
 
-    if (postData.length === 1) {
+    if (source && source == "gmap") {
+      const check = await processGMapListData(postData, update);
+
+      if (check.success == false) {
+        return check;
+      } else {
+        postData = check.gData;
+      }
+    } else if (postData.length === 1) {
       const url = `${NEXT_PUBLIC_GET_LIST}?listId=${customSlugify(
         postData[0].slug
       )}`;
@@ -26,7 +48,11 @@ export async function postListsApi(formData: any) {
       let postSlug = customSlugify(post.slug);
       let _id = post._id ? post._id : postSlug;
 
-      const tData: TopicModel = {
+      if (source == "gmap") {
+        _id = postSlug;
+      }
+
+      const tData: ListsModel = {
         title: post.title,
         description: post.description,
         body: post.body,
@@ -46,9 +72,19 @@ export async function postListsApi(formData: any) {
         ratingScore: post.ratingScore,
         views: post.views,
         selectedImage: post.selectedImage,
+        category: post.category,
+        type: post.type,
+        phone: post.phone,
+        website: post.website,
+        place_id: post.place_id,
+        tags: post.tags,
+        location_city: post.location_city,
+        location_country: post.location_country,
+        location_state: post.location_state,
+        external_image: post.image,
       };
 
-      const url = `${NEXT_PUBLIC_GET_LIST}?listId=${_id}`;
+      const url = await preFetch(`${NEXT_PUBLIC_GET_LIST}?listId=${_id}`);
       const result = await (
         await fetch(url, {
           next: {
@@ -81,6 +117,9 @@ export async function postListsApi(formData: any) {
         } else {
           tData.isUpdated = false;
           tData.msg = "success";
+          if (source == "gmap") {
+            tData.topicId = tData.ini_topic_id;
+          }
           data.push(tData);
           updatedData.push(tData);
         }
@@ -105,5 +144,48 @@ export async function postListsApi(formData: any) {
   } catch (e) {
     console.log(e);
     return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+  }
+}
+
+async function processGMapListData(formData, update) {
+  let lists = formData;
+
+  for (let i = 0; i < lists.length; i++) {
+    lists[i].body = await reWriteList(lists[i].body);
+    lists[i].description = await reWriteList(lists[i].description);
+  }
+
+  try {
+    return { success: true, gData: lists };
+  } catch (error) {
+    return { success: false, gData: {} };
+  }
+}
+
+async function reWriteList(data) {
+  let lists = data;
+
+  lists = lists.replace(/\bOur\b/g, "Their");
+  lists = lists.replace(/\bour\b/g, "their");
+  lists = lists.replace(/\bWe are\b/g, "They are");
+  lists = lists.replace(/\bwe are\b/g, "they are");
+  lists = lists.replace(/\bI\b/g, "He/She");
+  lists = lists.replace(/\bWe\b/g, "They");
+  lists = lists.replace(/\bwe\b/g, "they");
+
+  return lists;
+}
+
+export async function updateList(formData: any) {
+  const updateData = JSON.parse(formData.get("updateData"));
+
+  let uData: ListsModel = {};
+  uData = beforeUpdate(updateData, uData);
+
+  try {
+    return await updateAList(updateData._id, uData);
+  } catch {
+    console.log("error 746464");
+    return { success: false };
   }
 }
