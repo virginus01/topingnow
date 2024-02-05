@@ -1,7 +1,6 @@
 {
     "headers": [
         {
-            "source": "/api/(.*)",
             "headers": [
                 {
                     "key": "Access-Control-Allow-Credentials",
@@ -21,12 +20,5 @@
                 }
             ]
         }
-    ],
-    "build": {
-        "functions": "api/**/*",
-        "src": "public/**/*",
-        "includeFiles": [
-            ".cache/**/*"
-        ]
-    }
+    ]
 }
