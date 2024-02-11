@@ -6,7 +6,7 @@ import { deleteImports } from "@/app/lib/repo/import_repo";
 import DataTable from "@/app/components/widgets/data_table";
 import { NEXT_PUBLIC_GET_IMPORTS } from "@/constants";
 import { usePaginatedSWRAdmin } from "@/app/utils/fetcher";
-import { removeById } from "@/app/utils/custom_helpers";
+import { dataToast, removeById } from "@/app/utils/custom_helpers";
 
 export default function ImportsView() {
   const [page, setPage] = useState(1);
@@ -47,9 +47,8 @@ export default function ImportsView() {
     const updatedImports = removeById(data, _id);
     setData(updatedImports);
 
-    const result = await deleteImports(_id);
-
-    toast.success(`${result.data} items deleted`);
+    const { success, msg } = await deleteImports(_id);
+    dataToast(success, msg);
   }
 
   async function viewAction(slug: string) {}

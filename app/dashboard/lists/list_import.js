@@ -17,6 +17,7 @@ const ListsImport = (topicId) => {
     const [progress, setProgress] = useState(0);
     const [topics, setTopics] = useState([]);
     const [csv, setCSV] = useState("");
+    const [importTitle, setOnInput] = useState('');
 
 
     const handleImport = async (e) => {
@@ -74,7 +75,7 @@ const ListsImport = (topicId) => {
             return;
         }
 
-        const { success, msg, dataBody } = await postLists(topics);
+        const { success, msg, dataBody } = await postLists(topics, 'yes', true, importTitle);
 
         if (success) {
             // Set progress
@@ -121,7 +122,12 @@ const ListsImport = (topicId) => {
             handleImport={handleImport}
             csv={csv}
             progress={progress}
-            columnArray={columnArray} />
+            columnArray={columnArray}
+            compulsory="title|string, description|string, slug|string"
+            importType="Lists"
+            onInput={setOnInput}
+        />
+
     );
 };
 

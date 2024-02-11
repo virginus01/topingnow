@@ -20,4 +20,5 @@ export type ListsModel = {
   ratingScore?: string | null;
   views?: string | null;
   selectedImage?: any;
+  ranking_position?: string | null;
 };

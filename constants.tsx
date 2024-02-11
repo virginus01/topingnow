@@ -21,6 +21,12 @@ export const NEXT_PUBLIC_GET_POPULAR_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL
 export const NEXT_PUBLIC_POST_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/post/post_lists`;
 export const LIST_IMAGE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/list`;
 
+//Business
+export const NEXT_PUBLIC_GET_BUSINESS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_business`;
+
+//Review
+export const NEXT_PUBLIC_GET_REVIEW = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_review`;
+
 //files
 export const NEXT_PUBLIC_GET_FILES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_files`;
 export const NEXT_PUBLIC_GET_FILE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_file`;

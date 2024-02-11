@@ -18,6 +18,8 @@ const TopicsImport = (top_id) => {
   const [progress, setProgress] = useState(0);
   const [topics, setTopics] = useState([]);
   const [csv, setCSV] = useState("");
+  const [importTitle, setOnInput] = useState('');
+
 
   const handleImport = async (e) => {
     e.preventDefault();
@@ -50,8 +52,6 @@ const TopicsImport = (top_id) => {
         description: t.description,
         topId: top_id.top_id,
         slug: t.title,
-        isDuplicate: true,
-        _id: "",
       };
 
       if (topicsD.title && topicsD.description) {
@@ -73,7 +73,7 @@ const TopicsImport = (top_id) => {
       return;
     }
 
-    const { success, msg, dataBody } = await postTopics(topics);
+    const { success, msg, dataBody } = await postTopics(topics, 'yes', true, importTitle);
 
     if (success) {
       // Set progress
@@ -127,6 +127,7 @@ const TopicsImport = (top_id) => {
       columnArray={columnArray}
       compulsory="title|string, description|string, slug|string"
       importType="Topics"
+      onInput={setOnInput}
     />
   );
 };

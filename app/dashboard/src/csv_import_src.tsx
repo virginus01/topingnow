@@ -1,6 +1,9 @@
+"use client";
 import { PaperClipIcon } from "@heroicons/react/24/outline";
 import ProgressBar from "@/app/components/progress_bar";
 import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
+import { useState } from "react";
+import ConfirmAction from "@/app/components/widgets/confirm";
 
 export default function CsvImportSCR({
   handleFileChange,
@@ -11,10 +14,13 @@ export default function CsvImportSCR({
   columnArray,
   compulsory = "title, description",
   importType = "none",
+  onInput = (e) => {},
 }) {
   function downloadReport() {
     JsonToCsvDownload(csv);
   }
+
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
@@ -80,7 +86,7 @@ export default function CsvImportSCR({
           )}
 
           <button
-            onClick={handleImport}
+            onClick={() => setIsOpen(true)}
             disabled={!values || values.length === 0}
             className="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-700 disabled:bg-gray-400 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition"
           >
@@ -96,7 +102,7 @@ export default function CsvImportSCR({
               {columnArray.map((col, i) => (
                 <th
                   key={i}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500"
                 >
                   {col}
                 </th>
@@ -117,6 +123,22 @@ export default function CsvImportSCR({
           </tbody>
         </table>
       </div>
+
+      {isOpen && (
+        <ConfirmAction
+          info={"this will help you remember it later"}
+          headerText={"Give your import a title"}
+          isOpen={isOpen}
+          onConfirm={(e) => {
+            handleImport(e);
+            setIsOpen((prev) => !prev);
+          }}
+          onCancel={() => setIsOpen((prev) => !prev)}
+          confirmButtonText="Import"
+          hasInput={true}
+          onInput={onInput}
+        />
+      )}
     </>
   );
 }

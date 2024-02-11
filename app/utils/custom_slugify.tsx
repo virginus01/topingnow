@@ -401,7 +401,8 @@ export function customSlugify(
       .replace(/-+$/, "")
       .replace(/^-+/, "")
       .replace(/-+/g, "-")
-      .toLowerCase();
+      .toLowerCase()
+      .trim();
   } else {
     return words
       .join("-")
@@ -410,6 +411,7 @@ export function customSlugify(
       .replace(/-+$/, "")
       .replace(/^-+/, "")
       .replace(/-+/g, "-")
-      .toLowerCase();
+      .toLowerCase()
+      .trim();
   }
 }

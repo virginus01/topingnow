@@ -1,6 +1,6 @@
 import { connectDB } from '@/app/utils/mongodb'
 import { ObjectId } from 'mongodb';
-import { dataProcess, processInner } from '@/app/utils/custom_helpers';
+import { beforeInsert, dataProcess, processInner } from '@/app/utils/custom_helpers';
 import { isNull } from '@/app/utils/custom_helpers';
 
 export async function getTops(page = 1, perPage = 10, essentials = 'yes', q = '', process = 'yes') {
@@ -61,8 +61,8 @@ export async function getTops(page = 1, perPage = 10, essentials = 'yes', q = ''
             }
         };
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 84775yyf" }
 
     }
 }
@@ -122,8 +122,8 @@ export async function getTopsByImport(importId, page = 1, perPage = 10, q = '') 
             }
         };
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 847ryr57" }
 
     }
 }
@@ -172,8 +172,8 @@ export async function getListsByImport(importId, page = 1, perPage = 10, q = '')
             }
         };
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: kjfhfur77" }
 
     }
 }
@@ -227,8 +227,8 @@ export async function getTopicsByImport(importId, page = 1, perPage = 10, proces
         };
 
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 74yy4747" }
 
     }
 }
@@ -312,7 +312,7 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
         };
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 
 
@@ -363,7 +363,7 @@ export async function fetchImports(page = 1, perPage = 10) {
 
     } catch (error) {
 
-        console.log("Error in fetchImports", error);
+        console.error("Error in fetchImports", error);
         return "not_found";
 
     }
@@ -414,7 +414,7 @@ export async function fetchFiles(page = 1, perPage = 10) {
 
     } catch (error) {
 
-        console.log("Error in fetchFiles", error);
+        console.error("Error in fetchFiles", error);
         return "not_found";
 
     }
@@ -462,7 +462,7 @@ export async function fetchTemplates(page = 1, perPage = 10) {
         };
 
     } catch (error) {
-        console.log("Error in fetchTemplates", error);
+        console.error("Error in fetchTemplates", error);
         return "not_found";
 
     }
@@ -494,7 +494,7 @@ export async function fetchTemplate(templateId, rand = 'no') {
         return temp;
 
     } catch (error) {
-        console.log("Error in getTemplate", error);
+        console.error("Error in getTemplate", error);
         return "not_found";
     }
 
@@ -522,7 +522,7 @@ export async function fetchAQandA(id, rand = 'no', process = 'yes') {
         }
 
         if (process === 'yes') {
-            // console.log(temp)
+            // console.error(temp)
             temp = processInner(temp, "qanda");
 
         }
@@ -531,7 +531,7 @@ export async function fetchAQandA(id, rand = 'no', process = 'yes') {
         return temp;
 
     } catch (error) {
-        console.log("Error in getQandA", error);
+        console.error("Error in getQandA", error);
         return "not_found";
     }
 
@@ -668,15 +668,13 @@ export async function getLists(topicId, page = 1, perPage = 10, essentials = 'ye
             }
         };
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return { success: false, msg: "error: 847746" }
 
     }
 }
 
 export async function getList(listId, essentials = 'yes', process = "yes") {
-
-
 
     try {
         const db = await connectDB();
@@ -719,7 +717,67 @@ export async function getList(listId, essentials = 'yes', process = "yes") {
         return topic;
 
     } catch (error) {
-        console.log("Error in getList", error);
+        console.error("Error in getList", error);
+        return "not_found";
+    }
+
+}
+
+
+export async function getBusiness(id, essentials = 'yes', process = "yes") {
+
+    try {
+        const db = await connectDB();
+
+        let topic = await db.collection("business").findOne({
+            slug: id
+        });
+
+        if (!topic && isValidObjectId(id)) {
+            topic = await db.collection("business").findOne({
+                _id: new ObjectId(id)
+            });
+        }
+
+        if (!topic) {
+            return "not_found";
+        }
+
+
+        return topic;
+
+    } catch (error) {
+        console.error("Error in getBusiness", error);
+        return "not_found";
+    }
+
+}
+
+
+export async function getReviews(id, essentials = 'yes', process = "yes") {
+
+    try {
+        const db = await connectDB();
+
+        let topic = await db.collection("reviews").findOne({
+            review_id_hash: id
+        });
+
+        if (!topic && isValidObjectId(id)) {
+            topic = await db.collection("reviews").findOne({
+                _id: new ObjectId(id)
+            });
+        }
+
+        if (!topic) {
+            return "not_found";
+        }
+
+
+        return topic;
+
+    } catch (error) {
+        console.error("Error in getBusiness", error);
         return "not_found";
     }
 
@@ -792,8 +850,8 @@ export async function getPopularLists(excludeId = '', essentials = '', page = 1,
         };
 
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 847dhdh746" }
 
     }
 }
@@ -804,8 +862,8 @@ export async function stat() {
         const result = await db.collection.find().explain("executionStats");
         return result;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: dhdhgdg" }
 
     }
 
@@ -856,7 +914,7 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
         return topic;
 
     } catch (error) {
-        console.log("Error in getTopic", error);
+        console.error("Error in getTopic", error);
         return "not_found";
     }
 
@@ -892,7 +950,7 @@ export async function getTop(id, process = 'yes') {
         return topic;
 
     } catch (error) {
-        console.log("Error in getTop", error);
+        console.error("Error in getTop", error);
         return "not_found";
     }
 
@@ -907,8 +965,8 @@ export async function getUser(uid) {
             .findOne({ uid: uid })
         return user;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 847dhdhdh746" }
 
     }
 }
@@ -925,8 +983,8 @@ export async function addTopic(data) {
         await db.collection("topics").insertOne(data);
         return _id;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 847uuryry746" }
 
     }
 }
@@ -940,8 +998,8 @@ export async function addList(data) {
         await db.collection("lists").insertOne(data);
         return _id;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: jjcjdjhf" }
 
     }
 }
@@ -956,8 +1014,8 @@ export async function addTemplate(data) {
 
         return result.insertedIds;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: kjfjf" }
 
     }
 }
@@ -977,8 +1035,8 @@ export async function addQandAs(data) {
             return { success: false, ids: result.insertedIds, msg: `no data added` };
         }
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 84jdjjd7746" }
 
     }
 }
@@ -992,8 +1050,8 @@ export async function addFiles(data) {
 
         return result.insertedIds;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: jjjjfhdkj" }
 
     }
 }
@@ -1012,8 +1070,8 @@ export async function addTops(data) {
             return { success: false, ids: result.insertedIds, msg: `no data inserted` };
         }
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 84hdue747746" }
 
     }
 }
@@ -1023,6 +1081,12 @@ export async function addTops(data) {
 export async function addTopics(data) {
     try {
         const db = await connectDB();
+
+        for (let i = 0; i < data.length; i++) {
+
+            data[i] = beforeInsert(data[i])
+            console.error(data[i])
+        }
 
         const result = await db.collection("topics").insertMany(data);
 
@@ -1034,8 +1098,33 @@ export async function addTopics(data) {
         }
 
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 88ur747746" }
+
+    }
+}
+
+
+
+export async function addReviews(data) {
+    try {
+        const db = await connectDB();
+
+        for (let i = 0; i < data.length; i++) {
+            data[i] = beforeInsert(data[i])
+        }
+
+        const result = await db.collection("reviews").insertMany(data);
+
+        if (result.insertedCount > 0) {
+            return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
+        } else {
+            return { success: false, ids: result.insertedIds, msg: `no data added` };
+        }
+
+    } catch (error) {
+        console.error(error)
+        return { success: false, msg: "error: 8ue374j746" }
 
     }
 }
@@ -1054,8 +1143,29 @@ export async function addLists(data) {
         }
 
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 48rhhrhf" }
+
+    }
+}
+
+
+export async function addBusiness(data) {
+
+    try {
+        const db = await connectDB();
+
+        const result = await db.collection("business").insertMany(data);
+
+        if (result.insertedCount > 0) {
+            return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };
+        } else {
+            return { success: false, ids: result.insertedIds, msg: `no data added` };
+        }
+
+    } catch (error) {
+        console.error(error)
+        return { success: false, msg: "error: 4ygeghhrhf" }
 
     }
 }
@@ -1069,7 +1179,7 @@ export async function updateATopic(id, data) {
             .updateOne({ _id: _id }, { $set: data });
         return { success: true };
     } catch (error) {
-        console.log("Error updating topic", error);
+        console.error("Error updating topic", error);
         return { success: false };
     }
 }
@@ -1087,8 +1197,8 @@ export async function updateATemplate(id, data) {
 
         return true;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 847hhrfbcb" }
 
     }
 }
@@ -1104,8 +1214,8 @@ export async function updateAQandA(id, data) {
 
         return true;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 877565hf" }
 
     }
 }
@@ -1121,7 +1231,7 @@ export async function updateAList(id, data) {
             .updateOne({ _id: _id }, { $set: data });
         return { success: true };
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return { success: false }
     }
 
@@ -1139,8 +1249,8 @@ export async function updateATop(id, data) {
         return true;
 
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: hfhfgfr" }
 
     }
 }
@@ -1155,8 +1265,8 @@ export async function addImport(data) {
         await db.collection("imports").insertOne(data);
         return _id;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 0484857" }
 
     }
 }
@@ -1164,41 +1274,36 @@ export async function addImport(data) {
 //DELETE
 
 export async function removeTopics(id, topId, importId) {
+
+
     try {
         const db = await connectDB();
 
         let result;
         const _id = new ObjectId(id);
 
-        try {
-
-            if (importId) {
-                const res = await getTopicsByImport(importId, 1, 1000000, 'no');
-                if (!isNull(res.result)) {
-                    const ids = res.result.map((t) => String(t._id));
-                    const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
-                }
-                result = await db.collection("topics").deleteMany({ importId: importId });
+        if (importId) {
+            const res = await getTopicsByImport(importId, 1, 1000000, 'no');
+            if (!isNull(res.result) && Array.isArray(res.result)) {
+                const ids = res.result.map((t) => String(t._id));
+                const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
             }
 
-            if (topId) {
-                const res = await getTopics(topId, 1, 1000000, 'no');
-                if (!isNull(res.result)) {
-                    const ids = res.result.map((t) => String(t._id));
-                    const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
-                }
-                result = await db.collection("topics").deleteMany({ topId: topId });
+            result = await db.collection("topics").deleteMany({ importId: importId });
+        }
+
+        if (topId) {
+            const res = await getTopics(topId, 1, 1000000, 'no');
+            if (!isNull(res.result)) {
+                const ids = res.result.map((t) => String(t._id));
+                const delLists = await Promise.all(ids.map((t) => removeList(null, t, null)));
             }
+            result = await db.collection("topics").deleteMany({ topId: topId });
+        }
 
-            if (id && isValidObjectId(_id)) {
-                result = await db.collection("topics").deleteMany({ _id: _id });
-                await removeList(null, id, null);
-            }
-
-
-        } catch (error) {
-            console.log('Error removing topics:', error);
-            return { success: false, msg: `${error}`, data: {} };
+        if (id && isValidObjectId(_id)) {
+            result = await db.collection("topics").deleteMany({ _id: _id });
+            await removeList(null, id, null);
         }
 
         if (result.deletedCount > 0) {
@@ -1206,11 +1311,12 @@ export async function removeTopics(id, topId, importId) {
         } else {
             return { success: false, msg: `unknown error`, data: result };
         }
-    } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
 
+    } catch (error) {
+        console.error('Error removing topics:', error);
+        return { success: false, msg: `${error}`, data: {} };
     }
+
 }
 
 
@@ -1245,14 +1351,14 @@ export async function removeList(id, topicId, importId) {
 
 
         } catch (error) {
-            console.log('Error removing lists:', error);
+            console.error('Error removing lists:', error);
             return 0;
         }
 
         return result.deletedCount;
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 948jhrhf" }
 
     }
 }
@@ -1285,14 +1391,14 @@ export async function removeQandA(id, importId, listId) {
 
 
         } catch (error) {
-            console.log('Error removing lists:', error);
+            console.error('Error removing lists:', error);
             return 0;
         }
 
         return { success: true, count: result.deletedCount };
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 848ryg757" }
 
     }
 }
@@ -1326,12 +1432,12 @@ export async function removeTop(id, importId) {
             return { success: true }
 
         } catch (e) {
-            console.log(`${e} error 88364575`)
+            console.error(`${e} error 88364575`)
             return { success: false }
         }
     } catch (error) {
-        console.log(error)
-        return { success: false, msg: "error: 847746" }
+        console.error(error)
+        return { success: false, msg: "error: 84566yryr" }
 
     }
 }
@@ -1346,19 +1452,25 @@ export async function removeImport(importId) {
             _id: new ObjectId(importId)
         };
 
-        const result = await db.collection("imports").deleteMany(filter);
+
         await removeTop(null, importId);
         await removeList(null, null, importId);
         await removeTopics(null, null, importId);
 
-    } catch (e) {
-        console.log("error 7575775")
+        const result = await db.collection("imports").deleteMany(filter);
+
+        if (result.deletedCount > 0) {
+            return { success: true, msg: `successfully deleted`, data: result };
+        } else {
+            return { success: false, msg: `unknown error`, data: result };
+        }
+
+    } catch (error) {
+        console.error('Error removing import:', error);
+        return { success: false, msg: `${error}`, data: {} };
     }
 
-    return result;
-
 }
-
 
 function isValidObjectId(id) {
     return ObjectId.isValid(id);

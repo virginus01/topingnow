@@ -90,7 +90,7 @@ export default async function TopicImage({
 
       <div className="flex h-screen flex-col">
         <div className="flex justify-center text-center font-extrabold text-6xl text-blue-900 m-5">
-          Top 10 Best Flutter Developers in Lagos, Nigeria in 2024 now
+          {data.title ?? ""}
         </div>
         <div className="flex border-t-4 border-red-500"></div>
 

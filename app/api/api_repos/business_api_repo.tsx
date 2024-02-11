@@ -5,15 +5,15 @@ import {
   NEXT_PUBLIC_GET_LIST,
   NEXT_PUBLIC_UPDATE_LIST,
 } from "@/constants";
-import { addLists, updateAList } from "@/app/api/mongodb/query";
+import { addBusiness, addLists, updateAList } from "@/app/api/mongodb/query";
 import { beforeUpdate, isNull, preFetch } from "@/app/utils/custom_helpers";
 import { checkSinglePost } from "./check_single_post";
 import { PostData } from "./post_data";
 import { ListsModel } from "@/app/models/lists_model";
-import { generateListPositions } from "./topics_api_repo";
-import { postBusinessApi } from "./business_api_repo";
+import { postReviews } from "./reviews_api_repo";
+import { ObjectId } from "mongodb";
 
-export async function postListsApi(formData: any) {
+export async function postBusinessApi(formData: any) {
   try {
     let postData: any,
       isImport: any,
@@ -47,7 +47,7 @@ export async function postListsApi(formData: any) {
         postData = check.gData;
       }
     } else if (postData.length === 1) {
-      const url = `${NEXT_PUBLIC_GET_LIST}?listId=${customSlugify(
+      const url = `${NEXT_PUBLIC_GET_BUSINESS}?id=${customSlugify(
         postData[0].slug
       )}`;
       const check = await checkSinglePost(postData, url, update);
@@ -95,40 +95,28 @@ export async function postListsApi(formData: any) {
         location_state: post.location_state,
         external_image: post.image,
         all_images: post.all_images,
-        asso_bus_id: post.asso_bus_id,
       };
 
-      const url = await preFetch(`${NEXT_PUBLIC_GET_LIST}?listId=${id}`);
-
+      const url = await preFetch(`${NEXT_PUBLIC_GET_BUSINESS}?id=${id}`);
       const result = await (await fetch(url)).json();
 
       if (isNull(postSlug) == false) {
         if (result.data !== "not_found") {
-          const formData = new FormData();
-          tData._id = result.data._id;
-          formData.append("updateData", JSON.stringify(tData));
-          const url = `${NEXT_PUBLIC_UPDATE_LIST}`;
-          const response = await (
-            await fetch(url, {
-              cache: "no-store",
-              method: "POST",
-              body: formData,
-            })
-          ).json();
-
-          response;
-          tData.isUpdated = true;
-          tData.msg = "success";
-          updatedData.push(tData);
+          postData[i]._id = result.data._id;
+          //nothing for now
         } else {
           tData.isUpdated = false;
           tData.msg = "success";
+          postData[i]._id = String(new ObjectId());
+          tData._id = postData[i]._id;
           data.push(tData);
           updatedData.push(tData);
         }
       } else {
         tData.isUpdated = false;
         tData.msg = "no slug found";
+        postData[i]._id = String(new ObjectId());
+        tData._id = postData[i]._id;
         updatedData.push(tData);
       }
     });
@@ -141,14 +129,26 @@ export async function postListsApi(formData: any) {
       res = await PostData(
         data,
         updatedData,
-        () => addLists(data),
+        () => addBusiness(data),
         isImport,
         importTitle,
-        "list"
+        "business"
       );
 
-      for (let i = 0; i < postData.length; i++) {
-        await generateListPositions(postData[i].topicId);
+      for (let li = 0; li < postData.length; li++) {
+        if (
+          postData[li].detailed_reviews &&
+          Array.isArray(postData[li].detailed_reviews)
+        ) {
+          let lData = {
+            postData: postData[li].detailed_reviews,
+            source: source,
+            update: update,
+            isImport: isImport,
+            business_id: postData[li]._id,
+          };
+          await postReviews(lData);
+        }
       }
     } catch (e) {
       console.error("Error:", e);
@@ -165,40 +165,15 @@ export async function postListsApi(formData: any) {
 async function processGMapListData(formData, update) {
   let lists = formData;
 
-  await postBusinessApi({
-    postData: lists,
-    update,
-    source: "gmap",
-    importTitle: "gmap import",
-  });
-
   for (let i = 0; i < lists.length; i++) {
     lists[i].body = await reWriteList(lists[i].body);
     lists[i].description = await reWriteList(lists[i].description);
-
-    const slug = customSlugify(lists[i].slug);
-    const url = await preFetch(`${NEXT_PUBLIC_GET_BUSINESS}?id=${slug}`);
-    const result = await (
-      await fetch(url, {
-        next: {
-          revalidate: parseInt(
-            process.env.NEXT_PUBLIC_RE_VALIDATE as string,
-            10
-          ),
-        },
-      })
-    ).json();
-
-    if (!isNull(result)) {
-      lists[i].asso_bus_id = result.data._id;
-    }
   }
-  // console.log(lists);
+
   try {
     return { success: true, gData: lists };
   } catch (error) {
-    console.error(`error jdh4765: ${error}`);
-    return { success: false, gData: {}, error: error };
+    return { success: false, gData: {}, error: String(error) };
   }
 }
 

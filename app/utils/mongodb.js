@@ -1,27 +1,24 @@
 import { MongoClient } from "mongodb";
 
-const MONGODB_URI = process.env.MONGODB_URL;
-const MONGODB_DB = process.env.MONGODB_DATABASE;
+const MONGODB_URI = process.env.MONGODB_URL || 'mongodb://localhost:27017';
+const MONGODB_DB = process.env.MONGODB_DATABASE || 'topingnow';
 
-// Cache the database connection
 let cachedDb = null;
 
 async function connectToDatabase(uri) {
-  if (cachedDb && cachedDb.serverConfig) {
-    if (cachedDb.serverConfig.isConnected()) {
-      console.log("=> using cached database instance");
+  try {
+    if (cachedDb) {
+      //console.log("=> using cached database instance");
       return cachedDb;
     } else {
-      console.log("=> cached connection closed, reconnecting...");
+      //console.log("=> cached connection closed, reconnecting...");
     }
-  }
 
-  try {
     const client = await MongoClient.connect(uri);
     cachedDb = client.db(MONGODB_DB);
     return cachedDb;
   } catch (err) {
-    console.error("Failed to reconnect: ", err);
+    console.error("Failed to connect to database: ", err);
     throw err;
   }
 }
@@ -31,8 +28,7 @@ async function connectDB() {
     const client = await connectToDatabase(MONGODB_URI);
     return client;
   } catch (error) {
-    throw new Error(error);
-
+    throw error;
   }
 }
 

@@ -19,7 +19,7 @@ export async function DELETE(request, { params }) {
   try {
     if (action === "delete_import") {
       const data = await deleteImport(id);
-      return new Response(JSON.stringify({ data }), {
+      return new Response(JSON.stringify(data), {
         status: 200,
         headers: headers,
       });
@@ -67,12 +67,11 @@ export async function DELETE(request, { params }) {
   );
 }
 
-async function deleteImport(formData: any) {
-  const deleteData = JSON.parse(formData.get("deleteData"));
+async function deleteImport(id: any) {
   try {
-    return await removeImport(deleteData._id);
-  } catch {
-    return { data: "not_found" };
+    return await removeImport(id);
+  } catch (e) {
+    return { success: false, msg: String(e), data: "" };
   }
 }
 

@@ -96,12 +96,16 @@ export async function UpdateList(tData: any) {
 export async function postLists(
   postData: any,
   isImport = "no",
-  update = false
+  update = false,
+  importTitle = ""
 ) {
   try {
     const url = `${NEXT_PUBLIC_POST_LISTS}`;
     let formData = new FormData();
-    formData.append("postData", JSON.stringify({ postData, isImport, update }));
+    formData.append(
+      "postData",
+      JSON.stringify({ postData, isImport, update, importTitle })
+    );
 
     const result = await (
       await fetch(url, {

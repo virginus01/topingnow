@@ -113,13 +113,17 @@ export async function justGetTopicWithEssentials(topicId: string, page = 1) {
 export async function postTopics(
   postData: any,
   isImport = "no",
-  update = false
+  update = false,
+  importTitle = ""
 ) {
   try {
     const url = `${NEXT_PUBLIC_POST_TOPICS}`;
 
     let formData = new FormData();
-    formData.append("postData", JSON.stringify({ postData, isImport, update }));
+    formData.append(
+      "postData",
+      JSON.stringify({ postData, isImport, update, importTitle })
+    );
 
     const result = await fetch(url, {
       cache: "no-store",

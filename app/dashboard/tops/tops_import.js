@@ -23,8 +23,10 @@ const TopsImport = () => {
     const [progress, setProgress] = useState(0);
     const [topics, setTopics] = useState([]);
     const [csv, setCSV] = useState([]);
+    const [importTitle, setOnInput] = useState('');
 
     const handleImport = async (e) => {
+        setProgress(1)
         e.preventDefault();
 
         // Check criteria
@@ -35,6 +37,7 @@ const TopsImport = () => {
         const metaTitle = data[0].metaTitle;
         const body = data[0].body;
         const top = data[0].top;
+
 
         const requiredFields = { title, slug, metaTitle, top };
         const errors = beforePost(requiredFields);
@@ -131,6 +134,7 @@ const TopsImport = () => {
             columnArray={columnArray}
             compulsory="title|string, top|string, desc|string, slug|string"
             importType="Top"
+            onInput={setOnInput}
         />
     );
 };

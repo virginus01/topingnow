@@ -1,9 +1,13 @@
 import generateImportId from "@/app/lib/repo/import_repo";
 import { TopicModel } from "@/app/models/topic_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
-import { NEXT_PUBLIC_GET_TOPIC, NEXT_PUBLIC_UPDATE_TOPIC } from "@/constants";
+import {
+  NEXT_PUBLIC_GET_TOPIC,
+  NEXT_PUBLIC_UPDATE_LIST,
+  NEXT_PUBLIC_UPDATE_TOPIC,
+} from "@/constants";
 import { addTopics } from "../mongodb/query";
-import { isNull, preFetch } from "@/app/utils/custom_helpers";
+import { beforeInsert, isNull, preFetch } from "@/app/utils/custom_helpers";
 import { checkSinglePost } from "./check_single_post";
 import { PostData } from "./post_data";
 import { getTops } from "@/app/lib/repo/tops_repo";
@@ -12,19 +16,21 @@ import { ObjectId } from "mongodb";
 import { postListsApi } from "./lists_api_repo";
 
 export async function postTopics(formData: any) {
-  let postData: any, isImport: any, update: any, source: any;
+  let postData: any, isImport: any, update: any, source: any, importTitle: any;
 
   try {
     const parsedData = JSON.parse(formData.get("postData"));
     postData = parsedData.postData;
     isImport = parsedData.isImport;
     update = parsedData.update;
+    importTitle = parsedData.importTitle;
   } catch (error) {
     const parsedData = formData; //already a json
     postData = parsedData.postData;
     isImport = parsedData.isImport;
     update = parsedData.update;
     source = parsedData.source;
+    importTitle = parsedData.importTitle;
   }
 
   try {
@@ -81,21 +87,13 @@ export async function postTopics(formData: any) {
       };
 
       const url = await preFetch(`${NEXT_PUBLIC_GET_TOPIC}?topicId=${id}`);
-      const result = await (
-        await fetch(url, {
-          next: {
-            revalidate: parseInt(
-              process.env.NEXT_PUBLIC_RE_VALIDATE as string,
-              10
-            ),
-          },
-        })
-      ).json();
+      const result = await (await fetch(url)).json();
 
       if (isNull(postSlug) == false) {
         if (result.data !== "not_found") {
           const formData = new FormData();
           tData._id = result.data._id;
+          postData[i]._id = result.data._id;
           formData.append("updateData", JSON.stringify(tData));
           const url = `${NEXT_PUBLIC_UPDATE_TOPIC}`;
           const response = await (
@@ -109,6 +107,13 @@ export async function postTopics(formData: any) {
           response;
           tData.isUpdated = true;
           tData.msg = "success";
+
+          if (postData[i].lists && Array.isArray(postData[i].lists)) {
+            for (let li = 0; li < postData[i].lists.length; li++) {
+              postData[i].lists[li].topicId = result.data._id;
+            }
+          }
+
           updatedData.push(tData);
         } else {
           tData.isUpdated = false;
@@ -128,7 +133,14 @@ export async function postTopics(formData: any) {
     try {
       await Promise.all(promises);
 
-      res = await PostData(data, updatedData, () => addTopics(data), isImport);
+      res = await PostData(
+        data,
+        updatedData,
+        () => addTopics(data),
+        isImport,
+        importTitle,
+        "topic"
+      );
 
       for (let i = 0; i < postData.length; i++) {
         if (postData[i].lists && Array.isArray(postData[i].lists)) {
@@ -138,18 +150,19 @@ export async function postTopics(formData: any) {
             update: update,
             isImport: isImport,
           };
-
           await postListsApi(lData);
         }
+
+        await generateListPositions(postData[i]._id);
       }
     } catch (e) {
-      console.error("Error:", e);
+      console.error("Error 7eytdggd:", e);
       return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
     }
 
     return res;
   } catch (e) {
-    console.log(e);
+    console.error(`Topics Post: ${e}`);
     return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
   }
 }
@@ -176,11 +189,11 @@ export async function processGMapData(postData, update) {
 
         const mRate = parseInt(gList.rating) * 10;
         const lData: ListsModel = {
-          title: String(gTitle),
-          subTitle: gList.name,
-          description: `${gList.name} has been ranked on the business list of ${gData.title}`,
-          body: gList.about,
-          ini_topic_id: String(_id),
+          title: String(gTitle).trim(),
+          subTitle: gList.name.trim(),
+          description: gList.about,
+          body: `${gList.about}`,
+          topicId: String(_id),
           slug: gList.name,
           rankingScore: String(mRate + parseInt(gList.reviews)),
           ratingScore: gList.rating,
@@ -193,6 +206,8 @@ export async function processGMapData(postData, update) {
           location_country: "",
           location_city: "",
           external_image: gList.image,
+          all_images: gList.all_images,
+          detailed_reviews: gList.detailed_reviews,
         };
 
         if (lData.title && lData.description) {
@@ -202,9 +217,9 @@ export async function processGMapData(postData, update) {
 
       const basicData: TopicModel = {
         _id: _id,
-        title: `Top {top} ${gData.title}`,
-        metaTitle: `Top {top} ${gData.title}`,
-        metaDescription: `This is top {top} ${gData.title}`,
+        title: `Top {top} Best ${gData.title}`,
+        metaTitle: `Best: Top {top} ${gData.title}`,
+        metaDescription: `Welcome to the best {top} ${gData.title}. This is top {top} ${gData.title} currently`,
         rankingScore: "",
         ratingScore: "",
         views: "",
@@ -237,4 +252,70 @@ async function findNearestTop(length) {
   });
 
   return nearestItem;
+}
+
+export async function generateListPositions(_id: any) {
+  try {
+    const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${String(
+      _id
+    )}&page=${1}&essentials=${"yes"}&process=${"yes"}`;
+
+    const res = await fetch(url, {
+      next: {
+        revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Fetch failed");
+      return { error: res.statusText };
+    }
+
+    const result = await res.json();
+    const { data } = result;
+
+    if (data.lists && data.lists.result) {
+      for (let i = 0; i < data.lists.result.length; i++) {
+        const tData = {
+          _id: String(data.lists.result[i]._id),
+          ranking_position: i + 1,
+        };
+
+        const formData = new FormData();
+        formData.append("updateData", JSON.stringify(tData));
+        const url = `${NEXT_PUBLIC_UPDATE_LIST}`;
+
+        const response = await (
+          await fetch(url, {
+            cache: "no-store",
+            method: "POST",
+            body: formData,
+          })
+        ).json();
+      }
+    }
+
+    const formData = new FormData();
+    const topicD = {
+      _id: String(_id),
+      newly_updated: "yes",
+    };
+    formData.append("updateData", JSON.stringify(topicD));
+    const turl = `${NEXT_PUBLIC_UPDATE_TOPIC}`;
+    const response = await (
+      await fetch(turl, {
+        cache: "no-store",
+        method: "POST",
+        body: formData,
+      })
+    ).json();
+
+    return true;
+  } catch (error) {
+    console.error(error);
+
+    return {
+      error: error.message || "error 857575",
+    };
+  }
 }

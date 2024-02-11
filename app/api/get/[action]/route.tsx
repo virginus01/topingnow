@@ -14,6 +14,8 @@ import {
   fetchAQandA,
   fetchFiles,
   getPopularLists,
+  getBusiness,
+  getReviews,
 } from "@/app/api/mongodb/query";
 
 export async function GET(
@@ -117,6 +119,22 @@ export async function GET(
   //fetching list info
   if (action == "get_list") {
     const data = await fetchList(listId, essentials, process);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  if (action == "get_business") {
+    const data = await fetchBusiness(id, essentials, process);
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: headers,
+    });
+  }
+
+  if (action == "get_review") {
+    const data = await fetchReview(id, essentials, process);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -228,7 +246,7 @@ async function fetchTopic(id: any, essentials: any, page: any, process: any) {
   try {
     return await getTopic(id, essentials, page, 10, process);
   } catch {
-    console.log("error: 8475775");
+    console.error("error: 8475775");
     return "not_found";
   }
 }
@@ -276,6 +294,22 @@ async function fetchList(listId: string | number | null, essentials, process) {
   }
 }
 
+async function fetchBusiness(id: string | number | null, essentials, process) {
+  try {
+    return await getBusiness(id, essentials, process);
+  } catch {
+    return { msg: "error: 6454554" };
+  }
+}
+
+async function fetchReview(id: string | number | null, essentials, process) {
+  try {
+    return await getReviews(id, essentials, process);
+  } catch {
+    return { msg: "error: 6454554" };
+  }
+}
+
 async function fetchUser(uid: string | number | null) {
   try {
     return await getUser(uid);
@@ -312,7 +346,7 @@ async function getQandA(id: any, rand: any) {
   try {
     return await fetchAQandA(id, rand);
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { msg: "8487674747 error", e: e };
   }
 }

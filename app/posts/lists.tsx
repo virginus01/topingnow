@@ -8,6 +8,7 @@ import usePagination from "../utils/pagination";
 import Image from "next/image";
 import { getS3Url } from "../lib/repo/files_repo";
 import { LIST_IMAGE } from "@/constants";
+import { isNull } from "../utils/custom_helpers";
 
 export default function Lists({ topicData }) {
   const perPage = 5;
@@ -26,7 +27,17 @@ export default function Lists({ topicData }) {
     <ul>
       {paginatedData.map(
         (
-          { _id, title, description, slug, extraClass, featuredImagePath }: any,
+          {
+            _id,
+            title,
+            description,
+            slug,
+            extraClass,
+            featuredImagePath,
+            generatedImagePath,
+            position,
+            external_image,
+          }: any,
           index: number
         ) => {
           const imgUrl = `${LIST_IMAGE}/${slug}`;
@@ -40,8 +51,8 @@ export default function Lists({ topicData }) {
                   #{index + 1}: {title}
                 </div>
 
-                {featuredImagePath ? (
-                  <div className="mb-1">
+                {!isNull(featuredImagePath) ? (
+                  <div className="h-200">
                     <Image
                       src={getS3Url(featuredImagePath)}
                       alt={title}
@@ -52,9 +63,9 @@ export default function Lists({ topicData }) {
                       priority
                     />
                   </div>
-                ) : (
+                ) : !isNull(generatedImagePath) ? (
                   <Image
-                    src={`${imgUrl}`}
+                    src={getS3Url(generatedImagePath)}
                     alt={title}
                     style={{ width: "100%" }}
                     width={1920}
@@ -62,8 +73,19 @@ export default function Lists({ topicData }) {
                     className="w-full rounded-sm object-cover"
                     priority
                   />
+                ) : !isNull(external_image) ? (
+                  <Image
+                    src={external_image}
+                    alt={title}
+                    style={{ width: "100%" }}
+                    width={1920}
+                    height={1080}
+                    className="w-full rounded-sm object-cover"
+                    priority
+                  />
+                ) : (
+                  <></>
                 )}
-
                 <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
                   <section
                     className={`${extraClass} mt-5 line-clamp-3 text-sm leading-6 text-gray-600`}
@@ -76,7 +98,7 @@ export default function Lists({ topicData }) {
                       >
                         {title}
                       </Link>{" "}
-                      is {index + 1} in the list of {title}.
+                      is {position} in the list of {title}.
                       <div>
                         {description ? (
                           <div

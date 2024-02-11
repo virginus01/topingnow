@@ -24,25 +24,27 @@ export async function getImports(page: number, perPage: any | "") {
   }
 }
 
-export async function deleteImports(_id: string) {
+export async function deleteImports(_id: any) {
   try {
-    const url = `${NEXT_PUBLIC_DELETE_IMPORT}`;
+    const url = `${NEXT_PUBLIC_DELETE_IMPORT}?id=${_id}`;
 
     const formData = new FormData();
-    formData.append("deleteData", JSON.stringify({ _id }));
+    formData.append("deleteData", JSON.stringify(_id));
 
-    const response = await fetch(url, {
-      method: "DELETE",
-      body: formData,
-    });
+    const response = await (
+      await fetch(url, {
+        method: "DELETE",
+        body: formData,
+      })
+    ).json();
 
-    if (response.status === 200) {
-      return await response.json();
+    if (response.data) {
+      return response;
     } else {
-      return { error: "Failed to fetch topics" };
+      return { success: false, msg: "Failed to delete import" };
     }
   } catch (error) {
-    return { error: "An error occurred while fetching topic" };
+    return { success: false, msg: `Failed to delete import: ${error}` };
   }
 }
 

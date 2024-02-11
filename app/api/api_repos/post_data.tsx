@@ -1,9 +1,18 @@
 import generateImportId from "@/app/lib/repo/import_repo";
 
-export async function PostData(data, updatedData, postFunction, isImport) {
+export async function PostData(
+  data,
+  updatedData,
+  postFunction,
+  isImport,
+  importTitle = "",
+  dataType = "data"
+) {
   if (Array.isArray(data) && data !== null && data.length > 0) {
+    const date = Date.now();
+    importTitle = `${dataType}: ${importTitle} - ${date}`;
     if (isImport === "yes") {
-      const importId = await generateImportId("test", data);
+      const importId = await generateImportId(importTitle, data);
       data.forEach((im, i) => {
         data[i].importId = importId;
       });

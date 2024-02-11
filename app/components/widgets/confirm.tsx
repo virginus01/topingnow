@@ -3,6 +3,7 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import DOMPurify from "dompurify";
+import { isNull } from "@/app/utils/custom_helpers";
 
 export default function ConfirmAction({
   isOpen,
@@ -11,10 +12,19 @@ export default function ConfirmAction({
   confirmButtonText,
   info,
   headerText,
+  hasInput = false,
+  onInput = (e) => {},
+  confirmText = "",
 }) {
   const [open, setOpen] = useState(isOpen);
+  const [importTitle, setimportTitle] = useState("");
 
   const cancelButtonRef = useRef(null);
+
+  function onTitleInput(e) {
+    onInput(e);
+    setimportTitle(e);
+  }
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -64,20 +74,44 @@ export default function ConfirmAction({
                         {headerText}
                       </Dialog.Title>
                       <div className="mt-2">
-                        <div
-                          className="text-sm text-gray-500"
-                          dangerouslySetInnerHTML={{
-                            __html: DOMPurify.sanitize(info),
-                          }}
-                        />
+                        {hasInput == true ? (
+                          <>
+                            <input
+                              className="border border-gray-400 p-2 w-full rounded"
+                              type="text"
+                              id="title"
+                              name="title"
+                              defaultValue={""}
+                              onChange={(e) => onTitleInput(e.target.value)}
+                            />
+                            <br />
+                            <div
+                              className="text-sm text-gray-500"
+                              dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(info),
+                              }}
+                            />
+                          </>
+                        ) : (
+                          <div
+                            className="text-sm text-gray-500"
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(info),
+                            }}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
+                    disabled={
+                      (hasInput && isNull(importTitle)) ||
+                      (!isNull(confirmText) && confirmText !== importTitle)
+                    }
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    className="inline-flex w-full justify-center rounded-md bg-red-600 disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                     onClick={onConfirm}
                   >
                     {confirmButtonText}

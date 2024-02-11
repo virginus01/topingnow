@@ -116,7 +116,8 @@ export default async function TopicImage({
           </span>
 
           <span className="text-green-900">
-            is No. {listIndex} in the list: {listData.topicData.title}
+            is No. {listData.topicData.position} in the list:{" "}
+            {listData.topicData.title}
           </span>
         </div>
         <div className="flex justify-center text-center items-center m-1">
