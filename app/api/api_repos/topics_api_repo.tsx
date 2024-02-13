@@ -34,8 +34,8 @@ export async function postTopics(formData: any) {
   }
 
   try {
-    const data: any[] = [];
-    const updatedData: any[] = [];
+    const data: any = [];
+    const updatedData: any = [];
 
     if (source && source == "gmap") {
       const check = await processGMapData(postData, update);
@@ -64,7 +64,6 @@ export async function postTopics(formData: any) {
       }
 
       const tData: TopicModel = {
-        _id: post._id ? post._id : "",
         title: post.title,
         description: post.description,
         body: post.body,
@@ -73,6 +72,7 @@ export async function postTopics(formData: any) {
         topId: post.topId,
         status: post.status,
         subTitle: post.subTitle,
+        type: post.type,
         slug: postSlug,
         catId: post.catId,
         image: post.image,
@@ -107,23 +107,21 @@ export async function postTopics(formData: any) {
           response;
           tData.isUpdated = true;
           tData.msg = "success";
-
-          if (postData[i].lists && Array.isArray(postData[i].lists)) {
-            for (let li = 0; li < postData[i].lists.length; li++) {
-              postData[i].lists[li].topicId = result.data._id;
-            }
-          }
-
           updatedData.push(tData);
         } else {
           tData.isUpdated = false;
           tData.msg = "success";
+          const _id = new ObjectId();
+          tData._id = _id;
+          postData[i]._id = _id;
           data.push(tData);
           updatedData.push(tData);
         }
       } else {
         tData.isUpdated = false;
         tData.msg = "no slug found";
+        const _id = new ObjectId();
+        tData._id = _id;
         updatedData.push(tData);
       }
     });
@@ -144,12 +142,17 @@ export async function postTopics(formData: any) {
 
       for (let i = 0; i < postData.length; i++) {
         if (postData[i].lists && Array.isArray(postData[i].lists)) {
+          for (let li = 0; li < postData[i].lists.length; li++) {
+            postData[i].lists[li].topicId = String(postData[i]._id);
+          }
+
           let lData = {
             postData: postData[i].lists,
             source: source,
             update: update,
             isImport: isImport,
           };
+
           await postListsApi(lData);
         }
 
@@ -173,7 +176,6 @@ export async function processGMapData(postData, update) {
     for (let i = 0; i < postData.length; i++) {
       const gData = postData[i];
       const nearestTop: any = await findNearestTop(gData.lists.length);
-      const _id = new ObjectId();
       const listsData: any = [];
 
       for (let i = 0; i < gData.lists.length; i++) {
@@ -185,15 +187,16 @@ export async function processGMapData(postData, update) {
         const match = pattern.exec(gList.name);
 
         // Extract the matched words (if any)
-        const gTitle = match ? match[1] : "";
+        const gTitle = match ? match[1] : gList.name;
+
+        console.log(gList.about);
 
         const mRate = parseInt(gList.rating) * 10;
         const lData: ListsModel = {
           title: String(gTitle).trim(),
           subTitle: gList.name.trim(),
           description: gList.about,
-          body: `${gList.about}`,
-          topicId: String(_id),
+          body: gList.about,
           slug: gList.name,
           rankingScore: String(mRate + parseInt(gList.reviews)),
           ratingScore: gList.rating,
@@ -208,15 +211,20 @@ export async function processGMapData(postData, update) {
           external_image: gList.image,
           all_images: gList.all_images,
           detailed_reviews: gList.detailed_reviews,
+          workday_timing: gList.workday_timing,
+          time_zone: gList.time_zone,
+          location: gList.location,
+          latitude: gList.latitude,
+          Longitude: gList.Longitude,
+          lang_long: gList.lang_long,
+          lang_short: gList.lang_short,
+          status: "published",
         };
 
-        if (lData.title && lData.description) {
-          listsData.push(lData);
-        }
+        listsData.push(lData);
       }
 
       const basicData: TopicModel = {
-        _id: _id,
         title: `Top {top} Best ${gData.title}`,
         metaTitle: `Best: Top {top} ${gData.title}`,
         metaDescription: `Welcome to the best {top} ${gData.title}. This is top {top} ${gData.title} currently`,
@@ -227,6 +235,8 @@ export async function processGMapData(postData, update) {
         description: `This is bussiness the list of the top {top} ${gData.title}`,
         featuredImagePath: "",
         topId: nearestTop._id ?? "",
+        type: "gmap_business",
+        status: "published",
         lists: listsData,
       };
 

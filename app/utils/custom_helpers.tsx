@@ -103,8 +103,6 @@ export async function dataProcess(text, type = "none", iniData = {}) {
   try {
     let data: any = iniData;
 
-    // console.log(iniData);
-
     if (text && text.steps && Array.isArray(JSON.parse(text.steps))) {
       data.steps =
         JSON.parse(text.steps).length > 0 ? JSON.parse(text.steps).length : 1;
@@ -206,6 +204,12 @@ async function getRandomDataBody(body) {
   return body[randIndex].dataBody;
 }
 
+export function stripeNone(data) {
+  if (data == "None") {
+    return "";
+  }
+}
+
 export function getViewUrl(slug, type = "") {
   const path = slug ? "/" + slug : "";
 
@@ -246,7 +250,6 @@ export function cleanFileName(filename) {
 }
 
 export async function preFetch(url: any) {
-  //console.log(url);
   await fetch(url);
   return url;
 }

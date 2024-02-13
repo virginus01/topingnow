@@ -1,12 +1,8 @@
 import {
   updateATopic,
-  addLists,
-  updateAList,
   addImport,
   updateATemplate,
-  addList,
   addTemplate,
-  addQandAs,
   updateAQandA,
   updateATop,
   addFiles,
@@ -14,10 +10,7 @@ import {
 
 import { TopicModel } from "@/app/models/topic_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
-import {
-  NEXT_PUBLIC_POST_UPDATE_QANDA,
-  NEXT_PUBLIC_POST_UPDATE_TEMPLATE,
-} from "@/constants";
+import { NEXT_PUBLIC_POST_UPDATE_TEMPLATE } from "@/constants";
 import { beforeUpdate, isNull } from "@/app/utils/custom_helpers";
 import { TempModel } from "@/app/models/templates_model";
 import { QandAModel } from "@/app/models/qanda_model";
@@ -28,7 +21,6 @@ import { postTopics } from "../../api_repos/topics_api_repo";
 import { postTops } from "../../api_repos/tops_api_repo";
 //import { ListsModel, postListsApi } from "@/app/roadmap/lists_roadmap";
 import { postQandaApi } from "../../api_repos/qanda_api_repo";
-import { ListsModel } from "@/app/models/lists_model";
 import { postListsApi, updateList } from "../../api_repos/lists_api_repo";
 import { postReviews } from "../../api_repos/reviews_api_repo";
 
@@ -243,31 +235,6 @@ export async function updateQanda(formData: any) {
   }
 }
 
-async function postList(formData: any) {
-  const updateData = JSON.parse(formData.get("postData"));
-
-  const uData: ListsModel = {
-    title: updateData.title,
-    description: updateData.description,
-    updatedAt: new Date(),
-    topicId: updateData.topicId,
-    slug: updateData.slug,
-    body: "",
-    status: "",
-    subTitle: "",
-    catId: "",
-    image: "",
-    metaDescription: "",
-    metaTitle: "",
-  };
-
-  try {
-    return await addList(uData);
-  } catch {
-    return "489747 error";
-  }
-}
-
 async function updateTop(formData: any) {
   const updateData = JSON.parse(formData.get("updateData"));
 
@@ -275,7 +242,6 @@ async function updateTop(formData: any) {
 
   uData = beforeUpdate(updateData, uData);
 
-  // console.log(uData);
   try {
     await updateATop(updateData._id, uData);
     return { success: true };
@@ -336,7 +302,7 @@ async function postTemplates(formData: any) {
           });
           const result = await response.json();
         } catch (error) {
-          console.log("error 7464664");
+          console.error("error 7464664");
         }
       } else {
         data.push(tData);

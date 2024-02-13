@@ -37,6 +37,8 @@ export default function Lists({ topicData }) {
             generatedImagePath,
             position,
             external_image,
+            phone,
+            website,
           }: any,
           index: number
         ) => {
@@ -110,6 +112,8 @@ export default function Lists({ topicData }) {
                           ""
                         )}
                       </div>
+                      <div>Phone: {phone}</div>
+                      <div>Website: {website}</div>
                     </span>
                   </section>
                 </div>

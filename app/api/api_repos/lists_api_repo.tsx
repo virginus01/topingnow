@@ -12,6 +12,7 @@ import { PostData } from "./post_data";
 import { ListsModel } from "@/app/models/lists_model";
 import { generateListPositions } from "./topics_api_repo";
 import { postBusinessApi } from "./business_api_repo";
+import { ObjectId } from "mongodb";
 
 export async function postListsApi(formData: any) {
   try {
@@ -96,6 +97,13 @@ export async function postListsApi(formData: any) {
         external_image: post.image,
         all_images: post.all_images,
         asso_bus_id: post.asso_bus_id,
+        workday_timing: post.workday_timing,
+        time_zone: post.time_zone,
+        location: post.location,
+        latitude: post.latitude,
+        Longitude: post.Longitude,
+        lang_long: post.lang_long,
+        lang_short: post.lang_short,
       };
 
       const url = await preFetch(`${NEXT_PUBLIC_GET_LIST}?listId=${id}`);
@@ -119,16 +127,21 @@ export async function postListsApi(formData: any) {
           response;
           tData.isUpdated = true;
           tData.msg = "success";
+          postData[i]._id = result.data._id;
           updatedData.push(tData);
         } else {
           tData.isUpdated = false;
           tData.msg = "success";
+          const _id = new ObjectId();
+          tData._id = _id;
           data.push(tData);
           updatedData.push(tData);
         }
       } else {
         tData.isUpdated = false;
         tData.msg = "no slug found";
+        const _id = new ObjectId();
+        tData._id = _id;
         updatedData.push(tData);
       }
     });
@@ -163,38 +176,37 @@ export async function postListsApi(formData: any) {
 }
 
 async function processGMapListData(formData, update) {
-  let lists = formData;
-
-  await postBusinessApi({
-    postData: lists,
-    update,
-    source: "gmap",
-    importTitle: "gmap import",
-  });
-
-  for (let i = 0; i < lists.length; i++) {
-    lists[i].body = await reWriteList(lists[i].body);
-    lists[i].description = await reWriteList(lists[i].description);
-
-    const slug = customSlugify(lists[i].slug);
-    const url = await preFetch(`${NEXT_PUBLIC_GET_BUSINESS}?id=${slug}`);
-    const result = await (
-      await fetch(url, {
-        next: {
-          revalidate: parseInt(
-            process.env.NEXT_PUBLIC_RE_VALIDATE as string,
-            10
-          ),
-        },
-      })
-    ).json();
-
-    if (!isNull(result)) {
-      lists[i].asso_bus_id = result.data._id;
-    }
-  }
-  // console.log(lists);
   try {
+    let lists = formData;
+    await postBusinessApi({
+      postData: lists,
+      update,
+      source: "gmap",
+      importTitle: "gmap import",
+    });
+
+    for (let i = 0; i < lists.length; i++) {
+      lists[i].body = await reWriteList(lists[i].body ?? "");
+      lists[i].description = await reWriteList(lists[i].description ?? "");
+
+      const slug = customSlugify(lists[i].slug);
+      const url = await preFetch(`${NEXT_PUBLIC_GET_BUSINESS}?id=${slug}`);
+      const result = await (
+        await fetch(url, {
+          next: {
+            revalidate: parseInt(
+              process.env.NEXT_PUBLIC_RE_VALIDATE as string,
+              10
+            ),
+          },
+        })
+      ).json();
+
+      if (!isNull(result)) {
+        lists[i].asso_bus_id = result.data._id;
+      }
+    }
+
     return { success: true, gData: lists };
   } catch (error) {
     console.error(`error jdh4765: ${error}`);

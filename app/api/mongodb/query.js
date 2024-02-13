@@ -976,8 +976,6 @@ export async function getUser(uid) {
 
 export async function addTopic(data) {
 
-    const _id = new ObjectId();
-    data._id = _id;
     try {
         const db = await connectDB();
         await db.collection("topics").insertOne(data);
@@ -989,20 +987,6 @@ export async function addTopic(data) {
     }
 }
 
-export async function addList(data) {
-
-    const _id = new ObjectId();
-    data._id = _id;
-    try {
-        const db = await connectDB();
-        await db.collection("lists").insertOne(data);
-        return _id;
-    } catch (error) {
-        console.error(error)
-        return { success: false, msg: "error: jjcjdjhf" }
-
-    }
-}
 
 
 export async function addTemplate(data) {
@@ -1081,12 +1065,6 @@ export async function addTops(data) {
 export async function addTopics(data) {
     try {
         const db = await connectDB();
-
-        for (let i = 0; i < data.length; i++) {
-
-            data[i] = beforeInsert(data[i])
-            console.error(data[i])
-        }
 
         const result = await db.collection("topics").insertMany(data);
 
@@ -1223,18 +1201,18 @@ export async function updateAQandA(id, data) {
 
 export async function updateAList(id, data) {
 
-
     const _id = new ObjectId(String(id));
     try {
         const db = await connectDB();
-        await db.collection("lists")
-            .updateOne({ _id: _id }, { $set: data });
-        return { success: true };
+        const result = await db.collection("lists").updateOne(
+            { $or: [{ _id: _id }, { slug: data.slug }] },
+            { $set: data }
+        );
+        return { success: true, data: result };
     } catch (error) {
         console.error(error)
         return { success: false }
     }
-
 }
 
 export async function updateATop(id, data) {

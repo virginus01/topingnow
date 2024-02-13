@@ -5,7 +5,6 @@ import Loading from "@/app/dashboard/loading";
 import ListsImport from "@/app/dashboard/lists/list_import";
 import { NEXT_PUBLIC_GET_TEMPLATE } from "@/constants";
 import { useSingleSWRAdmin } from "@/app/utils/fetcher";
-import AddList from "@/app/dashboard/lists/create_list";
 import TemplateBody from "../../body";
 import TabbedContents from "@/app/components/widgets/tabbed_contents";
 import Shimmer from "@/app/components/shimmer";

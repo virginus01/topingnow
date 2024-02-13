@@ -1,7 +1,9 @@
+import { ObjectId } from "mongodb";
+
 export type TopicModel = {
   [key: string]: string | Date | any | null | undefined;
   title?: string | null;
-  _id?: any;
+  _id?: ObjectId | null;
   description?: string | null;
   body?: string | null;
   createdAt?: Date | null;

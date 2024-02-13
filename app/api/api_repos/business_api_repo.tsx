@@ -95,6 +95,14 @@ export async function postBusinessApi(formData: any) {
         location_state: post.location_state,
         external_image: post.image,
         all_images: post.all_images,
+        asso_bus_id: post.asso_bus_id,
+        workday_timing: post.workday_timing,
+        time_zone: post.time_zone,
+        location: post.location,
+        latitude: post.latitude,
+        Longitude: post.Longitude,
+        lang_long: post.lang_long,
+        lang_short: post.lang_short,
       };
 
       const url = await preFetch(`${NEXT_PUBLIC_GET_BUSINESS}?id=${id}`);
@@ -107,7 +115,7 @@ export async function postBusinessApi(formData: any) {
         } else {
           tData.isUpdated = false;
           tData.msg = "success";
-          postData[i]._id = String(new ObjectId());
+          postData[i]._id = new ObjectId();
           tData._id = postData[i]._id;
           data.push(tData);
           updatedData.push(tData);
@@ -115,7 +123,7 @@ export async function postBusinessApi(formData: any) {
       } else {
         tData.isUpdated = false;
         tData.msg = "no slug found";
-        postData[i]._id = String(new ObjectId());
+        postData[i]._id = new ObjectId();
         tData._id = postData[i]._id;
         updatedData.push(tData);
       }
@@ -145,7 +153,7 @@ export async function postBusinessApi(formData: any) {
             source: source,
             update: update,
             isImport: isImport,
-            business_id: postData[li]._id,
+            business_id: String(postData[li]._id),
           };
           await postReviews(lData);
         }
@@ -166,8 +174,8 @@ async function processGMapListData(formData, update) {
   let lists = formData;
 
   for (let i = 0; i < lists.length; i++) {
-    lists[i].body = await reWriteList(lists[i].body);
-    lists[i].description = await reWriteList(lists[i].description);
+    lists[i].body = await reWriteList(lists[i].body ?? "");
+    lists[i].description = await reWriteList(lists[i].description ?? "");
   }
 
   try {

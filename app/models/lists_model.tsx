@@ -1,7 +1,9 @@
+import { ObjectId } from "mongodb";
+
 export type ListsModel = {
   [key: string]: string | Date | any | null | undefined;
   title?: string | null;
-  _id?: string | null;
+  _id?: ObjectId | null;
   description?: string | null;
   body?: string | null;
   featuredImagePath?: string | null;
