@@ -188,7 +188,7 @@ export default function Lists({ topicData }) {
                         <PhoneIcon className="h-4 w-4 mr-2" /> {phone}
                       </div>
 
-                      <div className="flex items-center border-b border-gray-300 text-sm p-1">
+                      <div className="flex items-center border-b border-gray-300 text-xs p-1">
                         <HomeIcon className="h-5 w-5 mr-2" /> {address}
                       </div>
                     </div>
@@ -211,19 +211,20 @@ export default function Lists({ topicData }) {
                         <div className="flex flex-col w-[50%] border-b border-red-500 p-2">
                           <div className="text-md justify-center items-center">
                             <u>Services Hours:</u>
-                            {schedule.map((entry, index) => (
-                              <div className="flex items-center">
-                                <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                                <div className="text-sm" key={index}>
-                                  <strong> {entry[0]}</strong>:
-                                  {entry[3].map((timing, timingIndex) => (
-                                    <span className="pl-3" key={timingIndex}>
-                                      {timing[0]}
-                                    </span>
-                                  ))}
+                            {Array.isArray(schedule) &&
+                              schedule.map((entry, index) => (
+                                <div className="flex items-center" key={index}>
+                                  <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                                  <div className="text-sm" key={index}>
+                                    <strong> {entry[0]}</strong>:
+                                    {entry[3].map((timing, timingIndex) => (
+                                      <span className="pl-3" key={timingIndex}>
+                                        {timing[0]}
+                                      </span>
+                                    ))}
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
                           </div>
                         </div>
                       </div>
