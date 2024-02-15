@@ -34,11 +34,14 @@ export function isNull(text: any) {
     text === "[]" ||
     text === "{}" ||
     text === "/" ||
+    text === "NaN" ||
     text === "undefined/undefined" ||
     text === "undefined/" ||
     text === "/undefined" ||
+    text === false ||
+    text === 0 ||
     text.length === 0 ||
-    Object.keys(text).length === 0
+    Object.keys(String(text)).length === 0
   ) {
     return true;
   }
@@ -308,7 +311,7 @@ export function beforeUpdatePend(updateData, uData) {
 
 export function beforeUpdate(updateData, uData) {
   for (const key in updateData) {
-    if (!isNull(updateData[key])) {
+    if (!isNull(String(updateData[key]))) {
       uData[key] = updateData[key];
     } else {
       delete uData[key];

@@ -61,8 +61,8 @@ export async function postListsApi(formData: any) {
       let postSlug = customSlugify(post.slug);
       let id = post._id ? post._id : postSlug;
 
-      if (source == "gmap") {
-        id = postSlug;
+      if (source == "gmap" && !isNull(post.place_id)) {
+        id = post.place_id;
       }
 
       const tData: ListsModel = {
@@ -104,6 +104,8 @@ export async function postListsApi(formData: any) {
         Longitude: post.Longitude,
         lang_long: post.lang_long,
         lang_short: post.lang_short,
+        address: post.address,
+        gmap_link: post.gmap_link,
       };
 
       const url = await preFetch(`${NEXT_PUBLIC_GET_LIST}?listId=${id}`);
@@ -154,7 +156,7 @@ export async function postListsApi(formData: any) {
       res = await PostData(
         data,
         updatedData,
-        () => addLists(data),
+        () => addLists(data, source),
         isImport,
         importTitle,
         "list"
@@ -178,33 +180,10 @@ export async function postListsApi(formData: any) {
 async function processGMapListData(formData, update) {
   try {
     let lists = formData;
-    await postBusinessApi({
-      postData: lists,
-      update,
-      source: "gmap",
-      importTitle: "gmap import",
-    });
 
     for (let i = 0; i < lists.length; i++) {
       lists[i].body = await reWriteList(lists[i].body ?? "");
       lists[i].description = await reWriteList(lists[i].description ?? "");
-
-      const slug = customSlugify(lists[i].slug);
-      const url = await preFetch(`${NEXT_PUBLIC_GET_BUSINESS}?id=${slug}`);
-      const result = await (
-        await fetch(url, {
-          next: {
-            revalidate: parseInt(
-              process.env.NEXT_PUBLIC_RE_VALIDATE as string,
-              10
-            ),
-          },
-        })
-      ).json();
-
-      if (!isNull(result)) {
-        lists[i].asso_bus_id = result.data._id;
-      }
     }
 
     return { success: true, gData: lists };

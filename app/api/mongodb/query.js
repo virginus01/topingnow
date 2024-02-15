@@ -690,6 +690,12 @@ export async function getList(listId, essentials = 'yes', process = "yes") {
         }
 
         if (!topic) {
+            topic = await db.collection("lists").findOne({
+                place_id: listId
+            });
+        }
+
+        if (!topic) {
             return "not_found";
         }
 
@@ -1107,12 +1113,19 @@ export async function addReviews(data) {
     }
 }
 
-export async function addLists(data) {
+export async function addLists(data, type) {
 
     try {
         const db = await connectDB();
 
-        const result = await db.collection("lists").insertMany(data);
+        let result = {};
+
+        if (type == 'gmap') {
+            result = await db.collection("lists").insertMany(data);
+        } else {
+            result = await db.collection("lists").insertMany(data);
+        }
+
 
         if (result.insertedCount > 0) {
             return { success: true, ids: result.insertedIds, msg: `${result.insertedCount} data inserted` };

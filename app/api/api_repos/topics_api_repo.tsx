@@ -189,8 +189,6 @@ export async function processGMapData(postData, update) {
         // Extract the matched words (if any)
         const gTitle = match ? match[1] : gList.name;
 
-        console.log(gList.about);
-
         const mRate = parseInt(gList.rating) * 10;
         const lData: ListsModel = {
           title: String(gTitle).trim(),
@@ -200,24 +198,28 @@ export async function processGMapData(postData, update) {
           slug: gList.name,
           rankingScore: String(mRate + parseInt(gList.reviews)),
           ratingScore: gList.rating,
+          gmap_link: gList.link,
           type: "gmap_business",
+          address: gList.address,
           category: gList.main_category,
-          tags: "",
+          tags: JSON.stringify(gList.categories),
           phone: gList.phone,
           website: gList.website,
           place_id: gList.place_id,
-          location_country: "",
-          location_city: "",
-          external_image: gList.image,
+          location_country: gList.country,
+          location_state: gList.location_state,
+          location_city: gList.location_city,
+          external_image: gList.featured_image,
           all_images: gList.all_images,
           detailed_reviews: gList.detailed_reviews,
-          workday_timing: gList.workday_timing,
+          workday_timing: JSON.stringify(gList.workday_timing),
           time_zone: gList.time_zone,
           location: gList.location,
           latitude: gList.latitude,
           Longitude: gList.Longitude,
           lang_long: gList.lang_long,
           lang_short: gList.lang_short,
+          icon: gList.icon,
           status: "published",
         };
 
@@ -225,7 +227,7 @@ export async function processGMapData(postData, update) {
       }
 
       const basicData: TopicModel = {
-        title: `Top {top} Best ${gData.title}`,
+        title: `Top {top} Best ${gData.title} in {year}`,
         metaTitle: `Best: Top {top} ${gData.title}`,
         metaDescription: `Welcome to the best {top} ${gData.title}. This is top {top} ${gData.title} currently`,
         rankingScore: "",
