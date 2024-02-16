@@ -135,7 +135,6 @@ export default async function ListView({
       <div className="flex flex-col md:flex-row">
         <div className="w-full lg:w-7/12 lg:mt-2 mt-2 lg:ml-4">
           <ListBody post={data} />
-
           <QandAs listData={data} />
         </div>
 
@@ -145,6 +144,17 @@ export default async function ListView({
 
         <div className="w-full lg:w-1/5 lg:h-screen lg:mt-12 mt-2 top-0 right-0 lg:fixed">
           <PopularTopics _id={data._id} />
+        </div>
+
+        <div className="lg:fixed lg:top-[65%] right-20 lg:mt-12 mr-10 lg:left-2/3">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3081.0088488313666!2d-105.5929017!3d41.3131321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8768901d9a0e9dd9%3A0xc4e9855d790adeef!2sDaylight%20Donuts!5e0!3m2!1sen!2sus!4v1644964210174!5m2!1sen!2sus"
+            width="700"
+            height="180"
+            style={{ border: 0 }}
+            allowFullScreen={false}
+            loading="lazy"
+          ></iframe>
         </div>
       </div>
     </main>

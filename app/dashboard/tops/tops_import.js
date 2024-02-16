@@ -55,7 +55,7 @@ const TopsImport = () => {
         data.map(async (t, i) => {
             const topicsD = {
                 title: t.title,
-                top: t.top,
+                top: parseInt(t.top),
                 body: t.desc,
                 slug: t.slug,
             };

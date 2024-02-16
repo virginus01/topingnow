@@ -89,7 +89,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </h1>
 
         <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
+          <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto z-0">
             <ListTable key="left" topicData={data} />
           </div>
           <section className="w-full md:w-2/4 p-4 mx-auto">

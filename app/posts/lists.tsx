@@ -13,7 +13,7 @@ import { GlobeAltIcon, PhoneIcon, HomeIcon } from "@heroicons/react/24/outline";
 import RatingStars from "../components/widgets/rating_stars";
 
 export default function Lists({ topicData }) {
-  const perPage = 5;
+  const perPage = topicData.topData.top;
   const page = 1;
   let [data, setData] = useState(Shimmer(perPage));
 
@@ -37,7 +37,7 @@ export default function Lists({ topicData }) {
             extraClass,
             featuredImagePath,
             generatedImagePath,
-            ranking_position,
+            position,
             external_image,
             phone,
             website,
@@ -49,6 +49,7 @@ export default function Lists({ topicData }) {
             category,
             tags,
             type,
+            is_english,
           }: any,
           index: number
         ) => {
@@ -78,7 +79,7 @@ export default function Lists({ topicData }) {
                     <div className="flex flex-col w-[100%]">
                       <div className="flex pl-3 font-bold">
                         <div className="flex">
-                          Top {ranking_position}: {title}
+                          Top {position}: {title}
                         </div>
                       </div>
                       {!isNull(ratingScore) ? (
@@ -175,7 +176,7 @@ export default function Lists({ topicData }) {
                     </Link>
 
                     <div className="flex">
-                      {title} is the number {ranking_position} in the list of{" "}
+                      {title} is the number {position} in the list of{" "}
                       {topicData.title}
                     </div>
                   </div>
@@ -233,10 +234,15 @@ export default function Lists({ topicData }) {
                 ) : (
                   <></>
                 )}
-                <div className="p-2">{description}</div>
+
+                {is_english == "en" ? (
+                  <div className="p-2">{description}</div>
+                ) : (
+                  <></>
+                )}
 
                 <div className="flex justify-end items-end">
-                  <Link className="text-red-400" href={listSlug}>
+                  <Link rel="nofollow" className="text-red-400" href={listSlug}>
                     <div className="pt-2 items-end mr-3 h-10">see details</div>
                   </Link>
                 </div>

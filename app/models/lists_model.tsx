@@ -18,7 +18,7 @@ export type ListsModel = {
   metaTitle?: string | null;
   metaDescription?: string | null;
   importId?: string | null;
-  rankingScore?: string | null;
+  rankingScore?: number | null;
   ratingScore?: string | null;
   views?: string | null;
   selectedImage?: any;

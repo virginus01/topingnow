@@ -81,7 +81,7 @@ export async function postListsApi(formData: any) {
         metaDescription: post.metaDescription,
         importId: post.importId,
         featuredImagePath: post.featuredImagePath,
-        rankingScore: post.rankingScore,
+        rankingScore: parseInt(post.rankingScore),
         ratingScore: post.ratingScore,
         views: post.views,
         selectedImage: post.selectedImage,

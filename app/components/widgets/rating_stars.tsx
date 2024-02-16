@@ -2,7 +2,11 @@
 
 const RatingStars = ({ ratingScore }) => {
   // Calculate the number of full stars
+  if (ratingScore > 5) {
+    ratingScore = 5;
+  }
   const fullStars = Math.floor(ratingScore);
+
   // Calculate the remainder for the half star
   const remainder = ratingScore - fullStars;
 
@@ -54,6 +58,7 @@ const RatingStars = ({ ratingScore }) => {
         </svg>
       )}
       {/* Empty stars */}
+
       {[...Array(5 - Math.ceil(ratingScore))].map((_, index) => (
         <svg
           key={index}

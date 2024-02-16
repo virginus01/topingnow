@@ -71,6 +71,8 @@ export async function getTops(page = 1, perPage = 10, essentials = 'yes', q = ''
 export async function getTopsByImport(importId, page = 1, perPage = 10, q = '') {
     const skip = (page - 1) * perPage;
 
+
+
     try {
         const db = await connectDB();
         let filter = { importId: importId };
@@ -600,10 +602,10 @@ export async function fetchQandAs(listId, page = 1, perPage = 10, process = 'yes
 
 export async function getLists(topicId, page = 1, perPage = 10, essentials = 'yes', process = 'yes') {
 
-
-    const skip = (page - 1) * perPage;
-
     try {
+        const skip = (page - 1) * perPage;
+
+
         const db = await connectDB();
 
         const filter = topicId ? { topicId } : {};
@@ -612,7 +614,7 @@ export async function getLists(topicId, page = 1, perPage = 10, essentials = 'ye
             db.collection("lists").find(filter)
                 .sort({ rankingScore: -1 })
                 .skip(skip)
-                .limit(perPage)
+                .limit(parseInt(perPage))
                 .toArray(),
 
             db.collection("lists")
@@ -900,7 +902,8 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
         if (essentials == 'yes') {
             const tTop = await getTop(String(topic.topId))
             topic.topData = tTop;
-            const tLists = await getLists(String(topic._id), page, parseInt(tTop.name, 10), "yes", "yes")
+            //console.log(tTop.top)
+            const tLists = await getLists(String(topic._id), 1, tTop.top, "yes", "yes")
             topic.lists = tLists;
         }
 

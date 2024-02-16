@@ -61,10 +61,10 @@ export default async function Page() {
                 <ExtSearchScreen />
               </div>
             </div>
-            <div className="hidden lg:block  flex-col w-[40%]">
-              <div className="rounded-full overflow-hidden border-4 border-white w-60 h-60">
+            <div className="hidden lg:block  flex-col w-[20%]">
+              <div className="flex rounded-full overflow-hidden border-4 border-white w-60 h-60">
                 <Image
-                  className="w-full h-full object-cover"
+                  className="flex w-full h-full object-cover"
                   src={"/images/happy-colleagues.png"}
                   alt={"Top"}
                   width={500}
@@ -76,7 +76,7 @@ export default async function Page() {
         </div>
 
         <div className="bg-gray-100">
-          <div className="p-10">
+          <div className="p-2 lg:p-10">
             <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
               {data.map(({ title, _id, extraClass, topTopics }, i) => {
                 if (topTopics && topTopics.result.length > 0) {
@@ -85,9 +85,9 @@ export default async function Page() {
                       key={_id}
                       className="flex max-w-xl flex-col items-start justify-between"
                     >
-                      <div className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5">
+                      <div className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 rounded">
                         <div
-                          className={`${extraClass} bg-gray-500 flex items-center justify-center gap-x-4 px-4 py-2 text-xs font-bold text-center text-white`}
+                          className={`${extraClass} bg-gray-500 flex items-center justify-center gap-x-4 px-4 py-2 text-xs font-bold text-center text-white rounded-tr rounded-tl`}
                         >
                           Top {title} Best all over the world
                         </div>

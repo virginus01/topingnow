@@ -8,7 +8,7 @@ import PostListItem from "@/app/posts/post_lists_items";
 import usePagination from "../utils/pagination";
 
 export default function ListTable({ topicData }) {
-  const perPage = 5;
+  const perPage = topicData.topData.top;
   const page = 1;
   let [data, setData] = useState(Shimmer(perPage));
 
@@ -20,7 +20,7 @@ export default function ListTable({ topicData }) {
 
   return (
     <div className="relative flex sm:py-7">
-      <div className="relative  px-1 pb-2 pt-2 sm:mx-auto w-full">
+      <div className="relative px-1 pb-2 pt-2 sm:mx-auto w-full">
         <div className="relative bg-white pb-3 shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
           <div className="bg-gray-500 flex items-left justify-left gap-x-4 px-4 py-2 text-xs font-bold text-left text-white">
             List of {topicData.title}

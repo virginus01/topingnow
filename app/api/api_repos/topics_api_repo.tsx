@@ -196,7 +196,7 @@ export async function processGMapData(postData, update) {
           description: gList.about,
           body: gList.about,
           slug: gList.name,
-          rankingScore: String(mRate + parseInt(gList.reviews)),
+          rankingScore: parseInt(String(mRate + parseInt(gList.reviews))),
           ratingScore: gList.rating,
           gmap_link: gList.link,
           type: "gmap_business",

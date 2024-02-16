@@ -7,7 +7,7 @@ import Shimmer from "../components/shimmer";
 import usePagination from "../utils/pagination";
 
 export default function Topics({ topId, topicData }) {
-  const perPage = 3;
+  const perPage = 5;
   const page = 1;
   let [data, setData] = useState(Shimmer(perPage));
 

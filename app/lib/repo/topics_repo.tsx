@@ -85,7 +85,7 @@ export async function getTopicById(topicId: string) {
 export async function justGetTopicWithEssentials(topicId: string, page = 1) {
   try {
     const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}&page=${page}&essentials=${"yes"}&process=${"yes"}`;
-    // console.log(url);
+    //console.log(url);
     const res = await fetch(url, {
       next: {
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
