@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -24,10 +24,26 @@ function classNames(...classes) {
 }
 
 export const Navbar = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 10; // Change this value to adjust the scroll threshold
+      setScrolled(isScrolled);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <Disclosure
       as="nav"
-      className="bg-gray-200 fixed w-full z-10 shadow lg:shadow-none"
+      className={`bg-gray-200 fixed w-full z-10 shadow lg:shadow-none transition-all duration-300 ${
+        scrolled ? "bg-gray-200 shadow lg:shadow-none" : "bg-transparent"
+      }`}
     >
       {({ open }) => (
         <>

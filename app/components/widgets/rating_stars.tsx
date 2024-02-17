@@ -11,7 +11,8 @@ const RatingStars = ({ ratingScore }) => {
   const remainder = ratingScore - fullStars;
 
   return (
-    <div className="flex items-center ml-2">
+    <div className="flex items-center">
+      <span className="mr-2 text-black">{ratingScore}</span>
       {/* Full stars */}
       {[...Array(fullStars)].map((_, index) => (
         <svg

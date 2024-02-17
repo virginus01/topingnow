@@ -213,6 +213,14 @@ export function stripeNone(data) {
   }
 }
 
+export const extractDomain = (url) => {
+  url = url ? url : "";
+  // Regular expression to match the domain name
+  const domainRegex = /^(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/.*)?$/;
+  const match = url.match(domainRegex);
+  return match ? match[1] : ""; // Return the first capturing group
+};
+
 export function getViewUrl(slug, type = "") {
   const path = slug ? "/" + slug : "";
 

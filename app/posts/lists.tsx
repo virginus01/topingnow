@@ -84,7 +84,6 @@ export default function Lists({ topicData }) {
                       </div>
                       {!isNull(ratingScore) ? (
                         <div className="flex pl-3 ml-10">
-                          {ratingScore}
                           <RatingStars ratingScore={ratingScore} />
                         </div>
                       ) : (

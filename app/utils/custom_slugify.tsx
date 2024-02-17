@@ -395,9 +395,9 @@ export function customSlugify(
   if (filterTop === "yes") {
     return words
       .join("-")
-      .replace(/top-\d+\s*/gi, "") // Remove "top any number" anywhere in the string
+      .replace(/top-\d+\s*/gi, "-") // Replace "top any number" anywhere in the string with a single hyphen
       .replace(/{[^}]*}/g, "")
-      .replace(/[^\w-]+/g, "")
+      .replace(/[^\w-]+/g, "-")
       .replace(/-+$/, "")
       .replace(/^-+/, "")
       .replace(/-+/g, "-")
@@ -407,7 +407,7 @@ export function customSlugify(
     return words
       .join("-")
       .replace(/{[^}]*}/g, "")
-      .replace(/[^\w-]+/g, "")
+      .replace(/[^\w-]+/g, "-")
       .replace(/-+$/, "")
       .replace(/^-+/, "")
       .replace(/-+/g, "-")

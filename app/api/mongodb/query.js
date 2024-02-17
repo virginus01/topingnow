@@ -762,28 +762,69 @@ export async function getBusiness(id, essentials = 'yes', process = "yes") {
 }
 
 
-export async function getReviews(id, essentials = 'yes', process = "yes") {
+export async function getReviews(id, list_id = '', essentials = 'yes', page = 1, perPage = 10) {
 
     try {
         const db = await connectDB();
 
-        let topic = await db.collection("reviews").findOne({
-            review_id_hash: id
-        });
 
-        if (!topic && isValidObjectId(id)) {
-            topic = await db.collection("reviews").findOne({
-                _id: new ObjectId(id)
+        if (list_id) {
+
+            const skip = (page - 1) * perPage;
+
+            const db = await connectDB();
+
+            const filter = list_id ? { list_id } : {};
+
+            const [result, total] = await Promise.all([
+                db.collection("reviews").find(filter)
+                    .sort({ published_at: -1 })
+                    .skip(skip)
+                    .limit(parseInt(perPage))
+                    .toArray(),
+
+                db.collection("reviews")
+                    .estimatedDocumentCount(filter)
+            ]);
+
+            const numPages = Math.ceil(total / perPage);
+            const hasNextPage = page < numPages;
+            const hasPrevPage = page > 1;
+
+            if (!result) {
+                return "not_found";
+            }
+
+            return {
+                result: result,
+                metadata: {
+                    total,
+                    page,
+                    perPage,
+                    hasNextPage,
+                    hasPrevPage
+                }
+            };
+
+
+        } else {
+            let topic = await db.collection("reviews").findOne({
+                review_id_hash: id
             });
+
+            if (!topic && isValidObjectId(id)) {
+                topic = await db.collection("reviews").findOne({
+                    _id: new ObjectId(id)
+                });
+            }
+
+            if (!topic) {
+                return "not_found";
+            }
+
+
+            return topic;
         }
-
-        if (!topic) {
-            return "not_found";
-        }
-
-
-        return topic;
-
     } catch (error) {
         console.error("Error in getBusiness", error);
         return "not_found";

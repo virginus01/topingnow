@@ -133,8 +133,8 @@ export async function GET(
     });
   }
 
-  if (action == "get_review") {
-    const data = await fetchReview(id, essentials, process);
+  if (action == "get_reviews") {
+    const data = await fetchReview(id, listId, essentials, page, perPage);
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -302,9 +302,15 @@ async function fetchBusiness(id: string | number | null, essentials, process) {
   }
 }
 
-async function fetchReview(id: string | number | null, essentials, process) {
+async function fetchReview(
+  id: string | number | null,
+  listId,
+  essentials,
+  page,
+  perPage
+) {
   try {
-    return await getReviews(id, essentials, process);
+    return await getReviews(id, listId, essentials, page, perPage);
   } catch {
     return { msg: "error: 6454554" };
   }

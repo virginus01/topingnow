@@ -21,10 +21,14 @@ export default async function Page() {
 
   return (
     <Layout>
-      <div className="bg-white">
+      <div className="bg-gray-100">
         <div
           className="h-96 p-2 border-b border-gray-300"
           style={{
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
             alignItems: "start",
             justifyContent: "start",
             backgroundImage: `url("${process.env.NEXT_PUBLIC_BASE_URL}/images/beams.jpg")`,
@@ -39,7 +43,7 @@ export default async function Page() {
               right: 0,
               bottom: 0,
               left: 0,
-              backgroundImage: "url(http://localhost:3000/images/grid.svg)",
+              backgroundImage: `url(${process.env.NEXT_PUBLIC_BASE_URL}/images/grid.svg)`,
               backgroundPosition: "center",
               maskImage:
                 "linear-gradient(180deg, white, rgba(255, 255, 255, 0))",

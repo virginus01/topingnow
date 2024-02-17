@@ -25,7 +25,7 @@ export const LIST_IMAGE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/list`;
 export const NEXT_PUBLIC_GET_BUSINESS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_business`;
 
 //Review
-export const NEXT_PUBLIC_GET_REVIEW = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_review`;
+export const NEXT_PUBLIC_GET_REVIEWS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_reviews`;
 
 //files
 export const NEXT_PUBLIC_GET_FILES = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_files`;
