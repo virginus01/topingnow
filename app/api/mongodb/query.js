@@ -1461,15 +1461,15 @@ export async function removeTop(id, importId) {
                 result = await db.collection("tops").deleteMany({ importId: importId });
             }
 
-            return { success: true }
+            return { success: true, msg: "top removed" }
 
         } catch (e) {
             console.error(`${e} error 88364575`)
-            return { success: false }
+            return { success: false, msg: `${e}` }
         }
     } catch (error) {
         console.error(error)
-        return { success: false, msg: "error: 84566yryr" }
+        return { success: false, msg: String(error) }
 
     }
 }

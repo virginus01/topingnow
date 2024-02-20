@@ -57,7 +57,7 @@ export async function DELETE(request, { params }) {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return new Response(JSON.stringify({ success: false, msg: `${error}` }));
   }
   //...............GET........................
@@ -101,10 +101,9 @@ async function deleteList(formData: any) {
   }
 }
 
-async function deleteTop(formData: any) {
-  const deleteData = JSON.parse(formData.get("deleteData"));
+async function deleteTop(id: any) {
   try {
-    return await removeTop(deleteData._id);
+    return await removeTop(id);
   } catch {
     return { data: "not_found" };
   }

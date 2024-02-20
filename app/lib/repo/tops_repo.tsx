@@ -85,7 +85,7 @@ export async function postTops(postData: any, isImport = "no", update = false) {
 
 export async function deleteTop(_id: string) {
   try {
-    const url = `${NEXT_PUBLIC_DELETE_TOP}`;
+    const url = `${NEXT_PUBLIC_DELETE_TOP}?id=${_id}`;
 
     const formData = new FormData();
     formData.append("deleteData", JSON.stringify({ _id }));
@@ -98,9 +98,9 @@ export async function deleteTop(_id: string) {
     if (response.status === 200) {
       return await response.json();
     } else {
-      return { error: "Failed to delete top" };
+      return { success: false, msg: "Failed to delete top" };
     }
   } catch (error) {
-    return { error: "An error occurred while deleting top" };
+    return { success: false, msg: "An error occurred while deleting top" };
   }
 }
