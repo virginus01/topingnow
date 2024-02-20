@@ -8,7 +8,7 @@ import usePagination from "../utils/pagination";
 import Image from "next/image";
 import { getS3Url } from "../lib/repo/files_repo";
 import { LIST_IMAGE } from "@/constants";
-import { isNull } from "../utils/custom_helpers";
+import { base_url, isNull } from "../utils/custom_helpers";
 import { GlobeAltIcon, PhoneIcon, HomeIcon } from "@heroicons/react/24/outline";
 import RatingStars from "../components/widgets/rating_stars";
 
@@ -68,7 +68,7 @@ export default function Lists({ topicData }) {
           const core_tags = JSON.parse(tags);
 
           const listSlug = topicData.slug + "/" + slug;
-
+          console.log(String(base_url(`api/images/og?title=${title}`)));
           return (
             <li key={_id} id={slug}>
               <article className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
@@ -150,13 +150,9 @@ export default function Lists({ topicData }) {
                           className="h-48 w-full rounded-sm object-cover"
                           priority
                         />
-                      ) : !isNull(
-                          process.env.NEXT_PUBLIC_BASE_URL + "/api/images/og"
-                        ) ? (
+                      ) : !isNull(base_url(`api/images/og?title=${title}`)) ? (
                         <Image
-                          src={
-                            process.env.NEXT_PUBLIC_BASE_URL + "/api/images/og"
-                          }
+                          src={String(base_url(`api/images/og?title=${title}`))}
                           alt={title}
                           style={{ width: "100%" }}
                           width={1920}

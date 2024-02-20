@@ -239,6 +239,14 @@ export function countWords(textContent) {
   return words.length;
 }
 
+export function base_url(slug = "") {
+  if (isNull(slug)) {
+    return process.env.NEXT_PUBLIC_BASE_URL;
+  } else {
+    return `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`;
+  }
+}
+
 export function cleanFileName(filename) {
   // Create temp file name
   let cleanName = filename;

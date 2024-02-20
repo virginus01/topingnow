@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { SingleShimmer } from "../components/shimmer";
 import { getTopic, metaTags, topicMetaTags } from "../lib/repo/topics_repo";
 import {
+  base_url,
   countWords,
   getViewUrl,
   isNull,
@@ -24,7 +25,7 @@ async function generateMetadataAndTags(data) {
   await generateMetadata({
     params: { slug: data.slug },
     data: finalData,
-    breadcrumbData: [{ title: data.title, url: "" }],
+    breadcrumbData: [{ title: data.title, url: base_url(data.slug) }],
   });
 }
 
@@ -43,7 +44,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  await generateMetadataAndTags(data);
+  Promise.resolve(await generateMetadataAndTags(data));
   return (
     <>
       <div className="mt-10">
