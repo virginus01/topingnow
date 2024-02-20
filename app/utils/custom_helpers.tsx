@@ -256,12 +256,18 @@ export function cleanFileName(filename) {
     // Replace double spaces with single spaces
     cleanName = cleanName.replace(/\s\s+/g, " ");
   }
+
   // Return cleaned file name
   return cleanName.trim();
 }
 
 export async function preFetch(url: any) {
-  await fetch(url);
+  await fetch(url),
+    {
+      next: {
+        revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
+      },
+    };
   return url;
 }
 
@@ -371,4 +377,63 @@ export async function processInner(temp, type) {
   }
 
   return temp;
+}
+
+export function construct_sitemap(slug) {
+  let isDev = true;
+
+  if (process.env.NODE_ENV == "production") {
+    isDev = false;
+  }
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+  let link = "";
+  if (isDev) {
+    link = `${BASE_URL}/sitemap.xml/${slug}`;
+  } else {
+    link = `${BASE_URL}/sitemap/${slug}.xml`;
+  }
+
+  return link;
+}
+
+export function extractNumber(str) {
+  const match = str.match(/\d+/);
+  if (match) {
+    return match[0];
+  }
+  return null;
+}
+
+export function generateBreadcrumb(data = []) {
+  const breadcrumb: {
+    "@type": string;
+    position: string;
+    item: {
+      "@id": string;
+      name: string;
+    };
+  }[] = [];
+
+  breadcrumb.push({
+    "@type": "ListItem",
+    position: "1",
+    item: {
+      "@id": String(process.env.NEXT_PUBLIC_BASE_URL),
+      name: "Top",
+    },
+  });
+
+  data.map((result: any, i) => {
+    breadcrumb.push({
+      "@type": "ListItem",
+      position: String(i + 2),
+      item: {
+        "@id": result.url,
+        name: result.title,
+      },
+    });
+  });
+
+  return breadcrumb;
 }

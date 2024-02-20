@@ -1,5 +1,11 @@
 "use server";
-import { countWords, stripHtmlTags } from "@/app/utils/custom_helpers";
+import {
+  construct_sitemap,
+  countWords,
+  isNull,
+  preFetch,
+  stripHtmlTags,
+} from "@/app/utils/custom_helpers";
 import { customSlugify } from "@/app/utils/custom_slugify";
 import {
   NEXT_PUBLIC_DELETE_TOPICS,
@@ -7,6 +13,7 @@ import {
   NEXT_PUBLIC_GET_TOPIC,
   NEXT_PUBLIC_GET_TOPICS,
   NEXT_PUBLIC_POST_TOPICS,
+  SITEMAP_PER_PAGE,
 } from "@/constants";
 
 export async function getTopics(topId: any | "", page: any, perPage: any | "") {
@@ -54,9 +61,9 @@ export async function getPopularTopics(_id, page, perPage) {
   }
 }
 
-export async function getTopicById(topicId: string) {
+export async function getTopic(topicId: string, page = 1, essentials = "yes") {
   try {
-    const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}`;
+    const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}&page=${page}&essentials=${essentials}&process=${"yes"}`;
 
     const res = await fetch(url, {
       next: {
@@ -65,8 +72,12 @@ export async function getTopicById(topicId: string) {
     });
 
     if (!res.ok) {
-      console.log("Fetch failed");
-      return { error: res.statusText };
+      console.error("Fetch failed");
+      return {
+        success: false,
+        msg: "Failed to fetch topic",
+        error: res.statusText,
+      };
     }
 
     const result = await res.json();
@@ -77,35 +88,9 @@ export async function getTopicById(topicId: string) {
     console.error(error);
 
     return {
-      error: error.message || "Failed to fetch topic",
-    };
-  }
-}
-
-export async function justGetTopicWithEssentials(topicId: string, page = 1) {
-  try {
-    const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}&page=${page}&essentials=${"yes"}&process=${"yes"}`;
-    //console.log(url);
-    const res = await fetch(url, {
-      next: {
-        revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
-      },
-    });
-
-    if (!res.ok) {
-      console.log("Fetch failed");
-      return { error: res.statusText };
-    }
-
-    const result = await res.json();
-    const { data } = result;
-
-    return data;
-  } catch (error) {
-    console.error(error);
-
-    return {
-      error: error.message || "Failed to fetch topic",
+      success: false,
+      msg: "Failed to fetch topic",
+      error: error.message,
     };
   }
 }
@@ -182,4 +167,55 @@ export async function metaTags(metadata, data) {
     };
   }
   return true;
+}
+
+export async function topicMetaTags(data) {
+  let list_desc = "";
+
+  if (data.lists && data.lists.result[0] && data.lists.result[0].description) {
+    list_desc = data.lists.result[0].description;
+  }
+
+  const length = stripHtmlTags(data.description + " " + list_desc);
+
+  data.canonical = `${process.env.NEXT_PUBLIC_BASE_URL}/${data.slug}`;
+  data.robots = {
+    index:
+      countWords(length) >= 300 && data.lists.result.length >= 1 ? true : false,
+    follow: true,
+  };
+
+  return data;
+}
+
+export async function topics_for_sitemap(id: any) {
+  let posts: any = [];
+
+  if (id == 0) {
+    posts = await getTopics("", 1, SITEMAP_PER_PAGE);
+    const sml: any = [];
+    for (let i = 0; i < posts.data.metadata.numPages; i++) {
+      sml.push({
+        url: construct_sitemap(`topics_${i + 1}`),
+        changefreq: "weekly",
+      });
+    }
+
+    return [...sml];
+  }
+
+  posts = await getTopics("", parseInt(id), SITEMAP_PER_PAGE);
+
+  if (isNull(posts.data.result)) {
+    posts = await getTopics("", 1, SITEMAP_PER_PAGE);
+  }
+
+  return posts.data.result.map((item, i) => {
+    const slug = `${process.env.NEXT_PUBLIC_BASE_URL}/${item.slug}`;
+    //preFetch(slug);
+    return {
+      url: `${slug}`,
+      changefreq: "weekly",
+    };
+  });
 }

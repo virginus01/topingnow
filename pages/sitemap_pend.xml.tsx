@@ -1,4 +1,3 @@
-import { getTopicById, getTopics } from "@/app/lib/repo/topics_repo";
 import { writeFileSync } from "fs";
 import { formatISO } from "date-fns";
 import { getTops } from "@/app/lib/repo/tops_repo";

@@ -236,13 +236,10 @@ export async function getTopicsByImport(importId, page = 1, perPage = 10, proces
 }
 
 export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes', process = 'yes', q, others = {}) {
-
-
     const skip = (page - 1) * perPage;
 
     try {
         const db = await connectDB();
-
         let filter = topId ? { topId } : {};
 
         if (!isNull(q)) {
@@ -259,7 +256,6 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
             sortOptions = others.sort;
         } else {
             sortOptions = { createdAt: -1 };
-
         }
 
         const [result, total] = await Promise.all([
@@ -269,8 +265,7 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
                 .limit(perPage)
                 .toArray(),
 
-            db.collection("topics")
-                .estimatedDocumentCount(filter)
+            db.collection("topics").estimatedDocumentCount(filter)
         ]);
 
         const numPages = Math.ceil(total / perPage);
@@ -282,8 +277,10 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
         }
 
         if (essentials == 'yes') {
-            const tTop = await getTop(String(result[i].topId))
-            result[i].topData = tTop;
+            for (let i = 0; i < result.length; i++) {
+                const tTop = await getTop(String(result[i].topId))
+                result[i].topData = tTop;
+            }
         }
 
         if (process === 'yes') {
@@ -298,7 +295,6 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
                 }
 
                 result[i] = await dataProcess(result[i], 'topic', proData);
-
             }
         }
 
@@ -308,6 +304,7 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
                 total,
                 page,
                 perPage,
+                numPages,
                 hasNextPage,
                 hasPrevPage
             }
@@ -316,9 +313,8 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
     } catch (error) {
         console.error(error)
     }
-
-
 }
+
 
 
 export async function fetchImports(page = 1, perPage = 10) {
@@ -665,6 +661,7 @@ export async function getLists(topicId, page = 1, perPage = 10, essentials = 'ye
                 total,
                 page,
                 perPage,
+                numPages,
                 hasNextPage,
                 hasPrevPage
             }

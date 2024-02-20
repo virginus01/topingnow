@@ -1,4 +1,4 @@
-import { justGetTopicWithEssentials } from "@/app/lib/repo/topics_repo";
+import { getTopic } from "@/app/lib/repo/topics_repo";
 import { isNull } from "@/app/utils/custom_helpers";
 
 export default async function TopicImage({
@@ -7,10 +7,7 @@ export default async function TopicImage({
   params: { id: string };
 }) {
   let data: any = {};
-  const result = await justGetTopicWithEssentials(
-    params.id.replace(".png", ""),
-    10
-  );
+  const result = await getTopic(params.id.replace(".png", ""), 10);
 
   if (result) {
     data = result;

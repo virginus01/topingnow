@@ -72,6 +72,7 @@ export async function postListsApi(formData: any) {
         createdAt: new Date(),
         updatedAt: post.updatedAt,
         topicId: post.topicId,
+        topic_slug: post.topic_slug,
         status: post.status,
         subTitle: post.subTitle,
         slug: postSlug,

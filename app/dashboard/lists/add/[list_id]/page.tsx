@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { getTopicById } from "@/app/lib/repo/topics_repo";
+import { getTopic } from "@/app/lib/repo/topics_repo";
 import Loading from "@/app/dashboard/loading";
 import { TopicModel } from "@/app/models/topic_model";
 import { toast } from "sonner";
@@ -20,7 +20,7 @@ export default function CreatList({
   const [topicData, setTopicData] = useState<TopicModel | null>(null);
 
   useEffect(() => {
-    getTopicById(params.topic_id).then((data) => {
+    getTopic(params.topic_id).then((data) => {
       if (!data) {
         toast.error("topic not found");
         redirect("/dashboard/topics");

@@ -74,3 +74,8 @@ export const NEXT_PUBLIC_S3_UPLOADER = `${process.env.NEXT_PUBLIC_BASE_URL}/api/
 
 //dasboard topics
 export const DASH_TOPICS = "/dasboard/topics/";
+
+{
+  /*sitemap*/
+}
+export const SITEMAP_PER_PAGE = 100;

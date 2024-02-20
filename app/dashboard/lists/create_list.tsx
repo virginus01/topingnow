@@ -60,20 +60,29 @@ export default function CreateList({ topicData }) {
     e.preventDefault();
 
     const topicId = data.selectedParent._id;
+    const topic_slug = data.selectedParent.slug;
     const basicData: ListsModel = {
       title,
       metaTitle,
       metaDescription,
-      rankingScore,
+      rankingScore: parseInt(rankingScore),
       ratingScore,
       views,
       slug,
       description,
       featuredImagePath,
       topicId,
+      topic_slug,
     };
 
-    const requiredFields = { title, slug, metaTitle, topicId, metaDescription };
+    const requiredFields = {
+      title,
+      slug,
+      metaTitle,
+      topicId,
+      topic_slug,
+      metaDescription,
+    };
 
     const errors = beforePost(requiredFields);
 

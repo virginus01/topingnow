@@ -1,7 +1,10 @@
 "use server";
 import {
+  construct_sitemap,
   countWords,
   getViewUrl,
+  isNull,
+  preFetch,
   stripHtmlTags,
 } from "@/app/utils/custom_helpers";
 import { customSlugify } from "@/app/utils/custom_slugify";
@@ -13,7 +16,9 @@ import {
   NEXT_PUBLIC_POST_LISTS,
   NEXT_PUBLIC_POST_TOPICS,
   NEXT_PUBLIC_UPDATE_LIST,
+  SITEMAP_PER_PAGE,
 } from "@/constants";
+import { getTopic } from "./topics_repo";
 
 export async function getLists(
   topicId: any | "",
@@ -52,7 +57,7 @@ export async function getListById(id: string) {
     });
 
     if (!res.ok) {
-      console.log("Fetch failed");
+      console.error("Fetch failed");
       return { error: res.statusText };
     }
 
@@ -88,7 +93,7 @@ export async function UpdateList(tData: any) {
       return { error: "Failed to update a list" };
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { error: "An error occurred while updating list" };
   }
 }
@@ -117,7 +122,7 @@ export async function postLists(
 
     return result;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { success: false, msg: "An error occurred while posting list" };
   }
 }
@@ -174,7 +179,7 @@ export async function getPopularLists(_id, page, perPage) {
     });
 
     if (!res.ok) {
-      console.log("Fetch failed");
+      console.error("Fetch failed");
       return { error: res.statusText };
     }
     const result = await res.json();
@@ -185,4 +190,49 @@ export async function getPopularLists(_id, page, perPage) {
       error: error.message || "Failed to fetch data",
     };
   }
+}
+
+export async function lists_for_sitemap(id: any) {
+  let posts: any = [];
+
+  if (id == 0) {
+    posts = await getLists("", 1, SITEMAP_PER_PAGE);
+    const sml: any = [];
+    for (let i = 0; i < posts.data.metadata.numPages; i++) {
+      sml.push({
+        url: construct_sitemap(`lists_${i + 1}`),
+        changefreq: "weekly",
+      });
+    }
+
+    return [...sml];
+  }
+
+  posts = await getLists("", parseInt(id), SITEMAP_PER_PAGE);
+
+  if (isNull(posts.data.result)) {
+    posts = await getLists("", 1, SITEMAP_PER_PAGE);
+  }
+  const promise = posts.data.result.map(async (item, i) => {
+    let topic_slug = "";
+
+    if (!isNull(item.topic_slug)) {
+      topic_slug = item.topic_slug;
+    } else {
+      const topic = await getTopic(item["topicId"]);
+
+      if (topic.slug) {
+        topic_slug = topic.slug;
+      }
+    }
+    const slug = `${process.env.NEXT_PUBLIC_BASE_URL}/${topic_slug}/${item.slug}`;
+    //preFetch(slug);
+
+    return {
+      url: `${slug}`,
+      changefreq: "weekly",
+    };
+  });
+
+  return Promise.all(promise);
 }

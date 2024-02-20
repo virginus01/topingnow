@@ -5,7 +5,7 @@ import { buildSchema } from "./seo/schema";
 import Head from "next/head";
 import Script from "next/script";
 import { ConstructMetadata } from "./seo/metadata";
-import { getViewUrl } from "./utils/custom_helpers";
+import { generateBreadcrumb, getViewUrl } from "./utils/custom_helpers";
 
 const inter = Roboto({
   subsets: ["latin"],
@@ -13,80 +13,40 @@ const inter = Roboto({
   weight: "400",
 });
 
-export async function generateMetadata() {
-  const result = {
-    title: "Topingnow",
-    slug: process.env.NEXT_PUBLIC_BASE_URL,
-    description: "desc",
-  };
+export let result: any = {
+  title: "Topingnow",
+  slug: process.env.NEXT_PUBLIC_BASE_URL,
+  description: "desc",
+  breadcrumb: [],
+};
 
-  const breadcrumb: {
-    "@type": string;
-    position: string;
-    item: {
-      "@id": string;
-      name: string;
-    };
-  }[] = [];
+export async function generateMetadata({
+  params,
+  data,
+  breadcrumbData,
+}: {
+  params: { slug: string };
+  data: any;
+  breadcrumbData: any;
+}): Promise<Metadata> {
+  if (data) {
+    result = data;
+  }
 
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "1",
-    item: {
-      "@id": getViewUrl("", "topic"),
-      name: "Home",
-    },
-  });
+  if (breadcrumbData) {
+    result.breadcrumb = generateBreadcrumb(breadcrumbData);
+  }
 
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "2",
-    item: {
-      "@id": getViewUrl("", "topic"),
-      name: result.title,
-    },
-  });
-
-  schema.data = buildSchema(
-    getViewUrl(result.slug, "topic"),
-    "Topingnow",
-    "/images/logo.png",
-    breadcrumb,
-    result
-  );
-
-  return ConstructMetadata(result) as {};
+  return ConstructMetadata(result) as Metadata;
 }
-
-const breadcrumb: {
-  "@type": string;
-  position: string;
-  item: {
-    "@id": string;
-    name: string;
-  };
-}[] = [];
-
-breadcrumb.push({
-  "@type": "ListItem",
-  position: "1",
-  item: {
-    "@id": String(process.env.NEXT_PUBLIC_BASE_URL),
-    name: "Home",
-  },
-});
 
 export const schema = {
   data: buildSchema(
     process.env.NEXT_PUBLIC_BASE_URL,
     "TopingNow",
     "/logo.png",
-    breadcrumb,
-    {
-      headline: "My Article",
-      description: "Description here",
-      author: "John Doe",
-    }
+    result.breadcrumb,
+    result
   ),
 };
 

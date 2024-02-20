@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getTopicById } from "@/app/lib/repo/topics_repo";
+import { getTopic } from "@/app/lib/repo/topics_repo";
 import Loading from "@/app/dashboard/loading";
 import { TopicModel } from "@/app/models/topic_model";
 import ListsImport from "@/app/dashboard/lists/list_import";

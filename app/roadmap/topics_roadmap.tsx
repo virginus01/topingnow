@@ -1,5 +1,5 @@
 //dashboard end
-export { getTopicById, postTopics } from "@/app/lib/repo/topics_repo";
+export { getTopic, postTopics } from "@/app/lib/repo/topics_repo";
 export { default as TopicsView } from "../dashboard/topics/topics_view";
 export { default as CreateTopic } from "../dashboard/topics/create_topic";
 export { default as TopicsImport } from "../dashboard/topics/topics_import";

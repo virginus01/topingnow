@@ -3,7 +3,7 @@ import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Papa from "papaparse";
 import ProgressBar from "@/app/components/progress_bar";
-import { getTopicById, postTopics } from "@/app/lib/repo/topics_repo";
+import { getTopic, postTopics } from "@/app/lib/repo/topics_repo";
 import { toast } from "sonner";
 import { JsonToCsvDownload } from "@/app/utils/json_to_csv_download";
 import CsvImportSCR from "@/app/dashboard/src/csv_import_src";

@@ -23,4 +23,5 @@ export type ListsModel = {
   views?: string | null;
   selectedImage?: any;
   ranking_position?: string | null;
+  topic_slug?: string | null;
 };

@@ -5,63 +5,27 @@ import ListTable from "@/app/components/list_table";
 import Lists from "../posts/lists";
 import { notFound } from "next/navigation";
 import { SingleShimmer } from "../components/shimmer";
-import { justGetTopicWithEssentials, metaTags } from "../lib/repo/topics_repo";
+import { getTopic, metaTags, topicMetaTags } from "../lib/repo/topics_repo";
 import {
   countWords,
   getViewUrl,
   isNull,
   stripHtmlTags,
 } from "../utils/custom_helpers";
-import { schema } from "../layout";
+import { generateMetadata, schema } from "../layout";
 import { buildSchema } from "@/app/seo/schema";
 import { Metadata } from "next";
 import { ConstructMetadata } from "../seo/metadata";
 import Image from "next/image";
 import { TOPIC_IMAGE } from "@/constants";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const result = await justGetTopicWithEssentials(params.slug);
-
-  const breadcrumb: {
-    "@type": string;
-    position: string;
-    item: {
-      "@id": string;
-      name: string;
-    };
-  }[] = [];
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "1",
-    item: {
-      "@id": getViewUrl("", "topic"),
-      name: "Home",
-    },
+async function generateMetadataAndTags(data) {
+  const finalData = await topicMetaTags(data);
+  await generateMetadata({
+    params: { slug: data.slug },
+    data: finalData,
+    breadcrumbData: [{ title: data.title, url: "" }],
   });
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "2",
-    item: {
-      "@id": getViewUrl("", "topic"),
-      name: result.title,
-    },
-  });
-
-  schema.data = buildSchema(
-    getViewUrl(result.slug, "topic"),
-    "Topingnow",
-    "/images/logo.png",
-    breadcrumb,
-    result
-  );
-
-  return ConstructMetadata(result) as {};
 }
 
 export default async function Post({ params }: { params: { slug: string } }) {
@@ -69,7 +33,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
   const page = 1;
 
   let data: any = {};
-  const result = await justGetTopicWithEssentials(params.slug, page);
+  const result = await getTopic(params.slug, page);
 
   if (result) {
     data = result;
@@ -79,8 +43,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  let metadata = await generateMetadata({ params });
-  metaTags(metadata, data);
+  await generateMetadataAndTags(data);
   return (
     <>
       <div className="mt-10">

@@ -1,6 +1,6 @@
 import { TopicModel } from "@/app/models/topic_model";
 import { customSlugify } from "@/app/utils/custom_slugify";
-import { NEXT_PUBLIC_GET_REVIEW } from "@/constants";
+import { NEXT_PUBLIC_GET_REVIEWS } from "@/constants";
 import { addReviews } from "../mongodb/query";
 import { isNull, preFetch } from "@/app/utils/custom_helpers";
 import { PostData } from "./post_data";
@@ -59,7 +59,7 @@ export async function postReviews(formData: any) {
           post.response_from_owner_translated_text,
       };
 
-      const url = await preFetch(`${NEXT_PUBLIC_GET_REVIEW}?id=${id}`);
+      const url = await preFetch(`${NEXT_PUBLIC_GET_REVIEWS}?id=${id}`);
 
       const result = await (await fetch(url)).json();
 

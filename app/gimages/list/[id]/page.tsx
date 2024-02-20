@@ -1,5 +1,5 @@
 import { getListById } from "@/app/lib/repo/lists_repo";
-import { justGetTopicWithEssentials } from "@/app/lib/repo/topics_repo";
+import { getTopic } from "@/app/lib/repo/topics_repo";
 import { isNull } from "@/app/utils/custom_helpers";
 
 export default async function TopicImage({
@@ -23,7 +23,7 @@ export default async function TopicImage({
 
   let data: any = {};
 
-  const result = await justGetTopicWithEssentials(
+  const result = await getTopic(
     listData.topicData.slug.replace(".png", "10"),
     10
   );
