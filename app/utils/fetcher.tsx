@@ -61,10 +61,10 @@ export function usePaginatedSWRAdmin(url, page, perPage) {
   const results = data?.data?.result ?? [];
 
   const paginatedData = usePagination(results, page, perPage);
-
+  const raw_data = data;
   return {
     paginatedData,
-    data,
+    raw_data,
     loading: !data,
   };
 }

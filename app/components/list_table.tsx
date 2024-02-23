@@ -28,13 +28,18 @@ export default function ListTable({ topicData }) {
           <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
             <div className="line-clamp-1 text-sm leading-6 text-gray-600">
               <ul className="ml-1 inline-block w-[500px]">
-                {paginatedData.map((post: { _id; title; slug; extraClass }) => {
-                  const modifiedPost = {
-                    ...post,
-                    slug: `${topicData.slug}#${post.slug}`,
-                  };
-                  return <PostListItem data={modifiedPost} key={post._id} />;
-                })}
+                {paginatedData &&
+                  paginatedData.map(
+                    (post: { _id; title; slug; extraClass }) => {
+                      const modifiedPost = {
+                        ...post,
+                        slug: `${topicData.slug}#${post.slug}`,
+                      };
+                      return (
+                        <PostListItem data={modifiedPost} key={post._id} />
+                      );
+                    }
+                  )}
               </ul>
             </div>
           </div>

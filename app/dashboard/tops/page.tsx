@@ -22,8 +22,11 @@ export default function Index() {
     `${NEXT_PUBLIC_GET_TOPS}?page=${page}&perPage=${perPage}`
   );
 
-  // Slice topics array for current page
-  const { paginatedData, loading } = usePaginatedSWRAdmin(url, page, perPage);
+  const { paginatedData, raw_data, loading } = usePaginatedSWRAdmin(
+    url,
+    page,
+    perPage
+  );
 
   if (paginatedData && paginatedData.length > 0 && updating == false) {
     data = paginatedData;
@@ -38,6 +41,7 @@ export default function Index() {
         <DataTable
           data={data}
           page={page}
+          total={20}
           perPage={perPage}
           deleteAction={deleteAction}
           setPage={() => setPage}

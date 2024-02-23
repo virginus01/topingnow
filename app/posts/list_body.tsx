@@ -215,29 +215,32 @@ export default function ListBody({ post, reviews }) {
                     <div className="text-md">
                       <u>Core Services & Tags:</u>
 
-                      {core_tags.map((c, index) => (
-                        <div className="flex items-center" key={index}>
-                          <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                          <div className="text-sm">{c}</div>
-                        </div>
-                      ))}
+                      {core_tags &&
+                        core_tags.map((c, index) => (
+                          <div className="flex items-center" key={index}>
+                            <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                            <div className="text-sm">{c}</div>
+                          </div>
+                        ))}
                     </div>
                   </div>
 
                   <div className="flex flex-col w-[50%] border-b border-red-500 p-2">
                     <div className="text-md justify-center items-center">
                       <u>Services Hours:</u>
-                      {Array.isArray(schedule) &&
+                      {schedule &&
+                        Array.isArray(schedule) &&
                         schedule.map((entry, index) => (
                           <div className="flex items-center" key={index}>
                             <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
                             <div className="text-sm" key={index}>
                               <strong> {entry[0]}</strong>:
-                              {entry[3].map((timing, timingIndex) => (
-                                <span className="pl-3" key={timingIndex}>
-                                  {timing[0]}
-                                </span>
-                              ))}
+                              {entry[3] &&
+                                entry[3].map((timing, timingIndex) => (
+                                  <span className="pl-3" key={timingIndex}>
+                                    {timing[0]}
+                                  </span>
+                                ))}
                             </div>
                           </div>
                         ))}

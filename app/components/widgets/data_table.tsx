@@ -20,6 +20,7 @@ export default function DataTable({
   addAction,
   setPage,
   perPage,
+  total = 10,
   page,
   addText,
 }) {
@@ -82,7 +83,7 @@ export default function DataTable({
         className="pagination"
         current={page} // use current instead of page
         onChange={setPage}
-        total={data.length}
+        total={total}
         pageSize={perPage}
         showPrevNextJumpers={true}
         prevIcon={"«"}
