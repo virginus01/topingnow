@@ -4,29 +4,20 @@ import PopularTopics from "@/app/components/popular_topics";
 import ListTable from "@/app/components/list_table";
 import Lists from "../posts/lists";
 import { notFound } from "next/navigation";
-import { SingleShimmer } from "../components/shimmer";
-import { getTopic, metaTags, topicMetaTags } from "../lib/repo/topics_repo";
-import {
-  base_url,
-  countWords,
-  getViewUrl,
-  isNull,
-  stripHtmlTags,
-} from "../utils/custom_helpers";
-import { generateMetadata, schema } from "../layout";
-import { buildSchema } from "@/app/seo/schema";
+import { getTopic, topicMetaTags } from "../lib/repo/topics_repo";
+import { base_url, isNull } from "../utils/custom_helpers";
 import { Metadata } from "next";
 import { ConstructMetadata } from "../seo/metadata";
-import Image from "next/image";
-import { TOPIC_IMAGE } from "@/constants";
 
-async function generateMetadataAndTags(data) {
-  const finalData = await topicMetaTags(data);
-  await generateMetadata({
-    params: { slug: data.slug },
-    data: finalData,
-    breadcrumbData: [{ title: data.title, url: base_url(data.slug) }],
-  });
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const page = 1;
+  const data = await getTopic(params.slug, page);
+  const breadcrumbData = [{ title: data.title, url: base_url(data.slug) }];
+  return (await ConstructMetadata(data)) as Metadata;
 }
 
 export default async function Post({ params }: { params: { slug: string } }) {
@@ -44,7 +35,8 @@ export default async function Post({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  Promise.resolve(await generateMetadataAndTags(data));
+  await generateMetadata({ params });
+
   return (
     <>
       <div className="mt-10">

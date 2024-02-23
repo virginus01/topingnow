@@ -1,4 +1,4 @@
-import { stripHtmlTags } from "./custom_helpers";
+import { removeNonEnglishCharacters, stripHtmlTags } from "./custom_helpers";
 
 export function customSlugify(
   text: string,
@@ -391,6 +391,7 @@ export function customSlugify(
   });
 
   // Join words back together
+  words = removeNonEnglishCharacters(words);
 
   if (filterTop === "yes") {
     return words

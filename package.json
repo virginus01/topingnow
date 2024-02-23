@@ -54,7 +54,8 @@
     "remark-html": "^16.0.1",
     "sonner": "^1.2.4",
     "styled-components": "^6.1.0",
-    "swr": "^2.2.4"
+    "swr": "^2.2.4",
+    "unidecode": "^0.1.8"
   },
   "engines": {
     "node": ">=18"

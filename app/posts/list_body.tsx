@@ -11,6 +11,7 @@ import {
   ClockIcon,
 } from "@heroicons/react/24/outline";
 import RatingStars from "../components/widgets/rating_stars";
+import GmapBodyView from "./gmap_body_views";
 
 export default function ListBody({ post, reviews }) {
   if (!post) {
@@ -59,205 +60,13 @@ export default function ListBody({ post, reviews }) {
   return (
     <div className="relative flex sm:py-7">
       <div className="relative px-1 pb-2 pt-2 sm:mx-auto w-full sm:px-2">
+        {post.type == "gmap_business" ? (
+          <GmapBodyView post={post} topicData={post.topicData} isFull={true} />
+        ) : (
+          <></>
+        )}
         <article className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
-          {!isNull(featuredImagePath) && (
-            <div className="h-200">
-              <Image
-                src={getS3Url(featuredImagePath)}
-                alt={title}
-                style={{ width: "100%" }}
-                width={200}
-                height={200}
-                className="w-full rounded-sm object-cover"
-                priority
-              />
-            </div>
-          )}
-
-          <div
-            className={`${extraClass} bg-gray-100 text-black border-b border-red-600`}
-          >
-            <div className="flex justify-between h-14">
-              <div className="flex flex-col w-[100%]">
-                <div className="flex pl-3 font-bold">
-                  <div className="flex">
-                    <h2>
-                      <Link href={"/" + post.topicData.slug}>
-                        Top {position} in {post.topicData.title}
-                      </Link>
-                    </h2>
-                  </div>
-                </div>
-                {!isNull(ratingScore) ? (
-                  <div className="flex pl-3 ml-10">
-                    <RatingStars ratingScore={ratingScore} />
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div>
-
-              <div className="flex flex-col bg-red-600 text-white w-44 rounded-tr">
-                <a rel="nofollow" href="https://ppc.localhost:3000">
-                  <div className="flex items-center justify-between h-12 p-1">
-                    <div className="flex items-center">
-                      <span className="mr-0">visit website</span>
-                    </div>
-                    <div className="flex items-center">
-                      <GlobeAltIcon className="h-5 w-5" />
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-between h-48 border-b border-red-600">
-            <div className="flex flex-col bg-red-500 w-[100%]">
-              <div className="flex">
-                {!isNull(featuredImagePath) ? (
-                  <div className="m-0">
-                    <Image
-                      src={getS3Url(featuredImagePath)}
-                      alt={title}
-                      style={{ width: "100%" }}
-                      width={500}
-                      height={200}
-                      className="h-48 w-full rounded-sm object-cover"
-                      priority
-                    />
-                  </div>
-                ) : !isNull(generatedImagePath) ? (
-                  <Image
-                    src={getS3Url(generatedImagePath)}
-                    alt={title}
-                    style={{ width: "100%" }}
-                    width={1920}
-                    height={1080}
-                    className="h-48 w-full rounded-sm object-cover"
-                    priority
-                  />
-                ) : !isNull(external_image) ? (
-                  <Image
-                    src={external_image}
-                    alt={title}
-                    style={{ width: "100%" }}
-                    width={1920}
-                    height={1080}
-                    className="h-48 w-full rounded-sm object-cover"
-                    priority
-                  />
-                ) : !isNull(from_all_image[0]) ? (
-                  <Image
-                    src={from_all_image[0]}
-                    alt={title}
-                    style={{ width: "100%" }}
-                    width={1920}
-                    height={1080}
-                    className="h-48 w-full rounded-sm object-cover"
-                    priority
-                  />
-                ) : !isNull(
-                    process.env.NEXT_PUBLIC_BASE_URL + "/api/images/og"
-                  ) ? (
-                  <Image
-                    src={process.env.NEXT_PUBLIC_BASE_URL + "/api/images/og"}
-                    alt={title}
-                    style={{ width: "100%" }}
-                    width={1920}
-                    height={1080}
-                    className="h-48 w-full rounded-sm object-cover"
-                    priority
-                  />
-                ) : (
-                  <></>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col w-[100%]">
-              {post.gmap_link ? (
-                <iframe
-                  className="h-[100%]"
-                  src={post.gmap_link}
-                  style={{ border: 0 }}
-                  allowFullScreen={false}
-                  loading="lazy"
-                ></iframe>
-              ) : (
-                <></>
-              )}
-            </div>
-          </div>
-
-          {type === "gmap_business" ? (
-            <div className="flex justify-between">
-              <div className="flex flex-col w-[40%] border-r border-b border-red-500 p-2">
-                <div className="flex items-center border-b border-gray-300 text-sm p-1">
-                  <PhoneIcon className="h-4 w-4 mr-2" /> {phone}
-                </div>
-
-                <div className="flex items-center border-b border-gray-300 text-xs p-1">
-                  <HomeIcon className="h-5 w-5 mr-2" /> {address}
-                </div>
-
-                <div className="flex items-center border-b border-gray-300 text-xs p-1">
-                  <GlobeAltIcon className="h-5 w-5 mr-2" />{" "}
-                  {extractDomain(post.website)}
-                </div>
-
-                <div className="flex items-center border-b border-gray-300 text-xs p-1">
-                  <ClockIcon className="h-5 w-5 mr-2" /> {post.time_zone}
-                </div>
-              </div>
-
-              <div className="flex flex-col w-[60%]">
-                <div className="flex justify-between">
-                  <div className="flex flex-col w-[50%] border-r border-b border-red-500 p-2">
-                    <div className="text-md">
-                      <u>Core Services & Tags:</u>
-
-                      {core_tags &&
-                        core_tags.map((c, index) => (
-                          <div className="flex items-center" key={index}>
-                            <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                            <div className="text-sm">{c}</div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col w-[50%] border-b border-red-500 p-2">
-                    <div className="text-md justify-center items-center">
-                      <u>Services Hours:</u>
-                      {schedule &&
-                        Array.isArray(schedule) &&
-                        schedule.map((entry, index) => (
-                          <div className="flex items-center" key={index}>
-                            <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                            <div className="text-sm" key={index}>
-                              <strong> {entry[0]}</strong>:
-                              {entry[3] &&
-                                entry[3].map((timing, timingIndex) => (
-                                  <span className="pl-3" key={timingIndex}>
-                                    {timing[0]}
-                                  </span>
-                                ))}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <></>
-          )}
-
-          {is_english == "en" ? (
-            <div className="p-2">{description}</div>
-          ) : (
-            <></>
-          )}
+          loading..
         </article>
 
         <article>

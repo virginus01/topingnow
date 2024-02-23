@@ -5,7 +5,11 @@ import { buildSchema } from "./seo/schema";
 import Head from "next/head";
 import Script from "next/script";
 import { ConstructMetadata } from "./seo/metadata";
-import { generateBreadcrumb, getViewUrl } from "./utils/custom_helpers";
+import {
+  base_url,
+  generateBreadcrumb,
+  getViewUrl,
+} from "./utils/custom_helpers";
 
 const inter = Roboto({
   subsets: ["latin"],
@@ -15,9 +19,12 @@ const inter = Roboto({
 
 export let result: any = {
   title: "Topingnow",
-  slug: process.env.NEXT_PUBLIC_BASE_URL,
+  canonical: base_url(),
+  metadataBase: base_url() as unknown as URL,
+  slug: base_url(),
   description: "desc",
   breadcrumb: [],
+  robots: { index: false, follow: true },
 };
 
 export async function generateMetadata({
@@ -37,7 +44,8 @@ export async function generateMetadata({
     result.breadcrumb = generateBreadcrumb(breadcrumbData);
   }
 
-  return ConstructMetadata(result) as Metadata;
+  const meta = (await ConstructMetadata(result)) as Metadata;
+  return meta;
 }
 
 export const schema = {

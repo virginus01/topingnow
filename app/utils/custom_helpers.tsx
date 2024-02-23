@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { getTemplate } from "../lib/repo/templates_repo";
 import { placeholders } from "./templates";
 import { customSlugify } from "./custom_slugify";
+import { unidecode } from "unidecode";
 
 const textToHtml = (text: any) => {
   const elem = document.createElement("div");
@@ -413,6 +414,17 @@ export function extractNumber(str) {
   return null;
 }
 
+// utils/slugUtils.js
+
+export function removeNonEnglishCharacters(slug) {
+  // Remove any characters that are not in the English alphabet, digits, or hyphen
+  const cleanedSlug = slug
+    .replace(/[^a-zA-Z0-9-]/g, "")
+    .split("-")
+    .join(" ");
+  return unidecode(cleanedSlug);
+}
+
 export function generateBreadcrumb(data = []) {
   const breadcrumb: {
     "@type": string;
@@ -444,4 +456,21 @@ export function generateBreadcrumb(data = []) {
   });
 
   return breadcrumb;
+}
+
+export async function checkImageValidity(imageUrl, alt = "") {
+  try {
+    if (isNull(imageUrl)) {
+      return alt;
+    }
+    const response = await fetch(imageUrl);
+    if (response.ok) {
+      return imageUrl; // Image link is valid
+    } else {
+      return alt; // Image link is not valid
+    }
+  } catch (error) {
+    console.error("Error checking image validity:", error);
+    return alt;
+  }
 }

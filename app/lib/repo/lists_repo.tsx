@@ -1,5 +1,6 @@
 "use server";
 import {
+  base_url,
   construct_sitemap,
   countWords,
   getViewUrl,
@@ -149,23 +150,15 @@ export async function deleteList(_id: string) {
   }
 }
 
-export async function listMetaTags(metadata, data) {
+export async function listMetaTags(data) {
   const length = stripHtmlTags(data.description);
 
-  metadata.title = data.title;
-  metadata.description = `This is ${data.title}`;
-  metadata.alternates
-    ? (metadata.alternates.canonical = getViewUrl(
-        `${data.topicData.slug}/${data.slug}`
-      ))
-    : "";
-  if (metadata.robots) {
-    metadata.robots = {
-      index: countWords(length) >= 300 ? true : false,
-      follow: true,
-    };
-  }
-  return true;
+  data.canonical = base_url(`${data.topicData.slug}/${data.slug}`);
+  data.robots = {
+    index: countWords(length) >= 30 || data.type == "gmap" ? true : false,
+    follow: true,
+  };
+  return data;
 }
 
 export async function getPopularLists(_id, page, perPage) {

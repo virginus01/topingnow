@@ -175,16 +175,16 @@ export async function topicMetaTags(data) {
   if (data.lists && data.lists.result[0] && data.lists.result[0].description) {
     list_desc = data.lists.result[0].description;
   }
-
   const length = stripHtmlTags(data.description + " " + list_desc);
-
   data.canonical = `${process.env.NEXT_PUBLIC_BASE_URL}/${data.slug}`;
   data.robots = {
     index:
-      countWords(length) >= 300 && data.lists.result.length >= 1 ? true : false,
+      (countWords(length) >= 300 && data.lists.result.length >= 1) ||
+      data.lists.result.length >= 2
+        ? true
+        : false,
     follow: true,
   };
-
   return data;
 }
 

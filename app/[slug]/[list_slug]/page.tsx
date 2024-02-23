@@ -1,68 +1,26 @@
-import React, { useState } from "react";
 import ListBody from "@/app/posts/list_body";
-
 import PopularTopics from "@/app/components/popular_topics";
 import { notFound } from "next/navigation";
-import { SingleShimmer } from "@/app/components/shimmer";
 import { getListById, listMetaTags } from "@/app/lib/repo/lists_repo";
 import {
-  countWords,
-  getViewUrl,
+  base_url,
+  generateBreadcrumb,
   isNull,
-  stripHtmlTags,
 } from "@/app/utils/custom_helpers";
-import { schema } from "@/app/layout";
-import { buildSchema } from "@/app/seo/schema";
-import { Metadata } from "next";
-import { ConstructMetadata } from "@/app/seo/metadata";
-import Lists from "@/app/posts/lists";
 import QandAs from "@/app/posts/qandas";
 import PopularLists from "@/app/components/popular_lists";
 import { getListReviews } from "@/app/lib/repo/reviews_repo";
+import { Metadata } from "next";
+import { ConstructMetadata } from "@/app/seo/metadata";
 
 export async function generateMetadata({
   params,
 }: {
-  params: { list_slug: string };
+  params: { list_slug: string; slug: string };
 }): Promise<Metadata> {
-  const result = await getListById(params.list_slug);
+  const data = await getListById(params.list_slug);
 
-  const breadcrumb: {
-    "@type": string;
-    position: string;
-    item: {
-      "@id": string;
-      name: string;
-    };
-  }[] = [];
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "1",
-    item: {
-      "@id": getViewUrl("", "topic"),
-      name: "Home",
-    },
-  });
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "2",
-    item: {
-      "@id": getViewUrl("", "topic"),
-      name: result.title,
-    },
-  });
-
-  schema.data = buildSchema(
-    getViewUrl(result.slug, "topic"),
-    "Topingnow",
-    "/images/logo.png",
-    breadcrumb,
-    result
-  );
-
-  return ConstructMetadata(result) as {};
+  return (await ConstructMetadata(data)) as Metadata;
 }
 
 export default async function ListView({
@@ -84,51 +42,7 @@ export default async function ListView({
 
   const reviews = await getListReviews(data._id);
 
-  const metadata = await generateMetadata({ params });
-
-  const breadcrumb: {
-    "@type": string;
-    position: string;
-    item: {
-      "@id": string;
-      name: string;
-    };
-  }[] = [];
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "1",
-    item: {
-      "@id": getViewUrl(""),
-      name: "Home",
-    },
-  });
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "2",
-    item: {
-      "@id": getViewUrl(`${result.topicData.slug}`),
-      name: data.title,
-    },
-  });
-
-  breadcrumb.push({
-    "@type": "ListItem",
-    position: "3",
-    item: {
-      "@id": getViewUrl(`${result.topicData.slug}/${data.slug}`),
-      name: data.title,
-    },
-  });
-
-  schema.data = buildSchema(
-    getViewUrl(`${result.topicData.slug}/${data.slug}`),
-    "Topingnow",
-    "/images/logo.png",
-    breadcrumb,
-    data
-  );
+  await generateMetadata({ params });
 
   return (
     <main>
