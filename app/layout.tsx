@@ -6,6 +6,7 @@ import Head from "next/head";
 import Script from "next/script";
 import { ConstructMetadata } from "./seo/metadata";
 import {
+  base_images_url,
   base_url,
   generateBreadcrumb,
   getViewUrl,
@@ -22,8 +23,9 @@ export let result: any = {
   canonical: base_url(),
   metadataBase: base_url() as unknown as URL,
   slug: base_url(),
-  description: "desc",
-  breadcrumb: [],
+  meta_description:
+    "Unlock SEO success with expert tips, tools, and strategies for higher rankings and organic traffic.",
+  breadcrumb: generateBreadcrumb([]),
   robots: { index: false, follow: true },
 };
 
@@ -36,10 +38,6 @@ export async function generateMetadata({
   data: any;
   breadcrumbData: any;
 }): Promise<Metadata> {
-  if (data) {
-    result = data;
-  }
-
   if (breadcrumbData) {
     result.breadcrumb = generateBreadcrumb(breadcrumbData);
   }
@@ -50,9 +48,9 @@ export async function generateMetadata({
 
 export const schema = {
   data: buildSchema(
-    process.env.NEXT_PUBLIC_BASE_URL,
+    base_url(),
     "TopingNow",
-    "/logo.png",
+    base_images_url("logo.png"),
     result.breadcrumb,
     result
   ),

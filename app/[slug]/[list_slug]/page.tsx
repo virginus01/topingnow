@@ -3,6 +3,7 @@ import PopularTopics from "@/app/components/popular_topics";
 import { notFound } from "next/navigation";
 import { getListById, listMetaTags } from "@/app/lib/repo/lists_repo";
 import {
+  base_images_url,
   base_url,
   generateBreadcrumb,
   isNull,
@@ -12,6 +13,8 @@ import PopularLists from "@/app/components/popular_lists";
 import { getListReviews } from "@/app/lib/repo/reviews_repo";
 import { Metadata } from "next";
 import { ConstructMetadata } from "@/app/seo/metadata";
+import { schema } from "@/app/layout";
+import { buildSchema } from "../../seo/schema";
 
 export async function generateMetadata({
   params,
@@ -43,6 +46,20 @@ export default async function ListView({
   const reviews = await getListReviews(data._id);
 
   await generateMetadata({ params });
+
+  schema.data = buildSchema(
+    base_url(result.slug),
+    result.title,
+    base_images_url("logo.png"),
+    generateBreadcrumb([
+      { title: result.topicData.title, url: base_url(result.topicData.slug) },
+      {
+        title: result.title,
+        url: base_url(`${result.topicData.slug}/${result.slug}`),
+      },
+    ]),
+    result
+  );
 
   return (
     <main>

@@ -6,7 +6,7 @@ import Shimmer from "./shimmer";
 import { getPopularLists } from "../lib/repo/lists_repo";
 //import { getPopularLists } from "../lib/repo/lists_repo";
 
-export default async function PopularLists({ _id }) {
+export default async function PopularLists({ _id, showNumber = false }) {
   const perPage = 3;
   const page = 1;
 
@@ -31,7 +31,13 @@ export default async function PopularLists({ _id }) {
                     ...post,
                     slug: `${post.postSlug}`,
                   };
-                  return <PostListItem data={modifiedPost} key={post._id} />;
+                  return (
+                    <PostListItem
+                      data={modifiedPost}
+                      key={post._id}
+                      showNumber={showNumber}
+                    />
+                  );
                 })}
               </ul>
             </div>

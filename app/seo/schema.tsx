@@ -1,7 +1,7 @@
-import { getViewUrl } from "../utils/custom_helpers";
+import { base_url, getViewUrl } from "../utils/custom_helpers";
 
 export const buildSchema = (url, name, logoUrl, breadcrumb, article) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL + "/";
+  const baseUrl = base_url();
 
   return {
     "@context": "https://schema.org",
@@ -24,12 +24,12 @@ export const buildSchema = (url, name, logoUrl, breadcrumb, article) => {
       },
       {
         "@type": "WebSite",
-        "@id": `${baseUrl}search/#website`,
+        "@id": `${baseUrl}/search/#website`,
         url,
         name,
         potentialAction: {
           "@type": "SearchAction",
-          target: `${url}search/{search_term_string}`,
+          target: `${url}/search/{search_term_string}`,
           "query-input": "required name=search_term_string",
         },
         publisher: {
@@ -55,8 +55,6 @@ export const buildSchema = (url, name, logoUrl, breadcrumb, article) => {
         "@id": `${url}#webpage`,
         url: `${url}#webpage`,
         name: `${article.title} - ${name}`,
-        datePublished: new Date(article.createdAt ?? false).toISOString(),
-        dateModified: new Date(article.updatedAt ?? false).toISOString(),
         isPartOf: {
           "@id": `${url}#website`,
         },
@@ -72,7 +70,7 @@ export const buildSchema = (url, name, logoUrl, breadcrumb, article) => {
           name: "Find your latest",
           description: "Find your latest",
           relatedLink: [],
-          lastReviewed: new Date(article.updatedAt ?? false).toISOString(),
+          lastReviewed: new Date(article.updated_at ?? false).toISOString(),
         },
       },
       {
@@ -88,8 +86,7 @@ export const buildSchema = (url, name, logoUrl, breadcrumb, article) => {
           "@type": "Person",
           name: article.author,
         },
-        datePublished: new Date(article.createdAt ?? false).toISOString(),
-        dateModified: new Date(article.updatedAt ?? false).toISOString(),
+
         isPartOf: {
           "@id": `${url}#webpage`,
         },

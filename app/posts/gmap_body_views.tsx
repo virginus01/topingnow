@@ -15,14 +15,14 @@ import {
   isNull,
 } from "../utils/custom_helpers";
 import { getS3Url } from "../lib/repo/files_repo";
-import { LIST_IMAGE } from "@/constants";
+import { LIST_IMAGE, PPC } from "@/constants";
 
 export default function GmapBodyView({ post, topicData, isFull = false }) {
   if (isNull(post) || isNull(topicData)) {
     return <div>loading..</div>;
   }
 
-  const {
+  let {
     _id,
     title,
     description,
@@ -61,38 +61,67 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
   const listSlug = topicData.slug + "/" + slug;
 
   return (
-    <article className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
+    <article className="relative bg-white w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
       <div
         className={`${extraClass} bg-gray-100 text-black border-b border-red-600`}
       >
         <div className="flex justify-between h-14">
-          <div className="flex flex-col w-[100%]">
-            <div className="flex pl-3 font-bold">
-              <div className="flex">
-                Top {position}: {title}
+          {isFull ? (
+            <Link
+              rel="follow"
+              className="text-red-600"
+              href={String(base_url(`${topicData.slug}#${slug}`))}
+            >
+              <div className="flex flex-col w-[100%]">
+                <div className="flex pl-3 font-bold">
+                  <div className="flex">
+                    No. {position} in {topicData.title}
+                  </div>
+                </div>
+                {!isNull(ratingScore) ? (
+                  <div className="flex pl-3 ml-10">
+                    <RatingStars ratingScore={ratingScore} />
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
+            </Link>
+          ) : (
+            <div className="flex flex-col w-[100%]">
+              <div className="flex pl-3 font-bold">
+                <div className="flex">
+                  Top {position}: {title}
+                </div>
+              </div>
+              {!isNull(ratingScore) ? (
+                <div className="flex pl-3 ml-10">
+                  <RatingStars ratingScore={ratingScore} />
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
-            {!isNull(ratingScore) ? (
-              <div className="flex pl-3 ml-10">
-                <RatingStars ratingScore={ratingScore} />
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
+          )}
 
-          <div className="flex flex-col bg-red-600 text-white w-44 rounded-tr">
-            <a rel="nofollow" href="https://ppc.localhost:3000">
-              <div className="flex items-center justify-between h-12 p-1">
-                <div className="flex items-center">
-                  <span className="mr-0">visit website</span>
+          {!isFull && (
+            <div className="flex flex-col bg-red-600 text-white w-44 rounded-tr">
+              <a
+                rel="nofollow"
+                target="_blank"
+                href={`${PPC}?url=${website}&utm_campaign=${topicData.slug}`}
+              >
+                <div className="flex items-center justify-between h-12 p-1">
+                  <div className="flex items-center">
+                    <span className="mr-0">visit website</span>
+                  </div>
+                  <div className="flex items-center">
+                    <GlobeAltIcon className="h-5 w-5" />
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <GlobeAltIcon className="h-5 w-5" />
-                </div>
-              </div>
-            </a>
-          </div>
+              </a>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex justify-between h-48 border-b border-red-600">
@@ -242,11 +271,30 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
 
       {is_english == "en" ? <div className="p-2">{description}</div> : <></>}
 
-      {!isFull && (
+      {!isFull ? (
         <div className="flex justify-end items-end">
           <Link rel="nofollow" className="text-red-400" href={listSlug}>
             <div className="pt-2 items-end mr-3 h-10">see details</div>
           </Link>
+        </div>
+      ) : (
+        <div className="flex justify-end items-end  border-t border-red-600">
+          <div className="flex flex-col bg-red-600 text-white w-44 rounded-br">
+            <a
+              rel="nofollow"
+              target="_blank"
+              href={`${PPC}?url=${website}&utm_campaign=${topicData.slug}`}
+            >
+              <div className="flex items-center justify-between h-12 p-1">
+                <div className="flex items-center">
+                  <span className="mr-0">visit website</span>
+                </div>
+                <div className="flex items-center">
+                  <GlobeAltIcon className="h-5 w-5" />
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
       )}
     </article>

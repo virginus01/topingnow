@@ -5,9 +5,16 @@ import ListTable from "@/app/components/list_table";
 import Lists from "../posts/lists";
 import { notFound } from "next/navigation";
 import { getTopic, topicMetaTags } from "../lib/repo/topics_repo";
-import { base_url, isNull } from "../utils/custom_helpers";
+import {
+  base_images_url,
+  base_url,
+  generateBreadcrumb,
+  isNull,
+} from "../utils/custom_helpers";
 import { Metadata } from "next";
 import { ConstructMetadata } from "../seo/metadata";
+import { buildSchema } from "../seo/schema";
+import { schema } from "../layout";
 
 export async function generateMetadata({
   params,
@@ -15,7 +22,8 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   const page = 1;
-  const data = await getTopic(params.slug, page);
+  let data = await getTopic(params.slug, page);
+  data = await topicMetaTags(data);
   const breadcrumbData = [{ title: data.title, url: base_url(data.slug) }];
   return (await ConstructMetadata(data)) as Metadata;
 }
@@ -36,6 +44,14 @@ export default async function Post({ params }: { params: { slug: string } }) {
   }
 
   await generateMetadata({ params });
+
+  schema.data = buildSchema(
+    base_url(result.slug),
+    result.title,
+    base_images_url("logo.png"),
+    generateBreadcrumb([{ title: result.title, url: base_url(result.slug) }]),
+    result
+  );
 
   return (
     <>

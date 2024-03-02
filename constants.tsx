@@ -79,3 +79,7 @@ export const DASH_TOPICS = "/dasboard/topics/";
   /*sitemap*/
 }
 export const SITEMAP_PER_PAGE = 100;
+
+//static pages
+export const PPC = `${process.env.NEXT_PUBLIC_BASE_URL}/ppc`;
+export const CONTACT_US = "/legal/contact-us";

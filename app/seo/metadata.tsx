@@ -4,7 +4,9 @@ import { base_url, construct_sitemap, isNull } from "../utils/custom_helpers";
 
 export async function ConstructMetadata(result, data = {}) {
   const siteName = "Topingnow 2024";
-  const metaDescription = "welcome to Topingnow.com";
+  const metaDescription = result.meta_description
+    ? result.meta_description
+    : `welcome to ${result.title} page`;
 
   if (isNull(result)) {
     return {
@@ -14,13 +16,11 @@ export async function ConstructMetadata(result, data = {}) {
   }
 
   return {
-    metadataBase: process.env.NEXT_PUBLIC_BASE_URL as unknown as URL,
+    metadataBase: base_url() as unknown as URL,
     title: result.title ?? siteName,
-    description: result.meta_description
-      ? result.meta_description
-      : `welcome to ${result.title} page`,
+    description: metaDescription,
     alternates: {
-      canonical: base_url(result.slug),
+      canonical: result.canonical,
       languages: {
         "en-US": "/en-US",
       },
@@ -28,6 +28,7 @@ export async function ConstructMetadata(result, data = {}) {
         "application/rss+xml": construct_sitemap("index"),
       },
     },
+
     category: result.category ? result.category : "top",
     robots: {
       index: result.robots && result.robots.index ? result.robots.index : false,
@@ -79,9 +80,7 @@ export async function ConstructMetadata(result, data = {}) {
     },
     other: {
       "dc.title": result.title,
-      "dc.description": result.meta_description
-        ? result.meta_description
-        : `welcome to ${result.title} page`,
+      "dc.description": metaDescription,
     },
   };
 }

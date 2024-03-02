@@ -2,7 +2,7 @@ import DOMPurify from "isomorphic-dompurify";
 import Image from "next/image";
 import { getS3Url } from "../lib/repo/files_repo";
 import { TOPIC_IMAGE } from "@/constants";
-import { isNull } from "../utils/custom_helpers";
+import { base_url, isNull } from "../utils/custom_helpers";
 
 export default function PostBody({ post }) {
   const {
@@ -51,7 +51,15 @@ export default function PostBody({ post }) {
           priority
         />
       ) : (
-        <></>
+        <Image
+          src={base_url(`api/images/topic/${slug}.png`)}
+          alt={title}
+          style={{ width: "100%" }}
+          width={1920}
+          height={1080}
+          className="w-full rounded-sm object-cover"
+          priority
+        />
       )}
       <div className="mb-8">
         <div

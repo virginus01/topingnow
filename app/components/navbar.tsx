@@ -3,27 +3,35 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
-  BellIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import SearchScreen from "./search_screen";
 import Image from "next/image";
-
-const navigation = [
-  { name: "Home", href: "/", current: false },
-  { name: "About Us", href: "#", current: false },
-  { name: "Contact Us", href: "#", current: false },
-  { name: "Policy", href: "#", current: false },
-  { name: "Login", href: "/auth/login", current: true },
-];
+import { CONTACT_US } from "@/constants";
+import { usePathname } from "next/navigation";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export const Navbar = () => {
+  const pathname = usePathname();
+  const currentUrl = pathname;
+
+  const navigation = [
+    { name: "Home", href: "/", current: false },
+    { name: "About Us", href: "#", current: false },
+    {
+      name: "Contact Us",
+      href: CONTACT_US,
+      current: false,
+    },
+    { name: "Policy", href: "#", current: false },
+    { name: "Login", href: "/auth/login", current: false },
+  ];
+
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -87,12 +95,14 @@ export const Navbar = () => {
                         href={item.href}
                         as={item.href}
                         className={classNames(
-                          item.current
+                          currentUrl == item.href
                             ? "bg-gray-900 text-white"
                             : "text-gray-800 hover:bg-gray-700 hover:text-white",
                           "rounded-md px-3 py-2 text-sm font-medium"
                         )}
-                        aria-current={item.current ? "page" : undefined}
+                        aria-current={
+                          currentUrl == item.href ? "page" : undefined
+                        }
                       >
                         {item.name}
                       </Link>
@@ -141,12 +151,12 @@ export const Navbar = () => {
                   as="a"
                   href={item.href}
                   className={classNames(
-                    item.current
+                    currentUrl == item.href
                       ? "bg-gray-900 text-white"
                       : "text-gray-800 hover:bg-gray-700 hover:text-white",
                     "block rounded-md px-3 py-2 text-base font-medium"
                   )}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={currentUrl == item.href ? "page" : undefined}
                 >
                   {item.name}
                 </Disclosure.Button>

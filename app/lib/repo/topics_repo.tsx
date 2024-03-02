@@ -1,5 +1,6 @@
 "use server";
 import {
+  base_url,
   construct_sitemap,
   countWords,
   isNull,
@@ -176,7 +177,7 @@ export async function topicMetaTags(data) {
     list_desc = data.lists.result[0].description;
   }
   const length = stripHtmlTags(data.description + " " + list_desc);
-  data.canonical = `${process.env.NEXT_PUBLIC_BASE_URL}/${data.slug}`;
+  data.canonical = base_url(data.slug);
   data.robots = {
     index:
       (countWords(length) >= 300 && data.lists.result.length >= 1) ||

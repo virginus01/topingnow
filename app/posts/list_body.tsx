@@ -65,9 +65,6 @@ export default function ListBody({ post, reviews }) {
         ) : (
           <></>
         )}
-        <article className="relative bg-white pb-3 w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
-          loading..
-        </article>
 
         <article>
           <div className="container mx-auto px-4 py-8">

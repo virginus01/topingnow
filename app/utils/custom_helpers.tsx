@@ -242,9 +242,17 @@ export function countWords(textContent) {
 
 export function base_url(slug = "") {
   if (isNull(slug)) {
-    return process.env.NEXT_PUBLIC_BASE_URL;
+    return String(process.env.NEXT_PUBLIC_BASE_URL);
   } else {
-    return `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`;
+    return String(`${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`);
+  }
+}
+
+export function base_images_url(slug = "") {
+  if (isNull(slug)) {
+    return `${process.env.NEXT_PUBLIC_BASE_URL}/images/${slug}`;
+  } else {
+    return `${process.env.NEXT_PUBLIC_BASE_URL}/images/${slug}`;
   }
 }
 
@@ -425,7 +433,7 @@ export function removeNonEnglishCharacters(slug) {
   return unidecode(cleanedSlug);
 }
 
-export function generateBreadcrumb(data = []) {
+export function generateBreadcrumb(data: any) {
   const breadcrumb: {
     "@type": string;
     position: string;
@@ -439,7 +447,7 @@ export function generateBreadcrumb(data = []) {
     "@type": "ListItem",
     position: "1",
     item: {
-      "@id": String(process.env.NEXT_PUBLIC_BASE_URL),
+      "@id": String(base_url()),
       name: "Top",
     },
   });

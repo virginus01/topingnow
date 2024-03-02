@@ -36,7 +36,11 @@ export default function ListTable({ topicData }) {
                         slug: `${topicData.slug}#${post.slug}`,
                       };
                       return (
-                        <PostListItem data={modifiedPost} key={post._id} />
+                        <PostListItem
+                          data={modifiedPost}
+                          key={post._id}
+                          showNumber={true}
+                        />
                       );
                     }
                   )}
