@@ -2,6 +2,8 @@ import { ImageResponse } from "next/og";
 import { base_images_url, base_url, isNull } from "@/app/utils/custom_helpers";
 import { getTopic } from "@/app/roadmap/topics_roadmap";
 
+export const runtime = "edge";
+
 export async function GET(
   request: any,
   { params }: { params: { path: string; id: string } }
