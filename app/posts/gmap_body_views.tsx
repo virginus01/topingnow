@@ -109,7 +109,9 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
               <a
                 rel="nofollow"
                 target="_blank"
-                href={`${PPC}?url=${website}&utm_campaign=${topicData.slug}`}
+                href={`${PPC}?url=${
+                  website ? website : base_url(`${topicData.slug}/${slug}`)
+                }&utm_campaign=${topicData.slug}`}
               >
                 <div className="flex items-center justify-between h-12 p-1">
                   <div className="flex items-center">
@@ -283,7 +285,9 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
             <a
               rel="nofollow"
               target="_blank"
-              href={`${PPC}?url=${website}&utm_campaign=${topicData.slug}`}
+              href={`${PPC}?url=${
+                website ? website : base_url(`${topicData.slug}/${slug}`)
+              }&utm_campaign=${topicData.slug}`}
             >
               <div className="flex items-center justify-between h-12 p-1">
                 <div className="flex items-center">

@@ -134,7 +134,7 @@ export default function ListBody({ post, reviews }) {
                     <div className="relative bg-white shadow-xl ring-1 ring-gray-900/5 mb-3 rounded">
                       <div className="bg-gray-200 flex justify-between items-center gap-x-3 px-2 py-1 text-xs font-bold text-left text-white rounded-tr rounded-tl">
                         <div className="flex flex-col text-black">
-                          Popular Lists
+                          {r.user_name}
                         </div>
                         <div className="flex flex-col justify-end items-end">
                           <RatingStars

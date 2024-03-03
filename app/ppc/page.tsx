@@ -1,32 +1,26 @@
 "use client";
-import React, { useEffect } from "react";
+import { useEffect, Suspense } from "react"; // Import Suspense
 import { redirect, useSearchParams } from "next/navigation";
-import { base_url } from "../utils/custom_helpers";
+import { base_url, isNull } from "../utils/custom_helpers";
 
 export default function Page() {
-  if (typeof window === "undefined") {
-    return null;
-  }
+  return (
+    <Suspense fallback={<div>redirecting...</div>}>
+      <PageContent />
+    </Suspense>
+  );
+}
+
+function PageContent() {
+  // Create a separate component for content
   const searchParams = useSearchParams();
 
   if (searchParams) {
-    const url = searchParams ? searchParams.get("url") : base_url();
-    const utm_campaign = searchParams
-      ? searchParams.get("utm_campaign")
-      : "topingnow";
-
-    if (url) {
-      return redirect(
-        String(
-          `${url}?utm_source=${"topingnow.com"}&utm_medium=referral&utm_campaign=${utm_campaign}`
-        )
-      );
-    }
+    const url = searchParams.get("url") || base_url();
+    const utm_campaign = searchParams.get("utm_campaign") || "topingnow";
+    return redirect(
+      `${url}?utm_source=${"topingnow.com"}&utm_medium=referral&utm_campaign=${utm_campaign}`
+    );
   }
-
-  return redirect(
-    String(
-      `${base_url()}?utm_source=${"topingnow.com"}&utm_medium=referral&utm_campaign=none`
-    )
-  );
+  return redirect(base_url());
 }
