@@ -21,7 +21,8 @@ export async function generateMetadata({
 }: {
   params: { list_slug: string; slug: string };
 }): Promise<Metadata> {
-  const data = await getListById(params.list_slug);
+  let data = await getListById(params.list_slug);
+  data = await listMetaTags(data);
 
   return (await ConstructMetadata(data)) as Metadata;
 }

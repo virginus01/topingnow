@@ -181,7 +181,7 @@ export async function topicMetaTags(data) {
   data.robots = {
     index:
       (countWords(length) >= 300 && data.lists.result.length >= 1) ||
-      data.lists.result.length >= 2
+      data.lists.result.length >= 1
         ? true
         : false,
     follow: true,
