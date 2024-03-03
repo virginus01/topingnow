@@ -20,7 +20,7 @@ export async function ConstructMetadata(result, data = {}) {
     title: result.title ?? siteName,
     description: metaDescription,
     alternates: {
-      canonical: result.canonical,
+      canonical: result.canonical ? result.canonical : base_url(),
       languages: {
         "en-US": "/en-US",
       },
@@ -31,15 +31,15 @@ export async function ConstructMetadata(result, data = {}) {
 
     category: result.category ? result.category : "top",
     robots: {
-      index: result.robots && result.robots.index ? result.robots.index : false,
+      index: result.robots && result.robots.index ? result.robots.index : true,
       follow:
-        result.robots && result.robots.follow ? result.robots.follow : false,
+        result.robots && result.robots.follow ? result.robots.follow : true,
       //nocache: false,
       googleBot: {
         index:
-          result.robots && result.robots.index ? result.robots.index : false,
+          result.robots && result.robots.index ? result.robots.index : true,
         follow:
-          result.robots && result.robots.follow ? result.robots.follow : false,
+          result.robots && result.robots.follow ? result.robots.follow : true,
         noimageindex: false,
         "max-video-preview": -1,
         "max-image-preview": "large",
