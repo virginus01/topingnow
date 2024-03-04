@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    "types": [
+      "puppeteer"
+    ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "components/layout.tsx",
+    "app/api/api_client/route.tsx",
+    "app/lib/route.ts",
+    "app/utils/mongodb.js",
+    "app/controllers/route.tsx",
+    "app/dashboard/topics/topics_import.tsx",
+    "app/dashboard/templates/template_import.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
