@@ -39,7 +39,7 @@ const Contact = () => {
           <ul>
             <li>Email: info@afobata.com</li>
             <li>Phone: +234 81 6461 4193</li>
-            <li>Address: Block H/8 FAAN Village, Ikeja Lagos, Nigeria</li>
+            <li>Address: 4613 Bee Caves Rd, Austin, Texas, United States</li>
           </ul>
         </div>
         <h2 className="text-xl font-semibold mb-4">Or send us a message:</h2>
