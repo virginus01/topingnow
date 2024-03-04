@@ -16,6 +16,7 @@ import {
 } from "../utils/custom_helpers";
 import { getS3Url } from "../lib/repo/files_repo";
 import { LIST_IMAGE, PPC } from "@/constants";
+import { listImage } from "../utils/list_image";
 
 export default function GmapBodyView({ post, topicData, isFull = false }) {
   if (isNull(post) || isNull(topicData)) {
@@ -126,70 +127,29 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
           )}
         </div>
       </div>
-      <div className="flex justify-between h-48 border-b border-red-600">
-        <div className="flex flex-col bg-red-500 w-[50%]">
+      <div className="lg:flex lg:justify-between border-b border-red-600">
+        <div className="lg:flex lg:flex-col bg-red-500 w-full lg:w-[50%]">
           <div className="flex">
-            {!isNull(featuredImagePath) ? (
-              <div className="m-0">
-                <Image
-                  src={getS3Url(featuredImagePath)}
-                  alt={title}
-                  style={{ width: "100%" }}
-                  width={500}
-                  height={200}
-                  className="h-48 w-full rounded-sm object-cover"
-                  priority
-                />
-              </div>
-            ) : !isNull(generatedImagePath) ? (
-              <Image
-                src={getS3Url(generatedImagePath)}
-                alt={title}
-                style={{ width: "100%" }}
-                width={1920}
-                height={1080}
-                className="h-48 w-full rounded-sm object-cover"
-                priority
-              />
-            ) : !isNull(external_image) ? (
-              <Image
-                src={external_image}
-                alt={title}
-                style={{ width: "100%" }}
-                width={1920}
-                height={1080}
-                className="h-48 w-full rounded-sm object-cover"
-                priority
-              />
-            ) : !isNull(from_all_image_1) ? (
-              <Image
-                src={from_all_image_1}
-                alt={title}
-                style={{ width: "100%" }}
-                width={1920}
-                height={1080}
-                className="h-48 w-full rounded-sm object-cover"
-                priority
-              />
-            ) : !isNull(base_url(`api/images/og?title=${title}`)) ? (
-              <Image
-                src={String(base_url(`api/images/og?title=${title}`))}
-                alt={title}
-                style={{ width: "100%" }}
-                width={1920}
-                height={1080}
-                className="h-48 w-full rounded-sm object-cover"
-                priority
-              />
-            ) : (
-              <></>
-            )}
+            <Image
+              src={listImage(
+                featuredImagePath,
+                generatedImagePath,
+                external_image,
+                title,
+                from_all_image_1
+              )}
+              alt={title}
+              style={{ width: "100%" }}
+              width={500}
+              height={200}
+              className="h-48 w-full rounded-sm object-cover"
+            />
           </div>
         </div>
-        <div className="flex flex-col p-3 w-[50%]">
+        <div className="lg:flex lg:flex-col p-3 w-full lg:w-[50%]">
           {isFull ? (
             <iframe
-              className="h-[100%]"
+              className="h-[100%] w-full"
               src={post.gmap_link}
               style={{ border: 0 }}
               allowFullScreen={false}
@@ -212,22 +172,28 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
 
       <div className="lg:flex lg:justify-between">
         <div className="flex flex-col w-full lg:w-[40%] lg:border-r border-b border-red-500 p-2">
-          <div className="flex items-center border-b border-gray-300 text-sm p-1">
-            <PhoneIcon className="h-4 w-4 mr-2" /> {phone}
-          </div>
+          {!isNull(post.phone) && (
+            <div className="flex items-center border-b border-gray-300 text-sm p-1">
+              <PhoneIcon className="h-4 w-4 mr-2" /> {phone}
+            </div>
+          )}
+          {!isNull(address) && (
+            <div className="flex items-center border-b border-gray-300 text-xs p-1">
+              <HomeIcon className="h-5 w-5 mr-2" /> {address}
+            </div>
+          )}
+          {!isNull(post.website) && (
+            <div className="flex items-center border-b border-gray-300 text-xs p-1">
+              <GlobeAltIcon className="h-5 w-5 mr-2" />{" "}
+              {extractDomain(post.website)}
+            </div>
+          )}
 
-          <div className="flex items-center border-b border-gray-300 text-xs p-1">
-            <HomeIcon className="h-5 w-5 mr-2" /> {address}
-          </div>
-
-          <div className="flex items-center border-b border-gray-300 text-xs p-1">
-            <GlobeAltIcon className="h-5 w-5 mr-2" />{" "}
-            {extractDomain(post.website)}
-          </div>
-
-          <div className="flex items-center border-b border-gray-300 text-xs p-1">
-            <ClockIcon className="h-5 w-5 mr-2" /> {post.time_zone}
-          </div>
+          {!isNull(post.time_zone) && (
+            <div className="flex items-center border-b border-gray-300 text-xs p-1">
+              <ClockIcon className="h-5 w-5 mr-2" /> {post.time_zone}
+            </div>
+          )}
         </div>
 
         <div className="lg:flex lg:flex-col w-full lg:w-[60%]">
@@ -254,7 +220,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
                   schedule.map((entry, index) => (
                     <div className="flex items-center" key={index}>
                       <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                      <div className="text-sm" key={index}>
+                      <div className="text-[12px]" key={index}>
                         <strong> {entry[0]}</strong>:
                         {entry[3] &&
                           entry[3].map((timing, timingIndex) => (

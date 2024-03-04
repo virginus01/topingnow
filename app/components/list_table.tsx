@@ -8,7 +8,7 @@ import PostListItem from "@/app/posts/post_lists_items";
 import usePagination from "../utils/pagination";
 
 export default function ListTable({ topicData }) {
-  const perPage = topicData.topData.top;
+  const perPage = topicData.topData ? topicData.topData.top : 2;
   const page = 1;
   let [data, setData] = useState(Shimmer(perPage));
 
