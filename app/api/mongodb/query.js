@@ -608,7 +608,7 @@ export async function getLists(topicId, page = 1, perPage = 10, essentials = 'ye
 
         const [result, total] = await Promise.all([
             db.collection("lists").find(filter)
-                .sort({ rankingScore: -1 })
+                .sort({ position: 1 })
                 .skip(skip)
                 .limit(parseInt(perPage))
                 .toArray(),
@@ -935,8 +935,6 @@ export async function stat() {
 
 export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, process = 'yes',) {
 
-
-
     try {
         const db = await connectDB();
 
@@ -958,7 +956,9 @@ export async function getTopic(id, essentials = 'yes', page = 1, perPage = 10, p
             const tTop = await getTop(String(topic.topId))
             topic.topData = tTop;
             //console.log(tTop.top)
-            const tLists = await getLists(String(topic._id), 1, tTop.top, "yes", "yes")
+            const per_page = tTop.top
+
+            const tLists = await getLists(String(topic._id), 1, per_page, "yes", "yes")
             topic.lists = tLists;
         }
 

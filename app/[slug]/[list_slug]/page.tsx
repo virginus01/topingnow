@@ -64,11 +64,11 @@ export default async function ListView({
 
   return (
     <main>
-      <h1 className="text-2xl font-bold text-left pb-12 pt-6 ml-10">
-        {data.title}
-      </h1>
       <div className="relative  z-0">
         <div className="w-full lg:w-7/12 lg:mt-2 mt-2 lg:ml-4">
+          <h1 className="text-2xl font-bold text-left pb-12 pt-6 ml-10">
+            {data.title}
+          </h1>
           <ListBody post={data} reviews={reviews} />
           <QandAs listData={data} />
         </div>

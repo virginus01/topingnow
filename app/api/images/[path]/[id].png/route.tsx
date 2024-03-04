@@ -72,7 +72,7 @@ export async function GET(
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundImage: `url(${base_images_url("beams.jpg")})`,
+            backgroundImage: `url(${base_images_url("beams-with.png")})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -108,16 +108,15 @@ export async function GET(
             </div>
             <div tw="flex items-end flex-grow">
               {lists.map((post, i) => {
-                const height = heights[i];
-                let rate = height.replace("h-", "");
-                if (rate === "96") {
-                  rate = "100";
-                }
+                if (i <= 24) {
+                  const height = heights[i];
+                  let rate = height.replace("h-", "");
+                  if (rate === "96") {
+                    rate = "100";
+                  }
 
-                const d = 400 / lists.length;
-                let w = heights.length - lists.length + d;
+                  let w = 60;
 
-                if (heights.length > i) {
                   return (
                     <div tw="flex flex-col" key={i}>
                       <div
