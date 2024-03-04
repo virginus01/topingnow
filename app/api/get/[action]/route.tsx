@@ -35,6 +35,7 @@ export async function GET(
   let _id = searchParams.get("_id");
   let topicId = searchParams.get("topicId");
   let listId = searchParams.get("listId");
+  let placeId = searchParams.get("placeId");
   let uid = searchParams.get("uid");
   let q = searchParams.get("q");
   let rand = searchParams.get("rand");
@@ -134,7 +135,14 @@ export async function GET(
   }
 
   if (action == "get_reviews") {
-    const data = await fetchReview(id, listId, essentials, page, perPage);
+    const data = await fetchReview(
+      id,
+      listId,
+      placeId,
+      essentials,
+      page,
+      perPage
+    );
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -305,12 +313,13 @@ async function fetchBusiness(id: string | number | null, essentials, process) {
 async function fetchReview(
   id: string | number | null,
   listId,
+  placeId,
   essentials,
   page,
   perPage
 ) {
   try {
-    return await getReviews(id, listId, essentials, page, perPage);
+    return await getReviews(id, listId, placeId, essentials, page, perPage);
   } catch {
     return { msg: "error: 6454554" };
   }

@@ -151,6 +151,7 @@ export async function deleteList(_id: string) {
 }
 
 export async function listMetaTags(data) {
+  if (isNull(data)) return data;
   const length = stripHtmlTags(data.description);
 
   data.canonical = base_url(`${data.topicData.slug}/${data.slug}`);

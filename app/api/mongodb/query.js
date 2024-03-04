@@ -32,7 +32,7 @@ export async function getTops(page = 1, perPage = 10, essentials = 'yes', q = ''
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -98,7 +98,7 @@ export async function getTopsByImport(importId, page = 1, perPage = 10, q = '') 
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -159,7 +159,7 @@ export async function getListsByImport(importId, page = 1, perPage = 10, q = '')
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -205,7 +205,7 @@ export async function getTopicsByImport(importId, page = 1, perPage = 10, proces
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -272,7 +272,7 @@ export async function getTopics(topId, page = 1, perPage = 10, essentials = 'yes
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -341,7 +341,7 @@ export async function fetchImports(page = 1, perPage = 10) {
 
 
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -393,7 +393,7 @@ export async function fetchFiles(page = 1, perPage = 10) {
 
 
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -442,7 +442,7 @@ export async function fetchTemplates(page = 1, perPage = 10) {
 
 
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -563,7 +563,7 @@ export async function fetchQandAs(listId, page = 1, perPage = 10, process = 'yes
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -621,7 +621,7 @@ export async function getLists(topicId, page = 1, perPage = 10, essentials = 'ye
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 
@@ -759,21 +759,21 @@ export async function getBusiness(id, essentials = 'yes', process = "yes") {
 }
 
 
-export async function getReviews(id, list_id = '', essentials = 'yes', page = 1, perPage = 10) {
+export async function getReviews(id, list_id = '', place_id = '', essentials = 'yes', page = 1, perPage = 10) {
 
     try {
         const db = await connectDB();
 
 
-        if (list_id) {
+        if (list_id || place_id) {
 
             const skip = (page - 1) * perPage;
 
             const db = await connectDB();
 
-            const filter = list_id ? { list_id } : {};
+            let filter = list_id ? { list_id } : {};
 
-            const [result, total] = await Promise.all([
+            let [result, total] = await Promise.all([
                 db.collection("reviews").find(filter)
                     .sort({ published_at: -1 })
                     .skip(skip)
@@ -784,11 +784,28 @@ export async function getReviews(id, list_id = '', essentials = 'yes', page = 1,
                     .estimatedDocumentCount(filter)
             ]);
 
+
+            if (isNull(result)) {
+                filter = place_id ? { place_id } : {};
+                [result, total] = await Promise.all([
+                    db.collection("reviews").find(filter)
+                        .sort({ published_at: -1 })
+                        .skip(skip)
+                        .limit(parseInt(perPage))
+                        .toArray(),
+
+                    db.collection("reviews")
+                        .estimatedDocumentCount(filter)
+                ]);
+            }
+
             const numPages = Math.ceil(total / perPage);
             const hasNextPage = page < numPages;
             const hasPrevPage = page > 1;
 
-            if (!result) {
+
+
+            if (isNull(result)) {
                 return "not_found";
             }
 
@@ -864,7 +881,7 @@ export async function getPopularLists(excludeId = '', essentials = '', page = 1,
         const hasNextPage = page < numPages;
         const hasPrevPage = page > 1;
 
-        if (!result) {
+        if (isNull(result)) {
             return "not_found";
         }
 

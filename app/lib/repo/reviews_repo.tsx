@@ -1,8 +1,8 @@
 import { NEXT_PUBLIC_GET_REVIEWS } from "@/constants";
 
-export async function getListReviews(id: string) {
+export async function getListReviews(id: string, place_id: string) {
   try {
-    const url = `${NEXT_PUBLIC_GET_REVIEWS}?listId=${id}&essentials=yes&page=1&perPage=20`;
+    const url = `${NEXT_PUBLIC_GET_REVIEWS}?listId=${id}&placeId=${place_id}&essentials=yes&page=1&perPage=20`;
 
     const res = await fetch(url, {
       next: {

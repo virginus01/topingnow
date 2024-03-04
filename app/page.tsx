@@ -83,7 +83,11 @@ export default async function Page() {
           <div className="p-2 lg:p-10">
             <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
               {data.map(({ title, _id, extraClass, topTopics }, i) => {
-                if (topTopics && topTopics.result.length > 0) {
+                if (
+                  topTopics &&
+                  topTopics.result &&
+                  topTopics.result.length > 0
+                ) {
                   return (
                     <article
                       key={_id}

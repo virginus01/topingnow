@@ -44,7 +44,7 @@ export default async function ListView({
 
   const data = result;
 
-  const reviews = await getListReviews(data._id);
+  const reviews = await getListReviews(data._id, data.place_id);
 
   await generateMetadata({ params });
 

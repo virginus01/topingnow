@@ -171,6 +171,7 @@ export async function metaTags(metadata, data) {
 }
 
 export async function topicMetaTags(data) {
+  if (isNull(data)) return data;
   let list_desc = "";
 
   if (data.lists && data.lists.result[0] && data.lists.result[0].description) {
