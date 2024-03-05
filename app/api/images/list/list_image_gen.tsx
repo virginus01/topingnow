@@ -90,8 +90,8 @@ export async function ListImageGen(id: any) {
                   <div tw="flex flex-col" key={i}>
                     <img
                       src={post}
-                      height={500 - parseInt(length)}
-                      width={500 - parseInt(length)}
+                      height={450 - parseInt(length)}
+                      width={450 - parseInt(length)}
                     />
                   </div>
                 );
@@ -108,8 +108,8 @@ export async function ListImageGen(id: any) {
                   <div tw="flex flex-col" key={i}>
                     <img
                       src={post}
-                      height={500 - parseInt(length)}
-                      width={500 - parseInt(length)}
+                      height={450 - parseInt(length)}
+                      width={450 - parseInt(length)}
                     />
                   </div>
                 );

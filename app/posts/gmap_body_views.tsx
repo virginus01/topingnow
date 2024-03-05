@@ -200,6 +200,12 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
               <div className="text-md">
                 <u>Core Services & Tags:</u>
 
+                {topicData && topicData.category && (
+                  <div className="flex items-center">
+                    <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                    <div className="text-sm">{topicData.category}</div>
+                  </div>
+                )}
                 {core_tags &&
                   core_tags.map((c, index) => (
                     <div className="flex items-center" key={index}>
