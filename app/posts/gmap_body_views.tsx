@@ -134,7 +134,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
             <Image
               src={listImage(featuredImagePath, generatedImagePath, slug)}
               alt={`${title}: ${topicData.title}`}
-              style={{ width: "100%" }}
+              style={{ width: "100%", height: "100%" }}
               width={500}
               height={200}
               className="h-48 w-full rounded-sm object-cover"
@@ -144,7 +144,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
             />
           </div>
         </div>
-        <div className="lg:flex lg:flex-col p-3 w-full lg:w-[50%]">
+        <div className="lg:flex lg:flex-col w-full lg:w-[50%]">
           {isFull ? (
             <iframe
               className="h-[100%] w-full"

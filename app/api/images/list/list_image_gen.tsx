@@ -74,7 +74,7 @@ export async function ListImageGen(id: any) {
               tw="flex"
               style={{
                 fontWeight: "bolder",
-                fontSize: "2rem",
+                fontSize: "4rem",
                 textAlign: "center",
                 color: "#1e40af",
               }}
