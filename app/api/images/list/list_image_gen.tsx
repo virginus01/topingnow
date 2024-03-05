@@ -74,7 +74,7 @@ export async function ListImageGen(id: any) {
               tw="flex"
               style={{
                 fontWeight: "bolder",
-                fontSize: "4rem",
+                fontSize: "2rem",
                 textAlign: "center",
                 color: "#1e40af",
               }}
@@ -90,7 +90,7 @@ export async function ListImageGen(id: any) {
                   <div tw="flex flex-col" key={i}>
                     <img
                       src={post}
-                      height={450 - parseInt(length)}
+                      height={400 - parseInt(length)}
                       width={450 - parseInt(length)}
                     />
                   </div>
@@ -108,7 +108,7 @@ export async function ListImageGen(id: any) {
                   <div tw="flex flex-col" key={i}>
                     <img
                       src={post}
-                      height={450 - parseInt(length)}
+                      height={400 - parseInt(length)}
                       width={450 - parseInt(length)}
                     />
                   </div>

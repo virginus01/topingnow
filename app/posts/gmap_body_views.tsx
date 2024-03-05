@@ -144,7 +144,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
             />
           </div>
         </div>
-        <div className="lg:flex lg:flex-col w-full lg:w-[50%]">
+        <div className="lg:flex lg:flex-col w-full p-2 lg:w-[50%]">
           {isFull ? (
             <iframe
               className="h-[100%] w-full"
