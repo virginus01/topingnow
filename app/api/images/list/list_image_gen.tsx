@@ -44,7 +44,7 @@ export async function ListImageGen(id: any) {
   return new ImageResponse(
     (
       <div
-        tw="w-full"
+        tw="w-full border-4 border-red-500"
         style={{
           height: "100vh",
           display: "flex",
@@ -57,7 +57,7 @@ export async function ListImageGen(id: any) {
       >
         <div tw="flex h-screen flex-col">
           <div
-            tw="flex justify-center text-center font-extrabold text-6xl text-blue-900 m-5"
+            tw="flex justify-center text-center font-extrabold text-6xl text-blue-900 m-5 pt-20 mb-20"
             style={{
               fontWeight: "bolder",
               fontSize: "3rem",
@@ -67,9 +67,9 @@ export async function ListImageGen(id: any) {
           >
             {data.topicData.title ?? ""}
           </div>
-          <div tw="flex border-t-4 border-red-500"></div>
+          <div tw="flex border-t-4 border-red-500 mt-2 mb-2 pt-2 pb-2"></div>
 
-          <div tw="flex justify-center text-center items-center font-extrabold text-3xl text-blue-900 mb-10">
+          <div tw="flex justify-center text-center items-center font-extrabold text-3xl text-blue-900 mb-20">
             <div
               tw="flex"
               style={{
