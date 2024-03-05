@@ -65,7 +65,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
   return (
     <article className="relative bg-white w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
       <div
-        className={`${extraClass} bg-gray-100 text-black border-b border-red-600`}
+        className={`${extraClass} bg-gray-100 text-black border-b border-gray-300`}
       >
         <div className="flex justify-between h-14">
           {isFull ? (
@@ -128,18 +128,12 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
           )}
         </div>
       </div>
-      <div className="lg:flex lg:justify-between border-b border-red-600">
-        <div className="lg:flex lg:flex-col bg-red-500 w-full lg:w-[50%]">
+      <div className="lg:flex lg:justify-between border-b border-gray-300">
+        <div className="lg:flex lg:flex-col bg-red-200 w-full lg:w-[50%]">
           <div className="flex">
             <Image
-              src={listImage(
-                featuredImagePath,
-                generatedImagePath,
-                external_image,
-                title,
-                from_all_image_1
-              )}
-              alt={title}
+              src={listImage(featuredImagePath, generatedImagePath, slug)}
+              alt={`${title}: ${topicData.title}`}
               style={{ width: "100%" }}
               width={500}
               height={200}
@@ -174,35 +168,35 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
         </div>
       </div>
 
-      <div className="lg:flex lg:justify-between">
-        <div className="flex flex-col w-full lg:w-[40%] lg:border-r border-b border-red-500 p-2">
+      <div className="lg:flex lg:flex-grow lg:justify-between border-b border-gray-300">
+        <div className="flex flex-col lg:flex-grow w-full lg:w-[40%] lg:border-r border-gray-300 p-2">
           {!isNull(post.phone) && (
-            <div className="flex items-center border-b border-gray-300 text-sm p-1">
+            <div className="flex items-center border-b border-gray-100 text-sm p-1">
               <PhoneIcon className="h-4 w-4 mr-2" /> {phone}
             </div>
           )}
           {!isNull(address) && (
-            <div className="flex items-center border-b border-gray-300 text-xs p-1">
+            <div className="flex items-center border-b border-gray-100 text-xs p-1">
               <HomeIcon className="h-5 w-5 mr-2" /> {address}
             </div>
           )}
           {!isNull(post.website) && (
-            <div className="flex items-center border-b border-gray-300 text-xs p-1">
+            <div className="flex items-center border-b border-gray-100 text-xs p-1">
               <GlobeAltIcon className="h-5 w-5 mr-2" />{" "}
               {extractDomain(post.website)}
             </div>
           )}
 
           {!isNull(post.time_zone) && (
-            <div className="flex items-center border-b border-gray-300 text-xs p-1">
+            <div className="flex items-center border-b border-gray-100 text-xs p-1">
               <ClockIcon className="h-5 w-5 mr-2" /> {post.time_zone}
             </div>
           )}
         </div>
 
-        <div className="lg:flex lg:flex-col w-full lg:w-[60%]">
+        <div className="lg:flex lg:flex-grow lg:flex-col w-full lg:w-[60%]">
           <div className="flex justify-between">
-            <div className="flex flex-col w-[50%] border-r border-b border-red-500 p-2">
+            <div className="flex flex-col w-[50%] border-r p-2">
               <div className="text-md">
                 <u>Core Services & Tags:</u>
 
@@ -216,7 +210,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
               </div>
             </div>
 
-            <div className="flex flex-col w-[50%] border-b border-red-500 p-2">
+            <div className="flex flex-col lg:flex-grow w-[50%]  p-2">
               <div className="text-md justify-center items-center">
                 <u>Services Hours:</u>
                 {schedule &&
@@ -245,12 +239,12 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
 
       {!isFull ? (
         <div className="flex justify-end items-end">
-          <Link rel="nofollow" className="text-red-400" href={listSlug}>
+          <Link rel="nofollow" className="text-red-500" href={listSlug}>
             <div className="pt-2 items-end mr-3 h-10">see details</div>
           </Link>
         </div>
       ) : (
-        <div className="flex justify-end items-end  border-t border-red-600">
+        <div className="flex justify-end items-end  border-t border-gray-300">
           <div className="flex flex-col bg-red-600 text-white w-44 rounded-br">
             <a
               rel="nofollow"

@@ -466,19 +466,19 @@ export function generateBreadcrumb(data: any) {
   return breadcrumb;
 }
 
-export async function checkImageValidity(imageUrl, alt = "") {
+export async function checkImageValidity(imageUrl) {
   try {
     if (isNull(imageUrl)) {
-      return alt;
+      return { success: false };
     }
     const response = await fetch(imageUrl);
     if (response.ok) {
       return imageUrl; // Image link is valid
     } else {
-      return alt; // Image link is not valid
+      return { success: false }; // Image link is not valid
     }
   } catch (error) {
     console.error("Error checking image validity:", error);
-    return alt;
+    return { success: false };
   }
 }

@@ -29,54 +29,56 @@ export async function generateMetadata({
 }
 
 export default async function Post({ params }: { params: { slug: string } }) {
-  const repeat = 2;
   const page = 1;
 
-  let data: any = {};
-  const result = await getTopic(params.slug, page);
+  try {
+    let data: any = await getTopic(params.slug, page);
 
-  if (result) {
-    data = result;
-  }
+    if (!data) {
+      // If data is not found, return a 404 page
+      return notFound();
+    }
 
-  if (isNull(result)) {
-    notFound();
-  }
+    // Generate metadata for the post
+    await generateMetadata({ params });
 
-  await generateMetadata({ params });
+    // Construct schema data for SEO
+    schema.data = buildSchema(
+      base_url(data.slug),
+      data.title,
+      base_images_url("logo.png"),
+      generateBreadcrumb([{ title: data.title, url: base_url(data.slug) }]),
+      data
+    );
 
-  schema.data = buildSchema(
-    base_url(result.slug),
-    result.title,
-    base_images_url("logo.png"),
-    generateBreadcrumb([{ title: result.title, url: base_url(result.slug) }]),
-    result
-  );
+    return (
+      <>
+        <div className="mt-10">
+          <h1 className="text-2xl font-bold text-center py-12 bg-white">
+            {data.title}
+          </h1>
 
-  return (
-    <>
-      <div className="mt-10">
-        <h1 className="text-2xl font-bold text-center py-12 bg-white">
-          {data.title}
-        </h1>
-
-        <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto z-0">
-            <ListTable key="left" topicData={data} />
-          </div>
-          <section className="w-full md:w-2/4 p-4 mx-auto">
-            <article
-              className={`mb-5 bg-white shadow-xl ring-1 ring-gray-900/5 rounded`}
-            >
-              <PostBody post={data} />
-            </article>
-            <Lists topicData={data} />
-          </section>
-          <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
-            <PopularTopics _id={data._id} />
+          <div className="flex flex-col md:flex-row">
+            <div className="w-full md:w-1/4 lg:fixed top-0 left-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto z-0">
+              <ListTable key="left" topicData={data} />
+            </div>
+            <section className="w-full md:w-2/4 p-4 mx-auto">
+              <article
+                className={`mb-5 bg-white shadow-xl ring-1 ring-gray-900/5 rounded`}
+              >
+                <PostBody post={data} />
+              </article>
+              <Lists topicData={data} />
+            </section>
+            <div className="w-full md:w-1/4 lg:fixed top-0 right-0 lg:h-screen p-2 sm:pt-10 mt-8 overflow-y-auto mx-auto">
+              <PopularTopics _id={data._id} />
+            </div>
           </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  } catch (error) {
+    console.error("Error fetching post data:", error);
+    return notFound();
+  }
 }
