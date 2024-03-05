@@ -9,6 +9,7 @@ import React from "react";
 import Image from "next/image";
 import RatingStars from "../components/widgets/rating_stars";
 import {
+  base_images_url,
   base_url,
   checkImageValidity,
   extractDomain,
@@ -143,6 +144,9 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
               width={500}
               height={200}
               className="h-48 w-full rounded-sm object-cover"
+              blurDataURL={base_images_url("beams-with.png")}
+              placeholder="blur"
+              loading="lazy"
             />
           </div>
         </div>

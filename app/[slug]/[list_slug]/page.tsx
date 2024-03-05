@@ -69,6 +69,7 @@ export default async function ListView({
           <h1 className="text-2xl font-bold text-left pb-12 pt-6 ml-10">
             {data.title}
           </h1>
+
           <ListBody post={data} reviews={reviews} />
           <QandAs listData={data} />
         </div>
