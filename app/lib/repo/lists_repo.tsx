@@ -31,6 +31,7 @@ export async function getLists(
 
     const response = await fetch(url, {
       next: {
+        tags: ["lists", topicId],
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
       },
     });
@@ -53,6 +54,7 @@ export async function getListById(id: string) {
 
     const res = await fetch(url, {
       next: {
+        tags: ["list", id],
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
       },
     });

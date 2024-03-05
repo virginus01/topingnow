@@ -88,11 +88,7 @@ export async function ListImageGen(id: any) {
               if (i <= 24) {
                 return (
                   <div tw="flex flex-col" key={i}>
-                    <img
-                      src={post}
-                      height={350}
-                      width={500 - parseInt(length)}
-                    />
+                    <img src={post} height={350} width={2000 / lists.length} />
                   </div>
                 );
               } else {
@@ -106,11 +102,7 @@ export async function ListImageGen(id: any) {
               if (i <= 24) {
                 return (
                   <div tw="flex flex-col" key={i}>
-                    <img
-                      src={post}
-                      height={350}
-                      width={500 - parseInt(length)}
-                    />
+                    <img src={post} height={350} width={2000 / lists.length} />
                   </div>
                 );
               } else {

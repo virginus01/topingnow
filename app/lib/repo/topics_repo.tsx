@@ -23,6 +23,7 @@ export async function getTopics(topId: any | "", page: any, perPage: any | "") {
 
     const response = await fetch(url, {
       next: {
+        tags: ["topics", topId],
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
       },
     });
@@ -68,6 +69,7 @@ export async function getTopic(topicId: string, page = 1, essentials = "yes") {
 
     const res = await fetch(url, {
       next: {
+        tags: ["topic", topicId],
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
       },
     });
