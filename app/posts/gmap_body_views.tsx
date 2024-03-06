@@ -69,16 +69,6 @@ const amenityIcons = {
   "Bike Parking": "\u{1F6B2}",
 };
 
-const default_work_day: any = [
-  ["Monday", 1, [2024, 3, 11], [["24 hours", [[7], [21]]]], 0, 1],
-  ["Tuesday", 2, [2024, 3, 12], [["24 hours", [[7], [21]]]], 0, 1],
-  ["Wednesday", 3, [2024, 3, 6], [["24 hours", [[7], [21]]]], 0, 1],
-  ["Thursday", 4, [2024, 3, 7], [["24 hours", [[7], [21]]]], 0, 1],
-  ["Friday", 5, [2024, 3, 8], [["24 hours", [[7], [21]]]], 0, 1],
-  ["Saturday", 6, [2024, 3, 9], [["24 hours", [[7], [21]]]], 0, 1],
-  ["Sunday", 7, [2024, 3, 10], [["24 hours", [[7], [21]]]], 0, 1],
-];
-
 export default function GmapBodyView({ post, topicData, isFull = false }) {
   if (isNull(post) || isNull(topicData)) {
     return <div>loading..</div>;
@@ -123,6 +113,16 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
   }
 
   const listSlug = topicData.slug + "/" + slug;
+
+  const default_work_day: any = [
+    ["Monday", 1, [2024, 3, 11], [["24 hours", [[7], [21]]]], 0, 1],
+    ["Tuesday", 2, [2024, 3, 12], [["24 hours", [[7], [21]]]], 0, 1],
+    ["Wednesday", 3, [2024, 3, 6], [["24 hours", [[7], [21]]]], 0, 1],
+    ["Thursday", 4, [2024, 3, 7], [["24 hours", [[7], [21]]]], 0, 1],
+    ["Friday", 5, [2024, 3, 8], [["24 hours", [[7], [21]]]], 0, 1],
+    ["Saturday", 6, [2024, 3, 9], [["24 hours", [[7], [21]]]], 0, 1],
+    ["Sunday", 7, [2024, 3, 10], [["24 hours", [[7], [21]]]], 0, 1],
+  ];
 
   return (
     <article className="relative bg-white w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
@@ -281,9 +281,8 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
             <div className="flex flex-col lg:flex-grow w-[50%]  p-2">
               <div className="text-md justify-center items-center">
                 <u>Services Hours:</u>
-                {schedule
-                  ? Array.isArray(schedule) &&
-                    schedule.map((entry, index) => (
+                {schedule && Array.isArray(schedule)
+                  ? schedule.map((entry, index) => (
                       <div className="flex items-center" key={index}>
                         <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
                         <div className="text-[12px]" key={index}>
