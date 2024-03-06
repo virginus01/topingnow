@@ -4,7 +4,12 @@ import usePagination from "../utils/pagination";
 import GmapBodyView from "./gmap_body_views";
 
 export default function Lists({ topicData }) {
-  const perPage = topicData.topData.top;
+  let perPage = 10;
+
+  if (topicData.topData && topicData.topData.top) {
+    perPage = topicData.topData.top;
+  }
+
   const page = 1;
   let data = [];
 
@@ -32,19 +37,13 @@ export default function Lists({ topicData }) {
           post.from_all_image_1 = from_all_image[0];
 
           Promise.resolve(
-            checkImageValidity(
-              post.external_image,
-              `${base_url(`api/images/og?title=${post.title}`)}`
-            ).then((result) => {
+            checkImageValidity(post.external_image).then((result) => {
               post.from_all_image_1 = result;
             })
           );
 
           Promise.resolve(
-            checkImageValidity(
-              post.external_image,
-              `${base_url(`api/images/og?title=${post.title}`)}`
-            ).then((result) => {
+            checkImageValidity(post.external_image).then((result) => {
               post.external_image = result;
             })
           );

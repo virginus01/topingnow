@@ -11,10 +11,6 @@ export default async function PopularTopics({ _id }) {
 
   let data = await getPopularTopics(_id, page, perPage);
 
-  if (data.result.length === 0) {
-    data.result = Shimmer(5);
-  }
-
   return (
     <div className="relative flex sm:py-7">
       <div className="relative px-1 pb-2 pt-2 sm:mx-auto w-full sm:px-2">
