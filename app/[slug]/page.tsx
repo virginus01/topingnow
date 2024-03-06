@@ -20,7 +20,7 @@ export const revalidate = parseInt(
   String(process.env.NEXT_PUBLIC_RE_VALIDATE),
   10
 );
-export const maxDuration = 50;
+export const maxDuration = 10;
 
 export async function generateMetadata({
   params,
