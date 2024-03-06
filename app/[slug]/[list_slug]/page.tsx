@@ -16,6 +16,11 @@ import { ConstructMetadata } from "@/app/seo/metadata";
 import { schema } from "@/app/layout";
 import { buildSchema } from "../../seo/schema";
 
+export const revalidate = parseInt(
+  String(process.env.NEXT_PUBLIC_RE_VALIDATE),
+  10
+);
+
 export async function generateMetadata({
   params,
 }: {

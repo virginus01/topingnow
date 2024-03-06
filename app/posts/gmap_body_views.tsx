@@ -19,6 +19,66 @@ import { getS3Url } from "../lib/repo/files_repo";
 import { LIST_IMAGE, PPC } from "@/constants";
 import { listImage } from "../utils/list_image";
 
+const amenityIcons = {
+  Lunch: "\u{1F372}",
+  Dinner: "\u{1F37D}",
+  "Solo dining": "\u{1F468}",
+  "Wheelchair-accessible car park": "\u{1F3E8}",
+  "Wheelchair-accessible entrance": "\u{267F}",
+  "Wheelchair-accessible seating": "\u{267D}",
+  "Wheelchair-accessible toilet": "\u{1F6BB}",
+  Alcohol: "\u{1F378}",
+  Beer: "\u{1F37A}",
+  Coffee: "\u{2615}",
+  "Comfort food": "\u{1F35E}",
+  "Organic dishes": "\u{1F331}",
+  "Quick bite": "\u{1F956}",
+  "Small plates": "\u{1F37D}",
+  Breakfast: "\u{1F375}",
+  Brunch: "\u{1F305}",
+  Catering: "\u{1F69B}",
+  Dessert: "\u{1F370}",
+  Seating: "\u{1FA91}",
+  Toilets: "\u{1F6BD}",
+  Casual: "\u{1F4F5}",
+  "Family friendly": "\u{1F9D1}",
+  Groups: "\u{1F465}",
+  "Accepts reservations": "\u{1F4C5}",
+  "Credit cards": "\u{1F4B3}",
+  "Debit cards": "\u{1F4B3}",
+  "Good for kids": "\u{1F9D2}",
+  "High chairs": "\u{1FA91}",
+  "Kids' menu": "\u{1F370}",
+  "Free parking lot": "\u{1F17F}",
+  "Offers Takeout": "\u{1F961}",
+  "No Reservations": "\u{1F6AB}",
+  "Accepts Credit Cards": "\u{1F4B3}",
+  "Casual, Classy": "\u{1F973}\u{1F60E}",
+  Loud: "\u{1F50A}",
+  "Good for Groups": "\u{1F465}",
+  "Good for Dinner": "\u{1F37D}",
+  "Pool Table": "\u{1F3B1}",
+  "Private Lot Parking": "\u{1F17F}",
+  "Free Wi-Fi": "\u{1F4F6}",
+  "Happy Hour Specials": "\u{1F378}\u{1F4F5}",
+  "Full Bar": "\u{1F37B}",
+  TV: "\u{1F4FA}",
+  "No Outdoor Seating": "\u{1F6D1}",
+  "Offers Catering": "\u{1F69B}",
+  "Not Good For Kids": "\u{1F6AB}",
+  "Bike Parking": "\u{1F6B2}",
+};
+
+const default_work_day: any = [
+  ["Monday", 1, [2024, 3, 11], [["24 hours", [[7], [21]]]], 0, 1],
+  ["Tuesday", 2, [2024, 3, 12], [["24 hours", [[7], [21]]]], 0, 1],
+  ["Wednesday", 3, [2024, 3, 6], [["24 hours", [[7], [21]]]], 0, 1],
+  ["Thursday", 4, [2024, 3, 7], [["24 hours", [[7], [21]]]], 0, 1],
+  ["Friday", 5, [2024, 3, 8], [["24 hours", [[7], [21]]]], 0, 1],
+  ["Saturday", 6, [2024, 3, 9], [["24 hours", [[7], [21]]]], 0, 1],
+  ["Sunday", 7, [2024, 3, 10], [["24 hours", [[7], [21]]]], 0, 1],
+];
+
 export default function GmapBodyView({ post, topicData, isFull = false }) {
   if (isNull(post) || isNull(topicData)) {
     return <div>loading..</div>;
@@ -47,6 +107,8 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
     is_english,
     from_all_image_1,
   } = post;
+
+  let amenities = post.amenities;
 
   const imgUrl = `${LIST_IMAGE}/${slug}`;
 
@@ -219,27 +281,68 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
             <div className="flex flex-col lg:flex-grow w-[50%]  p-2">
               <div className="text-md justify-center items-center">
                 <u>Services Hours:</u>
-                {schedule &&
-                  Array.isArray(schedule) &&
-                  schedule.map((entry, index) => (
-                    <div className="flex items-center" key={index}>
-                      <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                      <div className="text-[12px]" key={index}>
-                        <strong> {entry[0]}</strong>:
-                        {entry[3] &&
-                          entry[3].map((timing, timingIndex) => (
-                            <span className="pl-3" key={timingIndex}>
-                              {timing[0]}
-                            </span>
-                          ))}
+                {schedule
+                  ? Array.isArray(schedule) &&
+                    schedule.map((entry, index) => (
+                      <div className="flex items-center" key={index}>
+                        <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                        <div className="text-[12px]" key={index}>
+                          <strong> {entry[0]}</strong>:
+                          {entry[3] &&
+                            entry[3].map((timing, timingIndex) => (
+                              <span className="pl-3" key={timingIndex}>
+                                {timing[0]}
+                              </span>
+                            ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  : Array.isArray(default_work_day) &&
+                    default_work_day.map((entry, index) => (
+                      <div className="flex items-center" key={index}>
+                        <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                        <div className="text-[12px]" key={index}>
+                          <strong> {entry[0]}</strong>:
+                          {entry[3] &&
+                            entry[3].map((timing, timingIndex) => (
+                              <span className="pl-3" key={timingIndex}>
+                                {timing[0]}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    ))}
               </div>
             </div>
           </div>
         </div>
       </div>
+      {isFull && (
+        <div className="grid grid-cols-2 gap-4 m-5">
+          {amenities.map((item, i) => {
+            const iconName = amenityIcons[item["key"]];
+            let displayIcon = iconName ? iconName : "\u2714"; // Default to a checkmark icon if iconName doesn't exist
+            let iconClasses = "text-green-500";
+
+            // Check for specific words in amenity and change icon accordingly
+            if (
+              item["amenity"].toLowerCase().includes("no") ||
+              item["amenity"].toLowerCase().includes("doesn't") ||
+              item["amenity"].toLowerCase().includes("not")
+            ) {
+              displayIcon = "\u2716"; // Change to 'X' icon for negative descriptions
+              iconClasses = "text-red-500";
+            }
+
+            return (
+              <div key={i} className="flex">
+                <span className={iconClasses}>{displayIcon}</span>
+                <span className="ml-1">{item["amenity"]}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {is_english == "en" ? <div className="p-2">{description}</div> : <></>}
 

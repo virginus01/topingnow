@@ -13,6 +13,7 @@ export async function getTops() {
 
     const res = await fetch(url, {
       next: {
+        tags: ["home"],
         revalidate: parseInt(process.env.NEXT_PUBLIC_RE_VALIDATE as string, 10),
       },
     });

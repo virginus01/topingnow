@@ -14,7 +14,7 @@ import RatingStars from "../components/widgets/rating_stars";
 import GmapBodyView from "./gmap_body_views";
 
 export default function ListBody({ post, reviews }) {
-  if (!post) {
+  if (isNull(post)) {
     return <>loading..</>;
   }
 

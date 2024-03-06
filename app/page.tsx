@@ -6,6 +6,11 @@ import { getTop, getTops } from "./lib/repo/tops_repo";
 import Image from "next/image";
 import ExtSearchScreen from "./components/ext_search_screen";
 
+export const revalidate = parseInt(
+  String(process.env.NEXT_PUBLIC_RE_VALIDATE),
+  10
+);
+
 export default async function Page() {
   const perPage = 5;
   const page = 1;

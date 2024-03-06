@@ -63,9 +63,14 @@ export async function getPopularTopics(_id, page, perPage) {
   }
 }
 
-export async function getTopic(topicId: string, page = 1, essentials = "yes") {
+export async function getTopic(
+  topicId: string,
+  page = 1,
+  perPage = 10,
+  essentials = "yes"
+) {
   try {
-    const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}&page=${page}&essentials=${essentials}&process=${"yes"}`;
+    const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${topicId}&page=${page}&perPage=${perPage}&essentials=${essentials}&process=${"yes"}`;
 
     const res = await fetch(url, {
       next: {

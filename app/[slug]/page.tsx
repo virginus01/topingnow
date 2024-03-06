@@ -16,6 +16,12 @@ import { ConstructMetadata } from "../seo/metadata";
 import { buildSchema } from "../seo/schema";
 import { schema } from "../layout";
 
+export const revalidate = parseInt(
+  String(process.env.NEXT_PUBLIC_RE_VALIDATE),
+  10
+);
+export const maxDuration = 50;
+
 export async function generateMetadata({
   params,
 }: {
@@ -34,7 +40,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
   try {
     let data: any = await getTopic(params.slug, page);
 
-    if (!data) {
+    if (isNull(data)) {
       // If data is not found, return a 404 page
       return notFound();
     }

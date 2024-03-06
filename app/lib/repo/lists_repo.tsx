@@ -156,6 +156,10 @@ export async function listMetaTags(data) {
   if (isNull(data)) return data;
   const length = stripHtmlTags(data.description);
 
+  if (data.topicData && data.topicData.category) {
+    data.title = `${data.title} - ${data.topicData.category}`;
+  }
+
   data.canonical = base_url(`${data.topicData.slug}/${data.slug}`);
   data.robots = {
     index: countWords(length) >= 30 || data.type == "gmap" ? true : false,

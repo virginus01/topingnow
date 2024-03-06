@@ -32,11 +32,15 @@ export async function ListImageGen(id: any) {
   }
 
   if (!isNull(data.all_images)) {
-    const urlsArray = data.all_images.split(",").map((url) => url.trim());
+    const jsonData = "[" + data.all_images.slice(1, -1) + "]";
+    const urlsArray = JSON.parse(jsonData);
+
+    let list_n = 0;
     for (let i = 0; i < urlsArray.length; i++) {
       const ex_check = await checkImageValidity(urlsArray[i]);
-      if (ex_check.success != false) {
+      if (ex_check.success != false && list_n <= 6) {
         lists.push(urlsArray[i]);
+        list_n++;
       }
     }
   }
@@ -65,7 +69,7 @@ export async function ListImageGen(id: any) {
               color: "#1e40af",
             }}
           >
-            {data.topicData.title ?? ""}
+            {data.title} is Number {data.position}
           </div>
           <div tw="flex border-t-4 border-red-500 mt-2 mb-2 pt-2 pb-2"></div>
 
@@ -79,13 +83,13 @@ export async function ListImageGen(id: any) {
                 color: "#1e40af",
               }}
             >
-              according to topingnow.com, {data.title} is Number {data.position}
+              {data.topicData.title ?? ""} by Topingnow.com
             </div>
           </div>
           <span tw="flex items-end">
             {shuffleArray(lists).map((post, i) => {
               const length = lists.length + "0";
-              if (i <= 24) {
+              if (i <= 6) {
                 return (
                   <div tw="flex flex-col" key={i}>
                     <img src={post} height={350} width={2000 / lists.length} />
