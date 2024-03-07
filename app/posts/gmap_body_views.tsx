@@ -70,76 +70,93 @@ const amenityIcons = {
 };
 
 export default function GmapBodyView({ post, topicData, isFull = false }) {
-  if (isNull(post) || isNull(topicData)) {
-    return <div>loading..</div>;
-  }
+  try {
+    if (isNull(post) || isNull(topicData)) {
+      return <div>loading..</div>;
+    }
 
-  let {
-    _id,
-    title,
-    description,
-    slug,
-    extraClass,
-    featuredImagePath,
-    generatedImagePath,
-    position,
-    external_image,
-    phone,
-    website,
-    all_images,
-    subTitle,
-    ratingScore,
-    address,
-    workday_timing,
-    category,
-    tags,
-    type,
-    is_english,
-    from_all_image_1,
-  } = post;
+    let {
+      _id,
+      title,
+      description,
+      slug,
+      extraClass,
+      featuredImagePath,
+      generatedImagePath,
+      position,
+      external_image,
+      phone,
+      website,
+      all_images,
+      subTitle,
+      ratingScore,
+      address,
+      workday_timing,
+      category,
+      tags,
+      type,
+      is_english,
+      from_all_image_1,
+    } = post;
 
-  let amenities = post.amenities;
+    let amenities: any = post.amenities;
 
-  const imgUrl = `${LIST_IMAGE}/${slug}`;
+    const imgUrl = `${LIST_IMAGE}/${slug}`;
 
-  let schedule: any = [];
-  if (workday_timing) {
-    schedule = JSON.parse(workday_timing);
-  }
+    let schedule: any = [];
+    if (workday_timing) {
+      schedule = JSON.parse(workday_timing);
+    }
 
-  let core_tags: any = [];
-  if (tags) {
-    core_tags = JSON.parse(tags);
-  }
+    let core_tags: any = [];
+    if (tags) {
+      core_tags = JSON.parse(tags);
+    }
 
-  const listSlug = topicData.slug + "/" + slug;
+    const listSlug = topicData.slug + "/" + slug;
 
-  const default_work_day: any = [
-    ["Monday", 1, [2024, 3, 11], [["24 hours", [[7], [21]]]], 0, 1],
-    ["Tuesday", 2, [2024, 3, 12], [["24 hours", [[7], [21]]]], 0, 1],
-    ["Wednesday", 3, [2024, 3, 6], [["24 hours", [[7], [21]]]], 0, 1],
-    ["Thursday", 4, [2024, 3, 7], [["24 hours", [[7], [21]]]], 0, 1],
-    ["Friday", 5, [2024, 3, 8], [["24 hours", [[7], [21]]]], 0, 1],
-    ["Saturday", 6, [2024, 3, 9], [["24 hours", [[7], [21]]]], 0, 1],
-    ["Sunday", 7, [2024, 3, 10], [["24 hours", [[7], [21]]]], 0, 1],
-  ];
+    const default_work_day: any = [
+      ["Monday", 1, [2024, 3, 11], [["24 hours", [[7], [21]]]], 0, 1],
+      ["Tuesday", 2, [2024, 3, 12], [["24 hours", [[7], [21]]]], 0, 1],
+      ["Wednesday", 3, [2024, 3, 6], [["24 hours", [[7], [21]]]], 0, 1],
+      ["Thursday", 4, [2024, 3, 7], [["24 hours", [[7], [21]]]], 0, 1],
+      ["Friday", 5, [2024, 3, 8], [["24 hours", [[7], [21]]]], 0, 1],
+      ["Saturday", 6, [2024, 3, 9], [["24 hours", [[7], [21]]]], 0, 1],
+      ["Sunday", 7, [2024, 3, 10], [["24 hours", [[7], [21]]]], 0, 1],
+    ];
 
-  return (
-    <article className="relative bg-white w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
-      <div
-        className={`${extraClass} bg-gray-100 text-black border-b border-gray-300`}
-      >
-        <div className="flex justify-between h-14">
-          {isFull ? (
-            <Link
-              rel="follow"
-              className="text-red-600"
-              href={String(base_url(`${topicData.slug}#${slug}`))}
-            >
+    return (
+      <article className="relative bg-white w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
+        <div
+          className={`${extraClass} bg-gray-100 text-black border-b border-gray-300`}
+        >
+          <div className="flex justify-between h-14">
+            {isFull ? (
+              <Link
+                rel="follow"
+                className="text-red-600"
+                href={String(base_url(`${topicData.slug}#${slug}`))}
+              >
+                <div className="flex flex-col w-[100%]">
+                  <div className="flex pl-3 font-bold">
+                    <div className="flex">
+                      No. {position} in {topicData.title}
+                    </div>
+                  </div>
+                  {!isNull(ratingScore) ? (
+                    <div className="flex pl-3 ml-10">
+                      <RatingStars ratingScore={ratingScore} />
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </Link>
+            ) : (
               <div className="flex flex-col w-[100%]">
                 <div className="flex pl-3 font-bold">
                   <div className="flex">
-                    No. {position} in {topicData.title}
+                    Top {position}: {title}
                   </div>
                 </div>
                 {!isNull(ratingScore) ? (
@@ -150,26 +167,194 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
                   <></>
                 )}
               </div>
-            </Link>
-          ) : (
-            <div className="flex flex-col w-[100%]">
-              <div className="flex pl-3 font-bold">
+            )}
+
+            {!isFull && (
+              <div className="flex flex-col bg-red-600 text-white w-44 rounded-tr">
+                <a
+                  rel="nofollow"
+                  target="_blank"
+                  href={`${PPC}?url=${
+                    website ? website : base_url(`${topicData.slug}/${slug}`)
+                  }&utm_campaign=${topicData.slug}`}
+                >
+                  <div className="flex items-center justify-between h-12 p-1">
+                    <div className="flex items-center">
+                      <span className="mr-0">visit website</span>
+                    </div>
+                    <div className="flex items-center">
+                      <GlobeAltIcon className="h-5 w-5" />
+                    </div>
+                  </div>
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="lg:flex lg:justify-between border-b border-gray-300">
+          <div className="lg:flex lg:flex-col bg-red-200 w-full lg:w-[50%]">
+            <div className="flex">
+              <Image
+                src={listImage(featuredImagePath, generatedImagePath, slug)}
+                alt={`${title}: ${topicData.title}`}
+                style={{ width: "100%", height: "100%" }}
+                width={500}
+                height={200}
+                className="h-48 w-full rounded-sm object-cover"
+                blurDataURL={base_images_url("beams-with.png")}
+                placeholder="blur"
+                loading="lazy"
+              />
+            </div>
+          </div>
+          <div className="lg:flex lg:flex-col w-full p-2 lg:w-[50%]">
+            {isFull ? (
+              <iframe
+                className="h-[100%] w-full"
+                src={post.gmap_link}
+                style={{ border: 0 }}
+                allowFullScreen={false}
+                loading="lazy"
+              ></iframe>
+            ) : (
+              <>
+                <Link href={listSlug}>
+                  <h2 className="flex font-bold pb-2">{subTitle}</h2>{" "}
+                </Link>
+
                 <div className="flex">
-                  Top {position}: {title}
+                  {title} is the number {position} in the list of{" "}
+                  {topicData.title}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="lg:flex lg:flex-grow lg:justify-between border-b border-gray-300">
+          <div className="flex flex-col lg:flex-grow w-full lg:w-[40%] lg:border-r border-gray-300 p-2">
+            {!isNull(post.phone) && (
+              <div className="flex items-center border-b border-gray-100 text-sm p-1">
+                <PhoneIcon className="h-4 w-4 mr-2" /> {phone}
+              </div>
+            )}
+            {!isNull(address) && (
+              <div className="flex items-center border-b border-gray-100 text-xs p-1">
+                <HomeIcon className="h-5 w-5 mr-2" /> {address}
+              </div>
+            )}
+            {!isNull(post.website) && (
+              <div className="flex items-center border-b border-gray-100 text-xs p-1">
+                <GlobeAltIcon className="h-5 w-5 mr-2" />{" "}
+                {extractDomain(post.website)}
+              </div>
+            )}
+
+            {!isNull(post.time_zone) && (
+              <div className="flex items-center border-b border-gray-100 text-xs p-1">
+                <ClockIcon className="h-5 w-5 mr-2" /> {post.time_zone}
+              </div>
+            )}
+          </div>
+
+          <div className="lg:flex lg:flex-grow lg:flex-col w-full lg:w-[60%]">
+            <div className="flex justify-between">
+              <div className="flex flex-col w-[50%] border-r p-2">
+                <div className="text-md">
+                  <u>Core Services & Tags:</u>
+
+                  {topicData && topicData.category && (
+                    <div className="flex items-center">
+                      <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                      <div className="text-sm">{topicData.category}</div>
+                    </div>
+                  )}
+                  {core_tags &&
+                    core_tags.map((c, index) => (
+                      <div className="flex items-center" key={index}>
+                        <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                        <div className="text-sm">{c}</div>
+                      </div>
+                    ))}
                 </div>
               </div>
-              {!isNull(ratingScore) ? (
-                <div className="flex pl-3 ml-10">
-                  <RatingStars ratingScore={ratingScore} />
-                </div>
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
 
-          {!isFull && (
-            <div className="flex flex-col bg-red-600 text-white w-44 rounded-tr">
+              <div className="flex flex-col lg:flex-grow w-[50%]  p-2">
+                <div className="text-md justify-center items-center">
+                  <u>Services Hours:</u>
+                  {schedule && Array.isArray(schedule)
+                    ? schedule.map((entry, index) => (
+                        <div className="flex items-center" key={index}>
+                          <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                          <div className="text-[12px]" key={index}>
+                            <strong> {entry[0]}</strong>:
+                            {entry[3] &&
+                              entry[3].map((timing, timingIndex) => (
+                                <span className="pl-3" key={timingIndex}>
+                                  {timing[0]}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      ))
+                    : Array.isArray(default_work_day) &&
+                      default_work_day.map((entry, index) => (
+                        <div className="flex items-center" key={index}>
+                          <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
+                          <div className="text-[12px]" key={index}>
+                            <strong> {entry[0]}</strong>:
+                            {entry[3] &&
+                              entry[3].map((timing, timingIndex) => (
+                                <span className="pl-3" key={timingIndex}>
+                                  {timing[0]}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {isFull && !isNull(amenities) && (
+          <div className="grid grid-cols-2 gap-4 m-5">
+            {amenities.map((item, i) => {
+              const iconName = amenityIcons[item["key"]];
+              let displayIcon = iconName ? iconName : "\u2714"; // Default to a checkmark icon if iconName doesn't exist
+              let iconClasses = "text-green-500";
+
+              // Check for specific words in amenity and change icon accordingly
+              if (
+                item["amenity"].toLowerCase().includes("no") ||
+                item["amenity"].toLowerCase().includes("doesn't") ||
+                item["amenity"].toLowerCase().includes("not")
+              ) {
+                displayIcon = "\u2716"; // Change to 'X' icon for negative descriptions
+                iconClasses = "text-red-500";
+              }
+
+              return (
+                <div key={i} className="flex">
+                  <span className={iconClasses}>{displayIcon}</span>
+                  <span className="ml-1">{item["amenity"]}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {is_english == "en" ? <div className="p-2">{description}</div> : <></>}
+
+        {!isFull ? (
+          <div className="flex justify-end items-end">
+            <Link rel="nofollow" className="text-red-500" href={listSlug}>
+              <div className="pt-2 items-end mr-3 h-10">see details</div>
+            </Link>
+          </div>
+        ) : (
+          <div className="flex justify-end items-end  border-t border-gray-300">
+            <div className="flex flex-col bg-red-600 text-white w-44 rounded-br">
               <a
                 rel="nofollow"
                 target="_blank"
@@ -187,192 +372,12 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
                 </div>
               </a>
             </div>
-          )}
-        </div>
-      </div>
-      <div className="lg:flex lg:justify-between border-b border-gray-300">
-        <div className="lg:flex lg:flex-col bg-red-200 w-full lg:w-[50%]">
-          <div className="flex">
-            <Image
-              src={listImage(featuredImagePath, generatedImagePath, slug)}
-              alt={`${title}: ${topicData.title}`}
-              style={{ width: "100%", height: "100%" }}
-              width={500}
-              height={200}
-              className="h-48 w-full rounded-sm object-cover"
-              blurDataURL={base_images_url("beams-with.png")}
-              placeholder="blur"
-              loading="lazy"
-            />
           </div>
-        </div>
-        <div className="lg:flex lg:flex-col w-full p-2 lg:w-[50%]">
-          {isFull ? (
-            <iframe
-              className="h-[100%] w-full"
-              src={post.gmap_link}
-              style={{ border: 0 }}
-              allowFullScreen={false}
-              loading="lazy"
-            ></iframe>
-          ) : (
-            <>
-              <Link href={listSlug}>
-                <h2 className="flex font-bold pb-2">{subTitle}</h2>{" "}
-              </Link>
-
-              <div className="flex">
-                {title} is the number {position} in the list of{" "}
-                {topicData.title}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div className="lg:flex lg:flex-grow lg:justify-between border-b border-gray-300">
-        <div className="flex flex-col lg:flex-grow w-full lg:w-[40%] lg:border-r border-gray-300 p-2">
-          {!isNull(post.phone) && (
-            <div className="flex items-center border-b border-gray-100 text-sm p-1">
-              <PhoneIcon className="h-4 w-4 mr-2" /> {phone}
-            </div>
-          )}
-          {!isNull(address) && (
-            <div className="flex items-center border-b border-gray-100 text-xs p-1">
-              <HomeIcon className="h-5 w-5 mr-2" /> {address}
-            </div>
-          )}
-          {!isNull(post.website) && (
-            <div className="flex items-center border-b border-gray-100 text-xs p-1">
-              <GlobeAltIcon className="h-5 w-5 mr-2" />{" "}
-              {extractDomain(post.website)}
-            </div>
-          )}
-
-          {!isNull(post.time_zone) && (
-            <div className="flex items-center border-b border-gray-100 text-xs p-1">
-              <ClockIcon className="h-5 w-5 mr-2" /> {post.time_zone}
-            </div>
-          )}
-        </div>
-
-        <div className="lg:flex lg:flex-grow lg:flex-col w-full lg:w-[60%]">
-          <div className="flex justify-between">
-            <div className="flex flex-col w-[50%] border-r p-2">
-              <div className="text-md">
-                <u>Core Services & Tags:</u>
-
-                {topicData && topicData.category && (
-                  <div className="flex items-center">
-                    <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                    <div className="text-sm">{topicData.category}</div>
-                  </div>
-                )}
-                {core_tags &&
-                  core_tags.map((c, index) => (
-                    <div className="flex items-center" key={index}>
-                      <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                      <div className="text-sm">{c}</div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col lg:flex-grow w-[50%]  p-2">
-              <div className="text-md justify-center items-center">
-                <u>Services Hours:</u>
-                {schedule && Array.isArray(schedule)
-                  ? schedule.map((entry, index) => (
-                      <div className="flex items-center" key={index}>
-                        <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                        <div className="text-[12px]" key={index}>
-                          <strong> {entry[0]}</strong>:
-                          {entry[3] &&
-                            entry[3].map((timing, timingIndex) => (
-                              <span className="pl-3" key={timingIndex}>
-                                {timing[0]}
-                              </span>
-                            ))}
-                        </div>
-                      </div>
-                    ))
-                  : Array.isArray(default_work_day) &&
-                    default_work_day.map((entry, index) => (
-                      <div className="flex items-center" key={index}>
-                        <div className="bg-red-500 w-1 h-1 mr-2 text-sm"></div>
-                        <div className="text-[12px]" key={index}>
-                          <strong> {entry[0]}</strong>:
-                          {entry[3] &&
-                            entry[3].map((timing, timingIndex) => (
-                              <span className="pl-3" key={timingIndex}>
-                                {timing[0]}
-                              </span>
-                            ))}
-                        </div>
-                      </div>
-                    ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {isFull && (
-        <div className="grid grid-cols-2 gap-4 m-5">
-          {amenities.map((item, i) => {
-            const iconName = amenityIcons[item["key"]];
-            let displayIcon = iconName ? iconName : "\u2714"; // Default to a checkmark icon if iconName doesn't exist
-            let iconClasses = "text-green-500";
-
-            // Check for specific words in amenity and change icon accordingly
-            if (
-              item["amenity"].toLowerCase().includes("no") ||
-              item["amenity"].toLowerCase().includes("doesn't") ||
-              item["amenity"].toLowerCase().includes("not")
-            ) {
-              displayIcon = "\u2716"; // Change to 'X' icon for negative descriptions
-              iconClasses = "text-red-500";
-            }
-
-            return (
-              <div key={i} className="flex">
-                <span className={iconClasses}>{displayIcon}</span>
-                <span className="ml-1">{item["amenity"]}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {is_english == "en" ? <div className="p-2">{description}</div> : <></>}
-
-      {!isFull ? (
-        <div className="flex justify-end items-end">
-          <Link rel="nofollow" className="text-red-500" href={listSlug}>
-            <div className="pt-2 items-end mr-3 h-10">see details</div>
-          </Link>
-        </div>
-      ) : (
-        <div className="flex justify-end items-end  border-t border-gray-300">
-          <div className="flex flex-col bg-red-600 text-white w-44 rounded-br">
-            <a
-              rel="nofollow"
-              target="_blank"
-              href={`${PPC}?url=${
-                website ? website : base_url(`${topicData.slug}/${slug}`)
-              }&utm_campaign=${topicData.slug}`}
-            >
-              <div className="flex items-center justify-between h-12 p-1">
-                <div className="flex items-center">
-                  <span className="mr-0">visit website</span>
-                </div>
-                <div className="flex items-center">
-                  <GlobeAltIcon className="h-5 w-5" />
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
-      )}
-    </article>
-  );
+        )}
+      </article>
+    );
+  } catch (e) {
+    console.error(e);
+    return <div>loading..</div>;
+  }
 }
