@@ -22,21 +22,25 @@ export default async function sitemap({
 }: {
   id: any;
 }): Promise<MetadataRoute.Sitemap> {
-  const numeric_id = extractNumber(id);
   let result: any = [];
-
-  if (isNull(numeric_id)) {
-    const result: any = index_sitemap();
+  try {
+    const numeric_id = extractNumber(id);
+    if (isNull(numeric_id)) {
+      result = index_sitemap();
+      return result;
+    } else if (check_type(id) == "topics") {
+      const get_constants = constant_sitemap("topics_0");
+      result = [...get_constants, ...(await topics_for_sitemap(numeric_id))];
+    } else if (check_type(id) == "lists") {
+      const get_constants = constant_sitemap("lists_0");
+      result = [...get_constants, ...(await lists_for_sitemap(numeric_id))];
+    }
     return result;
-  } else if (check_type(id) == "topics") {
-    const get_constants = constant_sitemap("topics_0");
-    result = [...get_constants, ...(await topics_for_sitemap(numeric_id))];
-  } else if (check_type(id) == "lists") {
-    const get_constants = constant_sitemap("lists_0");
-    result = [...get_constants, ...(await lists_for_sitemap(numeric_id))];
+  } catch (e) {
+    console.error(e);
+    result = index_sitemap();
+    return result;
   }
-
-  return result;
 }
 
 function construct_sitemap_page(current) {

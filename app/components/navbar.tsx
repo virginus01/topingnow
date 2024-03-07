@@ -22,13 +22,13 @@ export const Navbar = () => {
 
   const navigation = [
     { name: "Home", href: "/", current: false },
-    { name: "About Us", href: "/", current: false },
+    { name: "About Us", href: "/#", current: false },
     {
       name: "Contact Us",
       href: CONTACT_US,
       current: false,
     },
-    { name: "Policy", href: "/", current: false },
+    { name: "Policy", href: "/#", current: false },
     { name: "Login", href: "/auth/login", current: false },
   ];
 
