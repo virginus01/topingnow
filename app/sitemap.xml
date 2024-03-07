@@ -11,7 +11,7 @@
        <priority>0.8</priority>
      </url>
      <url>
-       <loc>https://topingnow.com/sitemap/topics/sitemap.xml</loc>
+       <loc>https://topingnow.com/sitemap/lists/sitemap.xml</loc>
        <changefreq>monthly</changefreq>
        <priority>0.5</priority>
      </url>

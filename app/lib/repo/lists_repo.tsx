@@ -201,7 +201,7 @@ export async function lists_for_sitemap(id: any) {
     for (let i = 0; i < posts.data.metadata.numPages; i++) {
       sml.push({
         url: construct_sitemap("lists", parseInt(`${i + 1}`)),
-        changefreq: "weekly",
+        changeFrequency: "monthly",
       });
     }
     return [...sml];
