@@ -194,17 +194,16 @@ export async function getPopularLists(_id, page, perPage) {
 
 export async function lists_for_sitemap(id: any) {
   let posts: any = [];
+  const sml: any = [];
 
   if (id == 0) {
     posts = await getLists("", 1, SITEMAP_PER_PAGE);
-    const sml: any = [];
     for (let i = 0; i < posts.data.metadata.numPages; i++) {
       sml.push({
-        url: construct_sitemap(`lists_${i + 1}`),
+        url: construct_sitemap("lists", parseInt(`${i + 1}`)),
         changefreq: "weekly",
       });
     }
-
     return [...sml];
   }
 
@@ -230,7 +229,7 @@ export async function lists_for_sitemap(id: any) {
 
     return {
       url: `${slug}`,
-      changefreq: "weekly",
+      changefreq: "monthly",
     };
   });
 

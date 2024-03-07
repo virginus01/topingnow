@@ -25,7 +25,7 @@ export async function ConstructMetadata(result, data = {}) {
         "en-US": "/en-US",
       },
       types: {
-        "application/rss+xml": construct_sitemap("index"),
+        "application/rss+xml": base_url("sitemap.xml"),
       },
     },
 
@@ -46,7 +46,7 @@ export async function ConstructMetadata(result, data = {}) {
         "max-snippet": -1,
       },
     },
-    sitemap: construct_sitemap("index"),
+    sitemap: base_url("sitemap.xml"),
     verification: {
       google: "",
     },

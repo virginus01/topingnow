@@ -396,16 +396,16 @@ export async function processInner(temp, type) {
   return temp;
 }
 
-export function construct_sitemap(slug) {
+export function construct_sitemap(type, id = 1) {
   const isProduction = process.env.NODE_ENV === "production";
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   let link = "";
 
   if (isProduction) {
-    link = `${BASE_URL}/sitemap/sitemap/${slug}.xml`;
+    link = `${BASE_URL}/sitemap/${type}/all/sitemap/${id}.xml`;
   } else {
-    link = `${BASE_URL}/sitemap/sitemap.xml/${slug}`;
+    link = `${BASE_URL}/sitemap/${type}/all/sitemap.xml/${id}`;
   }
 
   return link;

@@ -205,8 +205,8 @@ export async function topics_for_sitemap(id: any) {
     const sml: any = [];
     for (let i = 0; i < posts.data.metadata.numPages; i++) {
       sml.push({
-        url: construct_sitemap(`topics_${i + 1}`),
-        changefreq: "weekly",
+        url: construct_sitemap("topics", parseInt(`${i + 1}`)),
+        changeFrequency: "weekly",
       });
     }
 
