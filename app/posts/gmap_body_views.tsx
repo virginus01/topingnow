@@ -126,7 +126,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
     ];
 
     return (
-      <article className="relative bg-white w-full shadow-xl ring-1 ring-gray-900/5 mb-10 rounded">
+      <article className="relative bg-white w-full shadow-xl ring-1 ring-gray-900/5 text-gray-900 mb-10 rounded">
         <div
           className={`${extraClass} bg-gray-100 text-black border-b border-gray-300`}
         >
