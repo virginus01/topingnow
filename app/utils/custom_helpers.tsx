@@ -397,18 +397,15 @@ export async function processInner(temp, type) {
 }
 
 export function construct_sitemap(slug) {
-  let isDev = true;
-
-  if (process.env.NODE_ENV == "production") {
-    isDev = false;
-  }
+  const isProduction = process.env.NODE_ENV === "production";
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   let link = "";
-  if (isDev) {
-    link = `${BASE_URL}/sitemap.xml/${slug}`;
+
+  if (isProduction) {
+    link = `${BASE_URL}/sitemap/sitemap/${slug}.xml`;
   } else {
-    link = `${BASE_URL}/sitemap/${slug}.xml`;
+    link = `${BASE_URL}/sitemap/sitemap.xml/${slug}`;
   }
 
   return link;

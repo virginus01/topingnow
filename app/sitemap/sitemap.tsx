@@ -1,11 +1,13 @@
 import { MetadataRoute, NextApiRequest, NextApiResponse } from "next";
-import { topics_for_sitemap } from "./lib/repo/topics_repo";
+import { topics_for_sitemap } from "@/app/lib/repo/topics_repo";
 import {
   construct_sitemap,
   extractNumber,
   isNull,
-} from "./utils/custom_helpers";
-import { lists_for_sitemap } from "./lib/repo/lists_repo";
+} from "@/app/utils/custom_helpers";
+import { lists_for_sitemap } from "@/app/lib/repo/lists_repo";
+
+export const revalidate = parseInt(String("600"), 10);
 
 export async function generateSitemaps(
   req: NextApiRequest,
@@ -21,24 +23,43 @@ export default async function sitemap({
   id: any;
 }): Promise<MetadataRoute.Sitemap> {
   const numeric_id = extractNumber(id);
-  const result: any = [];
+  let result: any = [];
 
   if (isNull(numeric_id)) {
     const result: any = index_sitemap();
     return result;
-  }
-
-  if (check_type(id) == "topics") {
+  } else if (check_type(id) == "topics") {
     const get_constants = constant_sitemap("topics_0");
-    return [...get_constants, ...(await topics_for_sitemap(numeric_id))];
-  }
-
-  if (check_type(id) == "lists") {
+    result = [...get_constants, ...(await topics_for_sitemap(numeric_id))];
+  } else if (check_type(id) == "lists") {
     const get_constants = constant_sitemap("lists_0");
-    return [...get_constants, ...(await lists_for_sitemap(numeric_id))];
+    result = [...get_constants, ...(await lists_for_sitemap(numeric_id))];
   }
 
   return result;
+}
+
+function construct_sitemap_page(current) {
+  return `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+ <url>
+   <loc>https://acme.com</loc>
+   <lastmod>2023-04-06T15:02:24.021Z</lastmod>
+   <changefreq>yearly</changefreq>
+   <priority>1</priority>
+ </url>
+ <url>
+   <loc>https://acme.com/about</loc>
+   <lastmod>2023-04-06T15:02:24.021Z</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.8</priority>
+ </url>
+ <url>
+   <loc>https://acme.com/blog</loc>
+   <lastmod>2023-04-06T15:02:24.021Z</lastmod>
+   <changefreq>weekly</changefreq>
+   <priority>0.5</priority>
+ </url>
+</urlset>`;
 }
 
 function constant_sitemap(current) {

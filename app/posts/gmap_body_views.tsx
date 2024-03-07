@@ -348,8 +348,10 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
 
         {!isFull ? (
           <div className="flex justify-end items-end">
-            <Link rel="nofollow" className="text-red-500" href={listSlug}>
-              <div className="pt-2 items-end mr-3 h-10">see details</div>
+            <Link rel="nofollow" className="text-red-600" href={listSlug}>
+              <div className="pt-2 items-end mr-3 h-10 text-sm">
+                see details
+              </div>
             </Link>
           </div>
         ) : (
