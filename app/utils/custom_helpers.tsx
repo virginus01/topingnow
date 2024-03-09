@@ -228,11 +228,15 @@ export function getViewUrl(slug, type = "") {
   return `${process.env.NEXT_PUBLIC_BASE_URL}${path}`;
 }
 export function stripHtmlTags(html) {
-  if (typeof html !== "string") {
-    throw new Error("Expected a string");
-  }
+  if (html) {
+    if (typeof html !== "string") {
+      throw new Error("Expected a string");
+    }
 
-  return html.replace(/<[^>]*>?/gm, "");
+    return html.replace(/<[^>]*>?/gm, "");
+  } else {
+    return html;
+  }
 }
 
 export function countWords(textContent) {
@@ -423,11 +427,15 @@ export function extractNumber(str) {
 
 export function removeNonEnglishCharacters(slug) {
   // Remove any characters that are not in the English alphabet, digits, or hyphen
-  const cleanedSlug = slug
-    .replace(/[^a-zA-Z0-9-]/g, "")
-    .split("-")
-    .join(" ");
-  return unidecode(cleanedSlug);
+  if (!isNull(slug)) {
+    const cleanedSlug = slug
+      .replace(/[^a-zA-Z0-9-]/g, "")
+      .split("-")
+      .join(" ");
+    return unidecode(cleanedSlug);
+  } else {
+    return slug;
+  }
 }
 
 export function generateBreadcrumb(data: any) {

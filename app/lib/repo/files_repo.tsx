@@ -1,7 +1,15 @@
 import { s3Client } from "@/app/utils/aws";
 import { isNull } from "@/app/utils/custom_helpers";
-import { NEXT_PUBLIC_GET_FILES, NEXT_PUBLIC_POST_FILES } from "@/constants";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
+import {
+  NEXT_PUBLIC_GET_FILES,
+  NEXT_PUBLIC_POST_FILES,
+  NEXT_PUBLIC_S3_UPLOADER,
+} from "@/constants";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import https from "https";
+import http from "http";
+import { customSlugify } from "@/app/utils/custom_slugify";
+import axios from "axios";
 
 export async function postFiles(tData: any) {
   try {
@@ -19,12 +27,53 @@ export async function postFiles(tData: any) {
     if (result.status === 200) {
       return await result.json();
     } else {
-      return { error: "Failed to fetch topic" };
+      return { error: "Failed to fetch topic", success: false };
     }
   } catch (error) {
     console.log(error);
-    return { error: "An error occurred while posting topics" };
+    return { error: "An error occurred while posting topics", success: false };
   }
+}
+
+export async function uploadToS3FromUrl(imageUrl: string, path: string) {
+  try {
+    const imageResponse = await axios.get(imageUrl, { responseType: "stream" });
+
+    // Prepare image data
+    const imageStream = imageResponse.data;
+    const file = await streamToBuffer(imageStream);
+
+    const fileName = await uploadFileToS3(file, path, "image/png");
+
+    return fileName;
+  } catch (error) {
+    console.error(error);
+    return imageUrl;
+  }
+}
+
+async function uploadFileToS3(file, path, type) {
+  const fileBuffer = file;
+  const params = {
+    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET,
+    Key: path,
+    Body: fileBuffer,
+    ContentType: type,
+  };
+
+  const command = new PutObjectCommand(params);
+  await s3Client.send(command);
+  return path;
+}
+
+// Helper function to convert stream to buffer
+async function streamToBuffer(stream) {
+  return new Promise((resolve, reject) => {
+    const chunks: any = [];
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("error", (error) => reject(error));
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+  });
 }
 
 export const getS3Url = (path: any) => {

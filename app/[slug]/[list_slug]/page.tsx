@@ -15,6 +15,7 @@ import { Metadata } from "next";
 import { ConstructMetadata } from "@/app/seo/metadata";
 import { schema } from "@/app/layout";
 import { buildSchema } from "../../seo/schema";
+import { listImage } from "@/app/utils/list_image";
 
 export const revalidate = parseInt(
   String(process.env.NEXT_PUBLIC_RE_VALIDATE),
@@ -72,6 +73,14 @@ export default async function ListView({
       ]),
       result
     );
+
+    const lImage = await listImage(
+      data.featuredImagePath,
+      data.generatedImagePath,
+      data.slug
+    );
+
+    data.processedImage = lImage;
 
     return (
       <main>

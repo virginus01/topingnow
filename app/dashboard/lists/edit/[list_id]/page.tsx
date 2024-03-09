@@ -80,7 +80,7 @@ export default function EditList({ params }: { params: { list_id: string } }) {
       title: title ? title : data.title,
       metaTitle: metaTitle ? metaTitle : data.metaTitle,
       metaDescription,
-      rankingScore,
+      rankingScore: parseInt(rankingScore),
       ratingScore,
       views,
       slug: slug ? slug : data.slug,

@@ -216,8 +216,8 @@ export async function updateList(formData: any) {
 
   try {
     return await updateAList(updateData._id, uData);
-  } catch {
-    console.error("error 746464");
+  } catch (e) {
+    console.error(`error 746464 ${e}`);
     return { success: false };
   }
 }

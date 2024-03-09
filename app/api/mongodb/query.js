@@ -1272,17 +1272,23 @@ export async function updateAQandA(id, data) {
 
 export async function updateAList(id, data) {
 
-    const _id = new ObjectId(String(id));
     try {
+
+        let objId = "";
+
+        if (isValidObjectId(id)) {
+            objId = new ObjectId(String(id))
+        }
+
         const db = await connectDB();
         const result = await db.collection("lists").updateOne(
-            { $or: [{ _id: _id }, { slug: data.slug }] },
+            { $or: [{ _id: objId }, { slug: id }] },
             { $set: data }
         );
-        return { success: true, data: result };
+        return { success: true, data: result, msg: "success" };
     } catch (error) {
         console.error(error)
-        return { success: false }
+        return { success: false, msg: "error" }
     }
 }
 

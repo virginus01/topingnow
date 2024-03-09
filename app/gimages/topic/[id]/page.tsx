@@ -127,12 +127,12 @@ export default async function TopicImage({
               return (
                 <div className="flex flex-col" key={i}>
                   <div
-                    className={`m-2 rounded p-2 flex text-black font-bold items-end w-[${w}px] overflow-hidden`}
+                    className={`m-2 rounded p-2 flex text-black font-bold items-end w-20 overflow-hidden`}
                   >
                     <div className="overflow-hidden flex text-sm">{rate}%</div>
                   </div>
                   <div
-                    className={`${height} bg-blue-600 m-2 rounded p-2 shadow-xl  flex text-white font-bold items-end w-[${w}px] overflow-hidden`}
+                    className={`${height} bg-blue-600 m-2 rounded p-2 shadow-xl  flex text-white font-bold items-end w-20 overflow-hidden`}
                   >
                     <div className="overflow-hidden flex text-sm">
                       {post.title}

@@ -195,7 +195,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
           <div className="lg:flex lg:flex-col bg-red-200 w-full lg:w-[50%]">
             <div className="flex">
               <Image
-                src={listImage(featuredImagePath, generatedImagePath, slug)}
+                src={post.processedImage}
                 alt={`${title}: ${topicData.title}`}
                 style={{ width: "100%", height: "100%" }}
                 width={500}

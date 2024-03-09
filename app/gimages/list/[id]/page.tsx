@@ -1,6 +1,11 @@
 import { getListById } from "@/app/lib/repo/lists_repo";
 import { getTopic } from "@/app/lib/repo/topics_repo";
-import { isNull } from "@/app/utils/custom_helpers";
+import {
+  base_images_url,
+  checkImageValidity,
+  isNull,
+} from "@/app/utils/custom_helpers";
+import Image from "next/image";
 
 export default async function TopicImage({
   params,
@@ -32,6 +37,26 @@ export default async function TopicImage({
     data = result;
   }
 
+  let listImages: any[] = [];
+  const ex_check = await checkImageValidity(listData.external_image);
+  if (!isNull(listData.external_image) && ex_check.success != false) {
+    listImages.push(listData.external_image);
+  }
+
+  if (!isNull(listData.all_images)) {
+    const jsonData = "[" + listData.all_images.slice(1, -1) + "]";
+    const urlsArray = JSON.parse(jsonData);
+
+    let list_n = 0;
+    for (let i = 0; i < urlsArray.length; i++) {
+      const ex_check = await checkImageValidity(urlsArray[i]);
+      if (ex_check.success != false && list_n <= 6) {
+        listImages.push(urlsArray[i]);
+        list_n++;
+      }
+    }
+  }
+
   let lists: any = [];
   let listIndex = "1";
 
@@ -45,10 +70,10 @@ export default async function TopicImage({
   }
 
   const heights = [
-    "h-96",
+    /* "h-96",
     "h-80",
     "h-72",
-    "h-64",
+    "h-64",*/
     "h-60",
     "h-56",
     "h-52",
@@ -81,6 +106,7 @@ export default async function TopicImage({
 
   return (
     <div
+      className="border-4 border-red-700"
       style={{
         height: "100vh", // Use 100vh for full viewport height
         display: "flex",
@@ -104,19 +130,15 @@ export default async function TopicImage({
         }}
       ></div>
 
-      <div className="flex h-screen flex-col">
+      <div className="flex min-h-[calc(100vh-2rem)] flex-col">
         <div className="flex justify-center text-center font-extrabold text-6xl text-blue-900 m-5">
-          {listData.title}
+          {listData.title} - topingnow.com
         </div>
         <div className="flex border-t-4 border-red-500"></div>
 
         <div className="flex justify-center text-center items-center font-extrabold text-3xl text-blue-900 m-1">
-          <span className="text-red-900">
-            {listData.title} {", "}
-          </span>
-
           <span className="text-green-900">
-            is No. {listData.topicData.position} in the list:{" "}
+            {listData.title} is Number {listData.position} in{" "}
             {listData.topicData.title}
           </span>
         </div>
@@ -126,42 +148,45 @@ export default async function TopicImage({
             alt={""}
             width={60}
             height={60}
-            className=" rounded-sm object-cover"
+            className="rounded-sm object-cover"
           />
         </div>
+        {listData.position == 1 ? (
+          <div className="flex justify-center items-center m-10  border-3 border-green-600">
+            <div className="bg-transparent text-white rounded-full w-20 h-20 flex items-center justify-center">
+              <img
+                src={base_images_url("top_1.png")}
+                alt=""
+                width={150}
+                height={150}
+                tw="flex rounded-sm"
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center m-20">
+            <div className="bg-red-800 text-white rounded-full w-20 h-20 flex items-center justify-center">
+              <span className="text-center font-extrabold text-2xl">
+                TOP {listData.position}
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-end flex-grow">
-          {lists.map((post, i) => {
-            const height = heights[i];
-            let rate = height.replace("h-", "");
-            if (rate === "96") {
-              rate = "100";
-            }
-
-            let color = "bg-blue-300";
-
-            let d = 300 / lists.length;
-            if (listData && listData.title && listData.title === post.title) {
-              color = "bg-red-600";
-              d = 800 / lists.length;
-            }
-
-            let w = heights.length - lists.length + d;
-
-            if (heights.length > i) {
+          {listImages.map((post, i) => {
+            const length = lists.length + "0";
+            if (i <= 20) {
               return (
-                <div className="flex flex-col" key={i}>
-                  <div
-                    className={`m-2 rounded p-2 flex text-black font-bold items-end w-[${w}px] overflow-hidden`}
-                  >
-                    <div className="overflow-hidden flex text-sm">{rate}%</div>
-                  </div>
-                  <div
-                    className={`${height} ${color} m-2 rounded p-2 shadow-xl  flex text-white font-bold items-end w-[${w}px] overflow-hidden`}
-                  >
-                    <div className="overflow-hidden flex text-sm">
-                      {post.title}
-                    </div>
-                  </div>
+                <div
+                  key={i}
+                  className={`relative h-60 w-${2000 / listImages.length}`}
+                >
+                  <img
+                    className="object-cover w-full h-full"
+                    src={post}
+                    alt=""
+                  />
                 </div>
               );
             } else {
