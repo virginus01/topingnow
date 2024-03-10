@@ -2,6 +2,7 @@ import { LIST_IMAGE } from "@/constants";
 import { base_url, checkImageValidity } from "../utils/custom_helpers";
 import usePagination from "../utils/pagination";
 import GmapBodyView from "./gmap_body_views";
+import { listImage } from "../utils/list_image";
 
 export default function Lists({ topicData }) {
   let perPage = 10;
@@ -47,6 +48,8 @@ export default function Lists({ topicData }) {
               post.external_image = result;
             })
           );
+
+          post.processedImage = listImage(post);
 
           return (
             <li key={index} id={post.slug}>

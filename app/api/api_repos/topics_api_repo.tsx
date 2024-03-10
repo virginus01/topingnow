@@ -45,9 +45,7 @@ export async function postTopics(formData: any) {
         postData = check.gData;
       }
     } else if (postData.length === 1) {
-      const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${customSlugify(
-        postData[0].slug
-      )}`;
+      const url = `${NEXT_PUBLIC_GET_TOPIC}?topicId=${postData[0].slug}`;
       const check = await checkSinglePost(postData, url, update);
       if (check.success == false) {
         return check;
@@ -84,6 +82,8 @@ export async function postTopics(formData: any) {
         ratingScore: post.ratingScore,
         views: post.views,
         selectedImage: post.selectedImage,
+        generatedImagePath: post.generatedImagePath,
+        newly_updated: post.newly_updated,
       };
 
       const url = await preFetch(`${NEXT_PUBLIC_GET_TOPIC}?topicId=${id}`);
@@ -107,6 +107,7 @@ export async function postTopics(formData: any) {
           response;
           tData.isUpdated = true;
           tData.msg = "success";
+
           updatedData.push(tData);
         } else {
           tData.isUpdated = false;
@@ -165,7 +166,7 @@ export async function postTopics(formData: any) {
 
     return res;
   } catch (e) {
-    console.error(`Topics Post: ${e}`);
+    console.error(`Topics Post: ${e.stack || e}`);
     return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
   }
 }

@@ -94,7 +94,7 @@ export default function FromTopic({
       slug: slug ? slug : data.slug,
       description,
       featuredImagePath,
-      topId: selectedParent._id,
+      topId: String(selectedParent._id),
     };
 
     const submitData = {

@@ -425,15 +425,19 @@ export function extractNumber(str) {
 
 // utils/slugUtils.js
 
-export function removeNonEnglishCharacters(slug) {
-  // Remove any characters that are not in the English alphabet, digits, or hyphen
-  if (!isNull(slug)) {
-    const cleanedSlug = slug
-      .replace(/[^a-zA-Z0-9-]/g, "")
-      .split("-")
-      .join(" ");
-    return unidecode(cleanedSlug);
-  } else {
+export function removeNonEnglishCharacters(slug: any) {
+  try {
+    if (!isNull(slug)) {
+      const cleanedSlug = slug
+        .replace(/[^a-zA-Z0-9-]/g, "")
+        .split("-")
+        .join(" ");
+      return unidecode(cleanedSlug);
+    } else {
+      return slug;
+    }
+  } catch (e) {
+    console.error(e);
     return slug;
   }
 }

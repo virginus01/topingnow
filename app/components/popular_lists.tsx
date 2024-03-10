@@ -12,10 +12,6 @@ export default async function PopularLists({ _id, showNumber = false }) {
 
   let data = await getPopularLists(_id, page, perPage);
 
-  if (data.result.length === 0) {
-    data.result = Shimmer(5);
-  }
-
   return (
     <div className="relative flex sm:py-7">
       <div className="relative px-1 pb-2 pt-2 sm:mx-auto w-full sm:px-2">
@@ -26,19 +22,23 @@ export default async function PopularLists({ _id, showNumber = false }) {
           <div className="group relative pt-2 space-y-2 py-2 px-2 text-base text-gray-600">
             <div className="line-clamp-1 text-sm leading-6 text-gray-600">
               <ul className="ml-1 inline-block w-[500px]">
-                {data.result.map((post) => {
-                  const modifiedPost = {
-                    ...post,
-                    slug: `${post.postSlug}`,
-                  };
-                  return (
-                    <PostListItem
-                      data={modifiedPost}
-                      key={post._id}
-                      showNumber={showNumber}
-                    />
-                  );
-                })}
+                {data && data.result ? (
+                  data.result.map((post) => {
+                    const modifiedPost = {
+                      ...post,
+                      slug: `${post.postSlug}`,
+                    };
+                    return (
+                      <PostListItem
+                        data={modifiedPost}
+                        key={post._id}
+                        showNumber={showNumber}
+                      />
+                    );
+                  })
+                ) : (
+                  <div>no other list</div>
+                )}
               </ul>
             </div>
           </div>

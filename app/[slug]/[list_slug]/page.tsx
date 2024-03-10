@@ -74,13 +74,7 @@ export default async function ListView({
       result
     );
 
-    const lImage = await listImage(
-      data.featuredImagePath,
-      data.generatedImagePath,
-      data.slug
-    );
-
-    data.processedImage = lImage;
+    data.processedImage = await listImage(data);
 
     return (
       <main>

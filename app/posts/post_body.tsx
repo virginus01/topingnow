@@ -21,12 +21,7 @@ export default function PostBody({ post }) {
     <div className={` bg-white px-2 py-2 my-5 rounded-sm`}>
       <Image
         className="w-full rounded-sm object-cover"
-        src={topicImage(
-          featuredImagePath,
-          generatedImagePath,
-          external_image,
-          slug
-        )}
+        src={topicImage(post)}
         alt={title}
         style={{ width: "100%" }}
         width={1920}

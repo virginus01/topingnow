@@ -178,23 +178,39 @@ export async function metaTags(metadata, data) {
 }
 
 export async function topicMetaTags(data) {
-  if (isNull(data)) return data;
-  let list_desc = "";
+  try {
+    if (isNull(data)) return data;
 
-  if (data.lists && data.lists.result[0] && data.lists.result[0].description) {
-    list_desc = data.lists.result[0].description;
+    let list_desc = "";
+    if (
+      data.lists &&
+      data.lists.result &&
+      data.lists.result[0] &&
+      data.lists.result[0].description
+    ) {
+      list_desc = data.lists.result[0].description;
+    }
+
+    const length = stripHtmlTags(data.description + " " + list_desc);
+
+    // Set canonical URL
+    data.canonical = base_url(data.slug);
+
+    // Set robots meta tags
+    data.robots = {
+      index:
+        (!isNull(length) &&
+          countWords(length) >= 300 &&
+          data.lists.result.length >= 1) ||
+        data.lists.result.length >= 1,
+      follow: true,
+    };
+
+    return data;
+  } catch (error) {
+    console.error("An error occurred while processing topic meta tags:", error);
+    return data;
   }
-  const length = stripHtmlTags(data.description + " " + list_desc);
-  data.canonical = base_url(data.slug);
-  data.robots = {
-    index:
-      (countWords(length) >= 300 && data.lists.result.length >= 1) ||
-      data.lists.result.length >= 1
-        ? true
-        : false,
-    follow: true,
-  };
-  return data;
 }
 
 export async function topics_for_sitemap(id: any) {

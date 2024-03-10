@@ -18,6 +18,15 @@ import {
 import { getS3Url } from "../lib/repo/files_repo";
 import { LIST_IMAGE, PPC } from "@/constants";
 import { listImage } from "../utils/list_image";
+import dynamic from "next/dynamic";
+
+const LazyIframe = dynamic(() => import("./iframe"), {
+  loading: () => <p>Loading...</p>,
+});
+
+const LazyImage = dynamic(() => import("./lazy_image"), {
+  loading: () => <p>Loading...</p>,
+});
 
 const amenityIcons = {
   Lunch: "\u{1F372}",
@@ -194,28 +203,12 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
         <div className="lg:flex lg:justify-between border-b border-gray-300">
           <div className="lg:flex lg:flex-col bg-red-200 w-full lg:w-[50%]">
             <div className="flex">
-              <Image
-                src={post.processedImage}
-                alt={`${title}: ${topicData.title}`}
-                style={{ width: "100%", height: "100%" }}
-                width={500}
-                height={200}
-                className="h-48 w-full rounded-sm object-cover"
-                blurDataURL={base_images_url("beams-with.png")}
-                placeholder="blur"
-                loading="lazy"
-              />
+              <LazyImage post={post} topicData={topicData} title={title} />
             </div>
           </div>
           <div className="lg:flex lg:flex-col w-full p-2 lg:w-[50%]">
             {isFull ? (
-              <iframe
-                className="h-[100%] w-full"
-                src={post.gmap_link}
-                style={{ border: 0 }}
-                allowFullScreen={false}
-                loading="lazy"
-              ></iframe>
+              <LazyIframe post={post} />
             ) : (
               <>
                 <Link href={listSlug}>

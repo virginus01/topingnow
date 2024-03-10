@@ -107,6 +107,7 @@ export async function postListsApi(formData: any) {
         lang_short: post.lang_short,
         address: post.address,
         gmap_link: post.gmap_link,
+        generatedImagePath: post.generatedImagePath,
       };
 
       const url = await preFetch(`${NEXT_PUBLIC_GET_LIST}?listId=${id}`);

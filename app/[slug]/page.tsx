@@ -15,6 +15,7 @@ import { Metadata } from "next";
 import { ConstructMetadata } from "../seo/metadata";
 import { buildSchema } from "../seo/schema";
 import { schema } from "../layout";
+import Revalidate from "../posts/refresh";
 
 export const revalidate = parseInt(
   String(process.env.NEXT_PUBLIC_RE_VALIDATE),
@@ -73,6 +74,9 @@ export default async function Post({ params }: { params: { slug: string } }) {
                 className={`mb-5 bg-white shadow-xl ring-1 ring-gray-900/5 rounded`}
               >
                 <PostBody post={data} />
+                <div>
+                  <Revalidate tag={data._id} url={base_url(data.slug)} />
+                </div>
               </article>
               <Lists topicData={data} />
             </section>
