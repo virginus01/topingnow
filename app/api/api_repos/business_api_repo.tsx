@@ -160,13 +160,25 @@ export async function postBusinessApi(formData: any) {
       }
     } catch (e) {
       console.error("Error:", e);
-      return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+      return {
+        success: false,
+        ids: [],
+        msg: `${e}`,
+        data: "",
+        dataBody: "",
+      };
     }
 
     return res;
   } catch (e) {
     console.error(e);
-    return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+    return {
+      success: false,
+      ids: [],
+      msg: `${e}`,
+      data: "",
+      dataBody: "",
+    };
   }
 }
 

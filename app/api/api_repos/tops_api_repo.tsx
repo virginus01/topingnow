@@ -106,13 +106,25 @@ export async function postTops(formData: any) {
       await Promise.all(promises);
       res = await PostData(data, updatedData, () => addTops(data), isImport);
     } catch (e) {
-      console.error("Error:", e);
-      return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+      console.error("top Error:", e);
+      return {
+        success: false,
+        ids: [],
+        msg: `${e}`,
+        data: "",
+        dataBody: "",
+      };
     }
 
     return res;
   } catch (e) {
     console.log(e);
-    return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+    return {
+      success: false,
+      ids: [],
+      msg: `${e}`,
+      data: "",
+      dataBody: "",
+    };
   }
 }

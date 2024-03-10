@@ -6,6 +6,7 @@ import {
   base_images_url,
   base_url,
   generateBreadcrumb,
+  get_list_url,
   isNull,
 } from "@/app/utils/custom_helpers";
 import QandAs from "@/app/posts/qandas";
@@ -16,6 +17,7 @@ import { ConstructMetadata } from "@/app/seo/metadata";
 import { schema } from "@/app/layout";
 import { buildSchema } from "../../seo/schema";
 import { listImage } from "@/app/utils/list_image";
+import Revalidate from "@/app/posts/refresh";
 
 export const revalidate = parseInt(
   String(process.env.NEXT_PUBLIC_RE_VALIDATE),
@@ -85,6 +87,9 @@ export default async function ListView({
             </h1>
 
             <ListBody post={data} reviews={reviews} />
+            <div className="flex justify-end items-end m-2 p-2">
+              <Revalidate tag={data._id} url={get_list_url(data)} />
+            </div>
             <QandAs listData={data} />
           </div>
 

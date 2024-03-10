@@ -1,6 +1,11 @@
 import { getS3Url, uploadToS3FromUrl } from "../lib/repo/files_repo";
 import { UpdateList, postLists } from "../lib/repo/lists_repo";
-import { base_url, isNull } from "./custom_helpers";
+import {
+  base_images_url,
+  base_url,
+  checkImageValidity,
+  isNull,
+} from "./custom_helpers";
 
 export function listImage(data: any): string {
   const featuredImagePath = data.featuredImagePath;
@@ -16,7 +21,8 @@ export function listImage(data: any): string {
 
     try {
       sProcessImage(imageUrl, slug, data._id);
-      return imageUrl;
+      fetch(base_url(`/api/actions?tag=${data._id}`));
+      return base_images_url("placeholder.png");
     } catch (e) {
       console.error("Error uploading image to S3:", e);
       return imageUrl;
@@ -25,13 +31,21 @@ export function listImage(data: any): string {
 }
 
 async function sProcessImage(imageUrl, slug, id) {
-  const uploadedUrl = await uploadToS3FromUrl(imageUrl, `gimages/list/${slug}`);
+  const check: any = await checkImageValidity(imageUrl);
+  if (check.success !== false) {
+    const uploadedUrl = await uploadToS3FromUrl(
+      imageUrl,
+      `gimages/list/${slug}`
+    );
 
-  const submitData = {
-    _id: id,
-    slug: slug,
-    newly_updated: "no",
-    generatedImagePath: uploadedUrl,
-  };
-  await UpdateList(submitData);
+    if (uploadedUrl.success) {
+      const submitData = {
+        _id: id,
+        slug: slug,
+        newly_updated: "no",
+        generatedImagePath: uploadedUrl.path,
+      };
+      await UpdateList(submitData);
+    }
+  }
 }

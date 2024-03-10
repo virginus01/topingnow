@@ -45,10 +45,10 @@ export async function uploadToS3FromUrl(imageUrl: string, path: string) {
 
     const fileName = await uploadFileToS3(file, path, "image/png");
 
-    return fileName;
+    return { success: true, path: fileName };
   } catch (error) {
     console.error(error);
-    return imageUrl;
+    return { success: false, path: imageUrl };
   }
 }
 
@@ -68,12 +68,16 @@ async function uploadFileToS3(file, path, type) {
 
 // Helper function to convert stream to buffer
 async function streamToBuffer(stream) {
-  return new Promise((resolve, reject) => {
-    const chunks: any = [];
-    stream.on("data", (chunk) => chunks.push(chunk));
-    stream.on("error", (error) => reject(error));
-    stream.on("end", () => resolve(Buffer.concat(chunks)));
-  });
+  try {
+    return new Promise((resolve, reject) => {
+      const chunks: any = [];
+      stream.on("data", (chunk) => chunks.push(chunk));
+      stream.on("error", (error) => reject(error));
+      stream.on("end", () => resolve(Buffer.concat(chunks)));
+    });
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export const getS3Url = (path: any) => {

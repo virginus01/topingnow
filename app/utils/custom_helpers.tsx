@@ -252,6 +252,14 @@ export function base_url(slug = "") {
   }
 }
 
+export function get_list_url(data) {
+  if (!isNull(data)) {
+    return base_url(`${data.topicData.slug}/${data.slug}`);
+  } else {
+    return base_url();
+  }
+}
+
 export function base_images_url(slug = "") {
   if (isNull(slug)) {
     return `${process.env.NEXT_PUBLIC_BASE_URL}/images/${slug}`;

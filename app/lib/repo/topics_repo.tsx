@@ -151,7 +151,10 @@ export async function deleteTopics(_id: any) {
       return { success: false, msg: "Failed to delete topic" };
     }
   } catch (error) {
-    return { success: false, msg: `Failed to delete topic: ${error}` };
+    return {
+      success: false,
+      msg: `Failed to delete topic: ${error.stack || error}`,
+    };
   }
 }
 

@@ -168,14 +168,26 @@ export async function postListsApi(formData: any) {
         await generateListPositions(postData[i].topicId);
       }
     } catch (e) {
-      console.error("Error:", e);
-      return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+      console.error("list Error:", e);
+      return {
+        success: false,
+        ids: [],
+        msg: `${e}`,
+        data: "",
+        dataBody: "",
+      };
     }
 
     return res;
   } catch (e) {
     console.error(e);
-    return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+    return {
+      success: false,
+      ids: [],
+      msg: `${e}`,
+      data: "",
+      dataBody: "",
+    };
   }
 }
 
@@ -190,7 +202,7 @@ async function processGMapListData(formData, update) {
 
     return { success: true, gData: lists };
   } catch (error) {
-    console.error(`error jdh4765: ${error}`);
+    console.error(`error jdh4765: ${error.stack || error}`);
     return { success: false, gData: {}, error: error };
   }
 }

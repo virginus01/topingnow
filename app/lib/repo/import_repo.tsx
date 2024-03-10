@@ -44,7 +44,10 @@ export async function deleteImports(_id: any) {
       return { success: false, msg: "Failed to delete import" };
     }
   } catch (error) {
-    return { success: false, msg: `Failed to delete import: ${error}` };
+    return {
+      success: false,
+      msg: `Failed to delete import: ${error.stack || error}`,
+    };
   }
 }
 

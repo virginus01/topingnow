@@ -161,13 +161,25 @@ export async function postTopics(formData: any) {
       }
     } catch (e) {
       console.error("Error 7eytdggd:", e);
-      return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+      return {
+        success: false,
+        ids: [],
+        msg: `${e}`,
+        data: "",
+        dataBody: "",
+      };
     }
 
     return res;
   } catch (e) {
     console.error(`Topics Post: ${e.stack || e}`);
-    return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+    return {
+      success: false,
+      ids: [],
+      msg: `${e}`,
+      data: "",
+      dataBody: "",
+    };
   }
 }
 

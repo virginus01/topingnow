@@ -92,12 +92,24 @@ export async function postQandaApi(formData: any) {
       res = await PostData(data, updatedData, () => addQandAs(data), isImport);
     } catch (e) {
       console.error("Error:", e);
-      return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+      return {
+        success: false,
+        ids: [],
+        msg: `${e}`,
+        data: "",
+        dataBody: "",
+      };
     }
 
     return res;
   } catch (e) {
     console.log(e);
-    return { success: false, ids: [], msg: `${e}`, data: "", dataBody: "" };
+    return {
+      success: false,
+      ids: [],
+      msg: `${e}`,
+      data: "",
+      dataBody: "",
+    };
   }
 }
