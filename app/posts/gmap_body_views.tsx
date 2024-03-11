@@ -213,7 +213,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
 
               <MapModel post={post} />
             ) : (
-              <>
+              <div className="p-2">
                 <Link href={listSlug}>
                   <h2 className="flex font-bold pb-2">{subTitle}</h2>{" "}
                 </Link>
@@ -222,7 +222,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
                   {title} is the number {position} in the list of{" "}
                   {topicData.title}
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
