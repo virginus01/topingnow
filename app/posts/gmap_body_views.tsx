@@ -19,6 +19,7 @@ import { getS3Url } from "../lib/repo/files_repo";
 import { LIST_IMAGE, PPC } from "@/constants";
 import { listImage } from "../utils/list_image";
 import dynamic from "next/dynamic";
+import MapModel from "./map_model";
 
 const LazyIframe = dynamic(() => import("./iframe"), {
   loading: () => <p>Loading...</p>,
@@ -206,9 +207,11 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
               <LazyImage post={post} topicData={topicData} title={title} />
             </div>
           </div>
-          <div className="lg:flex lg:flex-col w-full p-2 lg:w-[50%]">
+          <div className="lg:flex lg:flex-col w-full lg:w-[50%]">
             {isFull ? (
-              <LazyIframe post={post} />
+              /*<LazyIframe post={post} /> */
+
+              <MapModel post={post} />
             ) : (
               <>
                 <Link href={listSlug}>

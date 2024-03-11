@@ -8,6 +8,7 @@ export default function image({ post, title, topicData }) {
         <Image
           src={post.processedImage}
           alt={`${title}: ${topicData.title}`}
+          title={`${title}: ${topicData.title}`}
           style={{ width: "100%", height: "100%" }}
           width={500}
           height={200}
