@@ -129,11 +129,14 @@ export default function ListBody({ post, reviews }) {
           {reviews.result && Array.isArray(reviews.result) ? (
             reviews.result.map((r, i) => {
               let from_review_images: any = [];
-              const imageUrlArray = r.user_photos
-                .replace("{", "[")
-                .replace("}", "]");
 
-              from_review_images = JSON.parse(imageUrlArray);
+              if (!isNull(r.user_photos)) {
+                const imageUrlArray = r.user_photos
+                  .replace("{", "[")
+                  .replace("}", "]");
+
+                from_review_images = JSON.parse(imageUrlArray);
+              }
               return (
                 <div className="relative flex" key={i}>
                   <div className="relative w-full">
