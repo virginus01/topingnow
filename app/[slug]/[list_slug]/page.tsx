@@ -76,7 +76,7 @@ export default async function ListView({
       result
     );
 
-    data.processedImage = await listImage(data);
+    data.processedImage = listImage(data);
 
     return (
       <main>

@@ -128,17 +128,35 @@ export default function ListBody({ post, reviews }) {
           </h3>
           {reviews.result && Array.isArray(reviews.result) ? (
             reviews.result.map((r, i) => {
+              let from_review_images: any = [];
+              const imageUrlArray = r.user_photos
+                .replace("{", "[")
+                .replace("}", "]");
+
+              from_review_images = JSON.parse(imageUrlArray);
               return (
                 <div className="relative flex" key={i}>
                   <div className="relative w-full">
                     <div className="relative bg-white shadow-xl ring-1 ring-gray-900/5 mb-3 rounded">
                       <div className="bg-gray-200 flex justify-between items-center gap-x-3 px-2 py-1 text-xs font-bold text-left text-white rounded-tr rounded-tl">
-                        <div className="flex flex-col text-black">
+                        <div className="flex flex-col justify-start items-start text-black">
+                          {r.user_photo && (
+                            <Image
+                              src={r.user_photo}
+                              width={50}
+                              height={50}
+                              alt={`${r.user_name}'s review on ${post.title} as ${post.topicData.title}`}
+                              title={`${r.user_name}'s review on ${post.title} as ${post.topicData.title}`}
+                            />
+                          )}
+
                           {r.user_name}
                         </div>
                         <div className="flex flex-col justify-end items-end">
                           <RatingStars
-                            ratingScore={parseFloat(r.rating).toFixed(1)}
+                            ratingScore={parseFloat(post.ratingScore).toFixed(
+                              1
+                            )}
                           />
                         </div>
                       </div>
@@ -146,6 +164,22 @@ export default function ListBody({ post, reviews }) {
                         <div className="text-sm leading-6 text-gray-600">
                           {r.review_text ? r.review_text : "no review"}
                         </div>
+                        {from_review_images && (
+                          <div className="flex flex-wrap">
+                            {from_review_images.map((image, index) => (
+                              <div key={index} className="m-2">
+                                <Image
+                                  src={image}
+                                  alt={`${r.user_name}'s review on ${post.title} as ${post.topicData.title} index ${index}`}
+                                  title={`${r.user_name}'s review on ${post.title} as ${post.topicData.title} index ${index}`}
+                                  height={60}
+                                  width={60}
+                                  className="object-cover rounded"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <div className="flex justify-end items-end text-xs italic p-1 border-t border-gray-200">
                         published at:{" "}

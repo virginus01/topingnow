@@ -8,120 +8,139 @@ import {
 import { getTopic } from "@/app/roadmap/topics_roadmap";
 import { getListById } from "@/app/lib/repo/lists_repo";
 
+export const dynamic = "force-dynamic";
+
 export async function ListImageGen(id: any) {
-  const topicSlug = id.replace(".png", "");
-  const page = 1;
-  let result = await getListById(topicSlug);
+  try {
+    const topicSlug = id.replace(".png", "");
+    const page = 1;
+    let result = await getListById(topicSlug);
 
-  let data: any = null;
-  if (result) {
-    data = result;
-  }
+    let data: any = null;
+    if (result) {
+      data = result;
+    }
 
-  if (isNull(data)) {
-    return new ImageResponse(await CustomImageResponse(), {
-      width: 1920,
-      height: 1080,
-    });
-  }
+    if (isNull(data)) {
+      return new ImageResponse(await CustomImageResponse(), {
+        width: 1920,
+        height: 1080,
+      });
+    }
 
-  let lists: any[] = [];
-  const ex_check = await checkImageValidity(data.external_image);
-  if (!isNull(data.external_image) && ex_check.success != false) {
-    lists.push(data.external_image);
-  }
+    let lists: any[] = [];
+    const ex_check = await checkImageValidity(data.external_image);
+    if (!isNull(data.external_image) && ex_check.success != false) {
+      lists.push(data.external_image);
+    }
 
-  if (!isNull(data.all_images)) {
-    const jsonData = "[" + data.all_images.slice(1, -1) + "]";
-    const urlsArray = JSON.parse(jsonData);
+    if (!isNull(data.all_images)) {
+      const jsonData = "[" + data.all_images.slice(1, -1) + "]";
+      const urlsArray = JSON.parse(jsonData);
 
-    let list_n = 0;
-    for (let i = 0; i < urlsArray.length; i++) {
-      const ex_check = await checkImageValidity(urlsArray[i]);
-      if (ex_check.success != false && list_n <= 6) {
-        lists.push(urlsArray[i]);
-        list_n++;
+      let list_n = 0;
+      for (let i = 0; i < urlsArray.length; i++) {
+        const ex_check = await checkImageValidity(urlsArray[i]);
+        if (ex_check.success != false && list_n <= 6) {
+          lists.push(urlsArray[i]);
+          list_n++;
+        }
       }
     }
-  }
 
-  return new ImageResponse(
-    (
-      <div
-        tw="w-full border-4 border-red-500"
-        style={{
-          height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundImage: `url(${base_images_url("beams-with.png")})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div tw="flex h-screen flex-col">
-          <div
-            tw="flex justify-center text-center font-extrabold text-6xl text-blue-900 m-5 pt-20 mb-20"
-            style={{
-              fontWeight: "bolder",
-              fontSize: "3rem",
-              textAlign: "center",
-              color: "#1e40af",
-            }}
-          >
-            {data.title} is Number {data.position}
-          </div>
-          <div tw="flex border-t-4 border-red-500 mt-2 mb-2 pt-2 pb-2"></div>
-
-          <div tw="flex justify-center text-center items-center font-extrabold text-3xl text-blue-900 mb-20">
+    return new ImageResponse(
+      (
+        <div
+          tw="w-full border-4 border-red-500"
+          style={{
+            height: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundImage: `url(${base_images_url("beams-with.png")})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div tw="flex h-screen flex-col">
             <div
-              tw="flex"
+              tw="flex justify-center text-center font-extrabold text-6xl text-blue-900 m-5 pt-20 mb-20"
               style={{
                 fontWeight: "bolder",
-                fontSize: "2rem",
+                fontSize: "3rem",
                 textAlign: "center",
                 color: "#1e40af",
               }}
             >
-              {data.topicData.title ?? ""} by Topingnow.com
+              {data.title} is Number {data.position}
+            </div>
+            <div tw="flex border-t-4 border-red-500 mt-2 mb-2 pt-2 pb-2"></div>
+
+            <div tw="flex justify-center text-center items-center font-extrabold text-3xl text-blue-900 mb-20">
+              <div
+                tw="flex"
+                style={{
+                  fontWeight: "bolder",
+                  fontSize: "2rem",
+                  textAlign: "center",
+                  color: "#1e40af",
+                }}
+              >
+                {data.topicData.title ?? ""} by Topingnow.com
+              </div>
+            </div>
+            <span tw="flex items-end">
+              {shuffleArray(lists).map((post, i) => {
+                const length = lists.length + "0";
+                if (i <= 6) {
+                  return (
+                    <div tw="flex flex-col" key={i}>
+                      <img
+                        src={post}
+                        height={350}
+                        width={2000 / lists.length}
+                      />
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
+              })}
+            </span>
+            <div tw="flex items-end">
+              {shuffleArray(lists).map((post, i) => {
+                const length = lists.length + "0";
+                if (i <= 24) {
+                  return (
+                    <div tw="flex flex-col" key={i}>
+                      <img
+                        src={post}
+                        height={350}
+                        width={2000 / lists.length}
+                      />
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
+              })}
             </div>
           </div>
-          <span tw="flex items-end">
-            {shuffleArray(lists).map((post, i) => {
-              const length = lists.length + "0";
-              if (i <= 6) {
-                return (
-                  <div tw="flex flex-col" key={i}>
-                    <img src={post} height={350} width={2000 / lists.length} />
-                  </div>
-                );
-              } else {
-                return null;
-              }
-            })}
-          </span>
-          <div tw="flex items-end">
-            {shuffleArray(lists).map((post, i) => {
-              const length = lists.length + "0";
-              if (i <= 24) {
-                return (
-                  <div tw="flex flex-col" key={i}>
-                    <img src={post} height={350} width={2000 / lists.length} />
-                  </div>
-                );
-              } else {
-                return null;
-              }
-            })}
-          </div>
         </div>
-      </div>
-    ),
-    {
+      ),
+      {
+        width: 1920,
+        height: 1080,
+      }
+    );
+  } catch (e) {
+    console.error(e.stack || e);
+    return new ImageResponse(await CustomImageResponse(), {
       width: 1920,
       height: 1080,
-    }
-  );
+      status: 400,
+    });
+  }
 }
 
 export async function CustomImageResponse() {

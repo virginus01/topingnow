@@ -2,6 +2,8 @@ import { ImageResponse } from "next/og";
 import { base_images_url, base_url, isNull } from "@/app/utils/custom_helpers";
 import { getTopic } from "@/app/roadmap/topics_roadmap";
 
+export const dynamic = "force-dynamic";
+
 export async function TopicImageGen(id: any) {
   try {
     const topicSlug = id.replace(".png", "");
@@ -149,6 +151,7 @@ export async function TopicImageGen(id: any) {
     return new ImageResponse(await CustomImageResponse(), {
       width: 1920,
       height: 1080,
+      status: 400,
     });
   }
 }

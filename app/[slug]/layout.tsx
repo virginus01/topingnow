@@ -1,5 +1,6 @@
 import { Navbar } from "@/app/components/navbar";
 import Footer from "@/app/components/footer";
+import SiteCookieConsent from "../cookie-consent";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
+      <SiteCookieConsent />
       <Footer />
     </>
   );

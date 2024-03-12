@@ -15,36 +15,41 @@ export function topicImage(data: any): string {
   } else if (!isNull(data.generatedImagePath)) {
     return getS3Url(data.generatedImagePath);
   } else {
-    const imageUrl = base_url(`api/images/topic/${slug}.png`);
-
     try {
+      const imageUrl = base_url(`api/images/topic/${slug}.png`);
+
       spProcessImage(imageUrl, slug, data._id);
       fetch(base_url(`/api/actions?tag=${data._id}`));
       return base_images_url("placeholder.png");
     } catch (e) {
       console.error("Error uploading topic image to S3:", e);
-      return imageUrl;
+      return base_images_url("placeholder.png");
     }
   }
 }
 
 async function spProcessImage(imageUrl, slug, id) {
-  const check: any = await checkImageValidity(imageUrl);
-  if (check.success !== false) {
-    const uploadedUrl = await uploadToS3FromUrl(
-      imageUrl,
-      `gimages/topic/${slug}`
-    );
+  try {
+    const response = await fetch(imageUrl, { cache: "no-cache" });
 
-    if (uploadedUrl.success) {
-      const submitData = {
-        _id: id,
-        slug: slug,
-        newly_updated: "no",
-        generatedImagePath: uploadedUrl.path,
-      };
+    if (response.ok !== false) {
+      const uploadedUrl: any = await uploadToS3FromUrl(
+        imageUrl,
+        `gimages/topic/${slug}`
+      );
 
-      await postTopics([submitData], "no", true);
+      if (uploadedUrl.success) {
+        const submitData = {
+          _id: id,
+          slug: slug,
+          newly_updated: "no",
+          generatedImagePath: uploadedUrl.path,
+        };
+
+        await postTopics([submitData], "no", true);
+      }
     }
+  } catch (e) {
+    console.error(e.stack || e);
   }
 }

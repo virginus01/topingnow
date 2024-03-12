@@ -30,25 +30,40 @@ export async function postFiles(tData: any) {
       return { error: "Failed to fetch topic", success: false };
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { error: "An error occurred while posting topics", success: false };
   }
 }
 
 export async function uploadToS3FromUrl(imageUrl: string, path: string) {
-  try {
-    const imageResponse = await axios.get(imageUrl, { responseType: "stream" });
+  let retryCount = 0;
+  const maxRetries = 3; // Maximum number of retries
 
-    // Prepare image data
-    const imageStream = imageResponse.data;
-    const file = await streamToBuffer(imageStream);
+  while (retryCount < maxRetries) {
+    try {
+      const imageResponse = await axios.get(imageUrl, {
+        responseType: "stream",
+        headers: {
+          "Cache-Control": "no-cache",
+        },
+      });
 
-    const fileName = await uploadFileToS3(file, path, "image/png");
+      // Prepare image data
+      const imageStream = imageResponse.data;
+      const file = await streamToBuffer(imageStream);
 
-    return { success: true, path: fileName };
-  } catch (error) {
-    console.error(error);
-    return { success: false, path: imageUrl };
+      const fileName = await uploadFileToS3(file, path, "image/png");
+
+      return { success: true, path: fileName };
+    } catch (error) {
+      console.error(error);
+      if (error.code === "ECONNRESET" && retryCount < maxRetries - 1) {
+        console.log(`Retrying (${retryCount + 1}/${maxRetries})...`);
+        retryCount++;
+      } else {
+        return { success: false, path: imageUrl };
+      }
+    }
   }
 }
 

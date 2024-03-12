@@ -17,35 +17,39 @@ export function listImage(data: any): string {
   } else if (!isNull(generatedImagePath)) {
     return getS3Url(generatedImagePath);
   } else {
-    const imageUrl = base_url(`/api/images/list/${slug}`);
-
     try {
+      const imageUrl = base_url(`/api/images/list/${slug}`);
       sProcessImage(imageUrl, slug, data._id);
       fetch(base_url(`/api/actions?tag=${data._id}`));
       return base_images_url("placeholder.png");
     } catch (e) {
       console.error("Error uploading image to S3:", e);
-      return imageUrl;
+      return base_images_url("placeholder.png");
     }
   }
 }
 
 async function sProcessImage(imageUrl, slug, id) {
-  const check: any = await checkImageValidity(imageUrl);
-  if (check.success !== false) {
-    const uploadedUrl = await uploadToS3FromUrl(
-      imageUrl,
-      `gimages/list/${slug}`
-    );
+  try {
+    const response = await fetch(imageUrl, { cache: "no-cache" });
 
-    if (uploadedUrl.success) {
-      const submitData = {
-        _id: id,
-        slug: slug,
-        newly_updated: "no",
-        generatedImagePath: uploadedUrl.path,
-      };
-      await UpdateList(submitData);
+    if (response.ok) {
+      const uploadedUrl: any = await uploadToS3FromUrl(
+        imageUrl,
+        `gimages/list/${slug}`
+      );
+
+      if (uploadedUrl.success) {
+        const submitData = {
+          _id: id,
+          slug: slug,
+          newly_updated: "no",
+          generatedImagePath: uploadedUrl.path,
+        };
+        await UpdateList(submitData);
+      }
     }
+  } catch (e) {
+    console.log(e);
   }
 }
