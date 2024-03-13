@@ -483,7 +483,7 @@ export function generateBreadcrumb(data: any) {
   return breadcrumb;
 }
 
-export async function checkImageValidity(imageUrl, maxRetries = 3) {
+export async function checkImageValidity(imageUrl, maxRetries = 2) {
   try {
     if (isNull(imageUrl)) {
       return { success: false };
@@ -496,9 +496,6 @@ export async function checkImageValidity(imageUrl, maxRetries = 3) {
         return imageUrl; // Image link is valid
       } else {
         retryCount++;
-        console.error(
-          `Failed to fetch image. Retrying... (Attempt ${retryCount}/${maxRetries})`
-        );
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
       }
     }

@@ -174,7 +174,13 @@ export async function POST(
 }
 
 export async function updateTopicApi(formData: any) {
-  const updateData = JSON.parse(formData.get("updateData"));
+  let updateData: any = {};
+
+  try {
+    updateData = JSON.parse(formData.get("updateData"));
+  } catch (e) {
+    updateData = formData;
+  }
 
   let uData: TopicModel = {};
 

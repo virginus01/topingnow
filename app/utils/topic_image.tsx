@@ -17,39 +17,11 @@ export function topicImage(data: any): string {
   } else {
     try {
       const imageUrl = base_url(`api/images/topic/${slug}.png`);
-
-      spProcessImage(imageUrl, slug, data._id);
       fetch(base_url(`/api/actions?tag=${data._id}`));
       return base_images_url("placeholder.png");
     } catch (e) {
       console.error("Error uploading topic image to S3:", e);
       return base_images_url("placeholder.png");
     }
-  }
-}
-
-async function spProcessImage(imageUrl, slug, id) {
-  try {
-    const response = await fetch(imageUrl, { cache: "no-cache" });
-
-    if (response.ok !== false) {
-      const uploadedUrl: any = await uploadToS3FromUrl(
-        imageUrl,
-        `gimages/topic/${slug}`
-      );
-
-      if (uploadedUrl.success) {
-        const submitData = {
-          _id: id,
-          slug: slug,
-          newly_updated: "no",
-          generatedImagePath: uploadedUrl.path,
-        };
-
-        await postTopics([submitData], "no", true);
-      }
-    }
-  } catch (e) {
-    console.error(e.stack || e);
   }
 }

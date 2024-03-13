@@ -37,7 +37,7 @@ export async function postFiles(tData: any) {
 
 export async function uploadToS3FromUrl(imageUrl: string, path: string) {
   let retryCount = 0;
-  const maxRetries = 3; // Maximum number of retries
+  let maxRetries = 3; // Maximum number of retries
 
   while (retryCount < maxRetries) {
     try {
@@ -52,13 +52,19 @@ export async function uploadToS3FromUrl(imageUrl: string, path: string) {
       const imageStream = imageResponse.data;
       const file = await streamToBuffer(imageStream);
 
-      const fileName = await uploadFileToS3(file, path, "image/png");
+      const res = await uploadFileToS3(file, path, "image/png");
 
-      return { success: true, path: fileName };
+      if (res.success) {
+        maxRetries = 0;
+      }
+
+      return { success: res.success, path: res.path };
     } catch (error) {
       console.error(error);
       if (error.code === "ECONNRESET" && retryCount < maxRetries - 1) {
-        console.log(`Retrying (${retryCount + 1}/${maxRetries})...`);
+        console.log(
+          `Retrying fetch to ${imageUrl} (${retryCount + 1}/${maxRetries})...`
+        );
         retryCount++;
       } else {
         return { success: false, path: imageUrl };
@@ -68,17 +74,21 @@ export async function uploadToS3FromUrl(imageUrl: string, path: string) {
 }
 
 async function uploadFileToS3(file, path, type) {
-  const fileBuffer = file;
-  const params = {
-    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET,
-    Key: path,
-    Body: fileBuffer,
-    ContentType: type,
-  };
+  try {
+    const fileBuffer = file;
+    const params = {
+      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET,
+      Key: path,
+      Body: fileBuffer,
+      ContentType: type,
+    };
 
-  const command = new PutObjectCommand(params);
-  await s3Client.send(command);
-  return path;
+    const command = new PutObjectCommand(params);
+    await s3Client.send(command);
+    return { path: path, success: false };
+  } catch (e) {
+    return { success: false };
+  }
 }
 
 // Helper function to convert stream to buffer

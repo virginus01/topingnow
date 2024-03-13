@@ -7,13 +7,20 @@ import {
   NEXT_PUBLIC_UPDATE_TOPIC,
 } from "@/constants";
 import { addTopics } from "../mongodb/query";
-import { beforeInsert, isNull, preFetch } from "@/app/utils/custom_helpers";
+import {
+  base_url,
+  beforeInsert,
+  isNull,
+  preFetch,
+} from "@/app/utils/custom_helpers";
 import { checkSinglePost } from "./check_single_post";
 import { PostData } from "./post_data";
 import { getTops } from "@/app/lib/repo/tops_repo";
 import { ListsModel } from "@/app/models/lists_model";
 import { ObjectId } from "mongodb";
-import { postListsApi } from "./lists_api_repo";
+import { postListsApi, ListProcessImage } from "./lists_api_repo";
+import { uploadToS3FromUrl } from "@/app/lib/repo/files_repo";
+import { updateTopicApi } from "../post/[action]/route";
 
 export async function postTopics(formData: any) {
   let postData: any, isImport: any, update: any, source: any, importTitle: any;
@@ -342,5 +349,61 @@ export async function generateListPositions(_id: any) {
     return {
       error: error.message || "error 857575",
     };
+  }
+}
+
+export async function sendTopicImage(data) {
+  try {
+    if (data) {
+      const imageUrl = base_url(`api/images/topic/${data.slug}.png`);
+      if (isNull(data.generatedImagePath) && isNull(data.featuredImagePath)) {
+        await TopicProcessImage(imageUrl, data.slug, data._id);
+      }
+
+      if (data.lists && data.lists.result) {
+        const promises = data.lists.result.map(async (item) => {
+          const list_imageUrl = base_url(`/api/images/list/${item.slug}`);
+
+          if (
+            isNull(item.generatedImagePath) &&
+            isNull(item.featuredImagePath)
+          ) {
+            await ListProcessImage(list_imageUrl, item.slug, item._id);
+          }
+        });
+        Promise.all(promises);
+      }
+
+      return { success: true };
+    } else {
+      return { success: false };
+    }
+  } catch (e) {
+    console.error(e);
+    return { success: false };
+  }
+}
+
+export async function TopicProcessImage(imageUrl, slug, id) {
+  try {
+    const uploadedUrl: any = await uploadToS3FromUrl(
+      imageUrl,
+      `gimages/topic/${slug}`
+    );
+
+    if (uploadedUrl.success) {
+      const postData = {
+        _id: id,
+        slug: slug,
+        newly_updated: "no",
+        generatedImagePath: uploadedUrl.path,
+      };
+
+      return await updateTopicApi(postData);
+    }
+    return { success: false };
+  } catch (e) {
+    console.error(e.stack || e);
+    return { success: false };
   }
 }

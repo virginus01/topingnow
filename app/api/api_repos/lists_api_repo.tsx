@@ -13,6 +13,7 @@ import { ListsModel } from "@/app/models/lists_model";
 import { generateListPositions } from "./topics_api_repo";
 import { postBusinessApi } from "./business_api_repo";
 import { ObjectId } from "mongodb";
+import { uploadToS3FromUrl } from "@/app/lib/repo/files_repo";
 
 export async function postListsApi(formData: any) {
   try {
@@ -222,7 +223,13 @@ async function reWriteList(data) {
 }
 
 export async function updateList(formData: any) {
-  const updateData = JSON.parse(formData.get("updateData"));
+  let updateData: any = {};
+
+  try {
+    updateData = JSON.parse(formData.get("updateData"));
+  } catch (e) {
+    updateData = formData;
+  }
 
   let uData: ListsModel = {};
   uData = beforeUpdate(updateData, uData);
@@ -231,6 +238,29 @@ export async function updateList(formData: any) {
     return await updateAList(updateData._id, uData);
   } catch (e) {
     console.error(`error 746464 ${e}`);
+    return { success: false };
+  }
+}
+
+export async function ListProcessImage(imageUrl, slug, id) {
+  try {
+    const uploadedUrl: any = await uploadToS3FromUrl(
+      imageUrl,
+      `gimages/list/${slug}`
+    );
+
+    if (uploadedUrl.success) {
+      const submitData = {
+        _id: id,
+        slug: slug,
+        newly_updated: "no",
+        generatedImagePath: uploadedUrl.path,
+      };
+      return await updateList(submitData);
+    }
+    return { success: false };
+  } catch (e) {
+    console.log(e);
     return { success: false };
   }
 }

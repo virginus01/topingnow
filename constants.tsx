@@ -15,6 +15,7 @@ export const NEXT_PUBLIC_GET_POPULAR_TOPICS = `${process.env.NEXT_PUBLIC_BASE_UR
 export const NEXT_PUBLIC_GET_IMPORTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_imports`;
 export const NEXT_PUBLIC_DELETE_TOPICS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete/delete_topics`;
 export const TOPIC_IMAGE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/topic`;
+export const PROCCESS_IMAGE = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/process-image/topic`;
 
 //lists
 export const NEXT_PUBLIC_GET_POPULAR_LISTS = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get/get_popular_lists`;

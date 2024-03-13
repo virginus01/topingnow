@@ -17,6 +17,8 @@ import {
   getBusiness,
   getReviews,
 } from "@/app/api/mongodb/query";
+import { sendTopicImage } from "../../api_repos/topics_api_repo";
+import { isNull } from "@/app/utils/custom_helpers";
 
 export async function GET(
   request: any,
@@ -40,6 +42,7 @@ export async function GET(
   let q = searchParams.get("q");
   let rand = searchParams.get("rand");
   let process = searchParams.get("process");
+  let process_images = searchParams.get("process_images") || "yes";
   let essentials = searchParams.get("essentials");
   let page = parseInt(searchParams.get("page") as string, 10);
   let perPage = parseInt(searchParams.get("perPage") as string, 10);
@@ -77,6 +80,7 @@ export async function GET(
       process,
       q
     );
+
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
@@ -86,6 +90,11 @@ export async function GET(
   //fetching topic info
   if (action == "get_topic") {
     const data = await fetchTopic(topicId, "yes", "10", process);
+
+    if (process_images == "yes" && !isNull(data)) {
+      sendTopicImage(data);
+    }
+
     return new Response(JSON.stringify({ data }), {
       status: 200,
       headers: headers,
