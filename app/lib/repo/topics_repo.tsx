@@ -205,7 +205,9 @@ export async function topicMetaTags(data) {
         (!isNull(length) &&
           countWords(length) >= 300 &&
           data.lists.result.length >= 1) ||
-        data.lists.result.length >= 1,
+        data.lists.result.length >= 1
+          ? true
+          : false,
       follow: true,
     };
 

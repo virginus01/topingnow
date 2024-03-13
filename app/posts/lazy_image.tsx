@@ -14,6 +14,7 @@ export default function image({
     <>
       {post.processedImage && (
         <Image
+          unoptimized
           src={image}
           alt={`${title}: ${topicData.title}`}
           title={`${title}: ${topicData.title}`}
