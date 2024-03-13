@@ -85,9 +85,9 @@ async function uploadFileToS3(file, path, type) {
 
     const command = new PutObjectCommand(params);
     await s3Client.send(command);
-    return { path: path, success: false };
+    return { path: path, success: true };
   } catch (e) {
-    return { success: false };
+    return { success: false, msg: e };
   }
 }
 

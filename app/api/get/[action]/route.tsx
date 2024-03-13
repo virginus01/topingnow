@@ -19,213 +19,232 @@ import {
 } from "@/app/api/mongodb/query";
 import { sendTopicImage } from "../../api_repos/topics_api_repo";
 import { isNull } from "@/app/utils/custom_helpers";
+import { sendListImage } from "../../api_repos/lists_api_repo";
 
 export async function GET(
   request: any,
   { params }: { params: { action: string } }
 ) {
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  };
+  try {
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    };
 
-  const { searchParams } = new URL(request.url);
-  let limit = searchParams.get("limit");
-  let topId = searchParams.get("topId");
-  let id = searchParams.get("id");
-  let _id = searchParams.get("_id");
-  let topicId = searchParams.get("topicId");
-  let listId = searchParams.get("listId");
-  let placeId = searchParams.get("placeId");
-  let uid = searchParams.get("uid");
-  let q = searchParams.get("q");
-  let rand = searchParams.get("rand");
-  let process = searchParams.get("process");
-  let process_images = searchParams.get("process_images") || "yes";
-  let essentials = searchParams.get("essentials");
-  let page = parseInt(searchParams.get("page") as string, 10);
-  let perPage = parseInt(searchParams.get("perPage") as string, 10);
-  let action = params.action;
+    const { searchParams } = new URL(request.url);
+    let limit = searchParams.get("limit");
+    let topId = searchParams.get("topId");
+    let id = searchParams.get("id");
+    let _id = searchParams.get("_id");
+    let topicId = searchParams.get("topicId");
+    let listId = searchParams.get("listId");
+    let placeId = searchParams.get("placeId");
+    let uid = searchParams.get("uid");
+    let q = searchParams.get("q");
+    let rand = searchParams.get("rand");
+    let process = searchParams.get("process");
+    let process_images = searchParams.get("process_images") || "yes";
+    let essentials = searchParams.get("essentials");
+    let page = parseInt(searchParams.get("page") as string, 10);
+    let perPage = parseInt(searchParams.get("perPage") as string, 10);
+    let action = params.action;
 
-  limit = "10";
+    limit = "10";
 
-  //...............GET........................
+    //...............GET........................
 
-  //fetching tops
-  if (action == "get_tops") {
-    const data = await fetchTops(page, perPage, q);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //fetching a top
-  if (action == "get_top") {
-    const data = await fetchTop(id);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //fetching topics
-  if (action == "get_topics") {
-    const data = await fetchTopics(
-      topId,
-      page,
-      perPage,
-      essentials,
-      process,
-      q
-    );
-
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //fetching topic info
-  if (action == "get_topic") {
-    const data = await fetchTopic(topicId, "yes", "10", process);
-
-    if (process_images == "yes" && !isNull(data)) {
-      sendTopicImage(data);
+    //fetching tops
+    if (action == "get_tops") {
+      const data = await fetchTops(page, perPage, q);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
     }
 
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
+    //fetching a top
+    if (action == "get_top") {
+      const data = await fetchTop(id);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
 
-  //fetching popular topic
-  if (action == "get_popular_topics") {
-    const data = await fetchPopularTopics(_id, page, perPage);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
+    //fetching topics
+    if (action == "get_topics") {
+      const data = await fetchTopics(
+        topId,
+        page,
+        perPage,
+        essentials,
+        process,
+        q
+      );
 
-  //fetching popular topic
-  if (action == "get_popular_lists") {
-    const data = await fetchPopularLists(_id, essentials, page, perPage);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-  //fetching lists
-  if (action == "get_lists") {
-    const data = await fetchLists(topicId, page, perPage, essentials, process);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-  //fetching list info
-  if (action == "get_list") {
-    const data = await fetchList(listId, essentials, process);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
 
-  if (action == "get_business") {
-    const data = await fetchBusiness(id, essentials, process);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
+    //fetching topic info
+    if (action == "get_topic") {
+      const data = await fetchTopic(topicId, "yes", "10", process);
+
+      if (process_images == "yes" && !isNull(data)) {
+        sendTopicImage(data);
+      }
+
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    //fetching popular topic
+    if (action == "get_popular_topics") {
+      const data = await fetchPopularTopics(_id, page, perPage);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    //fetching popular topic
+    if (action == "get_popular_lists") {
+      const data = await fetchPopularLists(_id, essentials, page, perPage);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+    //fetching lists
+    if (action == "get_lists") {
+      const data = await fetchLists(
+        topicId,
+        page,
+        perPage,
+        essentials,
+        process
+      );
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+    //fetching list info
+    if (action == "get_list") {
+      const data = await fetchList(listId, essentials, process);
+
+      if (process_images == "yes" && !isNull(data)) {
+        sendListImage(data);
+      }
+
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    if (action == "get_business") {
+      const data = await fetchBusiness(id, essentials, process);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    if (action == "get_reviews") {
+      const data = await fetchReview(
+        id,
+        listId,
+        placeId,
+        essentials,
+        page,
+        perPage
+      );
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    //fetching a user
+    if (action == "get_user") {
+      const data = await fetchUser(uid);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    //fetching a user
+    if (action == "get_imports") {
+      const data = await getImports();
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    //fetching templates
+    if (action == "get_templates") {
+      const data = await getTemplates(page, perPage);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    ///
+    if (action == "get_template") {
+      const data = await getTemplate(id, rand);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    if (action == "get_qandas") {
+      const data = await getQandAs(listId, page, perPage, process);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    if (action == "get_qanda") {
+      const data = await getQandA(id, rand);
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    //fetching a user
+    if (action == "get_files") {
+      const data = await getFiles();
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: headers,
+      });
+    }
+
+    //.....................PUT.......................
+
+    //return info
+    return new Response(JSON.stringify({ data: "please define get action" }), {
+      status: 400,
       headers: headers,
     });
-  }
-
-  if (action == "get_reviews") {
-    const data = await fetchReview(
-      id,
-      listId,
-      placeId,
-      essentials,
-      page,
-      perPage
-    );
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
+  } catch (e) {
+    //return info
+    return new Response(JSON.stringify({ data: "error", msg: e }), {
+      status: 400,
     });
   }
-
-  //fetching a user
-  if (action == "get_user") {
-    const data = await fetchUser(uid);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //fetching a user
-  if (action == "get_imports") {
-    const data = await getImports();
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //fetching templates
-  if (action == "get_templates") {
-    const data = await getTemplates(page, perPage);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  ///
-  if (action == "get_template") {
-    const data = await getTemplate(id, rand);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  if (action == "get_qandas") {
-    const data = await getQandAs(listId, page, perPage, process);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  if (action == "get_qanda") {
-    const data = await getQandA(id, rand);
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //fetching a user
-  if (action == "get_files") {
-    const data = await getFiles();
-    return new Response(JSON.stringify({ data }), {
-      status: 200,
-      headers: headers,
-    });
-  }
-
-  //.....................PUT.......................
-
-  //return info
-  return new Response(JSON.stringify({ data: "please define get action" }), {
-    status: 400,
-    headers: headers,
-  });
 }
 
 async function fetchTops(page: number, perPage: number, q: any) {

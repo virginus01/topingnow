@@ -352,7 +352,7 @@ export async function generateListPositions(_id: any) {
   }
 }
 
-export async function sendTopicImage(data) {
+export async function sendTopicImage(data, essentials = "no") {
   try {
     if (data) {
       const imageUrl = base_url(`api/images/topic/${data.slug}.png`);
@@ -360,7 +360,7 @@ export async function sendTopicImage(data) {
         await TopicProcessImage(imageUrl, data.slug, data._id);
       }
 
-      if (data.lists && data.lists.result) {
+      if (data.lists && data.lists.result && essentials == "yes") {
         const promises = data.lists.result.map(async (item) => {
           const list_imageUrl = base_url(`/api/images/list/${item.slug}`);
 
@@ -374,13 +374,13 @@ export async function sendTopicImage(data) {
         Promise.all(promises);
       }
 
-      return { success: true };
+      return { success: true, msg: "uploaded" };
     } else {
-      return { success: false };
+      return { success: false, msg: "no data" };
     }
   } catch (e) {
     console.error(e);
-    return { success: false };
+    return { success: false, msg: e };
   }
 }
 

@@ -6,7 +6,12 @@ import {
   NEXT_PUBLIC_UPDATE_LIST,
 } from "@/constants";
 import { addLists, updateAList } from "@/app/api/mongodb/query";
-import { beforeUpdate, isNull, preFetch } from "@/app/utils/custom_helpers";
+import {
+  base_url,
+  beforeUpdate,
+  isNull,
+  preFetch,
+} from "@/app/utils/custom_helpers";
 import { checkSinglePost } from "./check_single_post";
 import { PostData } from "./post_data";
 import { ListsModel } from "@/app/models/lists_model";
@@ -242,6 +247,26 @@ export async function updateList(formData: any) {
   }
 }
 
+export async function sendListImage(data, essentials = "no") {
+  try {
+    const list_imageUrl = base_url(`/api/images/list/${data.slug}`);
+
+    if (
+      data &&
+      isNull(data.generatedImagePath) &&
+      isNull(data.featuredImagePath)
+    ) {
+      await ListProcessImage(list_imageUrl, data.slug, data._id);
+      return { success: true, msg: "uploaded" };
+    } else {
+      return { success: true, msg: "up to date" };
+    }
+  } catch (e) {
+    console.error(e);
+    return { success: false, msg: e };
+  }
+}
+
 export async function ListProcessImage(imageUrl, slug, id) {
   try {
     const uploadedUrl: any = await uploadToS3FromUrl(
@@ -256,6 +281,7 @@ export async function ListProcessImage(imageUrl, slug, id) {
         newly_updated: "no",
         generatedImagePath: uploadedUrl.path,
       };
+
       return await updateList(submitData);
     }
     return { success: false };

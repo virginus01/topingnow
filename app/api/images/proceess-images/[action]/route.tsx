@@ -1,3 +1,4 @@
+import { sendListImage } from "@/app/api/api_repos/lists_api_repo";
 import { sendTopicImage } from "@/app/api/api_repos/topics_api_repo";
 import {
   getTops,
@@ -48,7 +49,20 @@ export async function GET(
 
     let res = {};
     if (data) {
-      res = await sendTopicImage(data);
+      res = await sendTopicImage(data, "no");
+    }
+    return new Response(JSON.stringify({ res }), {
+      status: 200,
+    });
+  }
+
+  //fetching list
+  if (action == "list") {
+    const data = await fetchList(listId, "no", "no");
+
+    let res = {};
+    if (data) {
+      res = await sendListImage(data, "no");
     }
     return new Response(JSON.stringify({ res }), {
       status: 200,
@@ -84,5 +98,13 @@ async function fetchTopic(id: any, essentials: any, page: any, process: any) {
   } catch {
     console.error("error: 8475775");
     return "not_found";
+  }
+}
+
+async function fetchList(listId: string | number | null, essentials, process) {
+  try {
+    return await getList(listId, essentials, process);
+  } catch {
+    return { msg: "error: 6454554" };
   }
 }
