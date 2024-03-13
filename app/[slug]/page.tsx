@@ -60,10 +60,10 @@ export default async function Post({ params }: { params: { slug: string } }) {
       data
     );
 
-    data.proccessedImage = null;
+    data.processedImage = null;
     const pImage = await checkImageValidity(topicImage(data));
     if (pImage.success !== false) {
-      data.proccessedImage = pImage;
+      data.processedImage = pImage;
     }
 
     return (

@@ -6,6 +6,7 @@ import {
   checkImageValidity,
   isNull,
 } from "./custom_helpers";
+import { list_image_array } from "./list_image";
 
 export function topicImage(data: any): string {
   const slug = data.slug;
@@ -14,10 +15,16 @@ export function topicImage(data: any): string {
     return getS3Url(data.featuredImagePath);
   } else if (!isNull(data.generatedImagePath)) {
     return getS3Url(data.generatedImagePath);
+  } else if (!isNull(data.external_image)) {
+    return data.external_image;
   } else {
     try {
-      const imageUrl = base_url(`api/images/topic/${slug}.png`);
       fetch(base_url(`/api/actions?tag=${data._id}`));
+      const image = list_image_array(data.lists.result[0], 300, 300);
+      if (!isNull(image[0])) {
+        return image[0];
+      }
+
       return base_images_url("placeholder.png");
     } catch (e) {
       console.error("Error uploading topic image to S3:", e);

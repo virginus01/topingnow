@@ -502,7 +502,34 @@ export async function checkImageValidity(imageUrl, maxRetries = 2) {
 
     return { success: false }; // Image link is not valid after retrying
   } catch (error) {
-    console.error("Error checking image validity:", error.stack || error);
+    console.error(
+      `Error checking image validity for ${imageUrl}:`,
+      error.stack || error
+    );
     return { success: false };
   }
 }
+
+export const modifyImageUrl = (url, w = 500, h = 500) => {
+  try {
+    if (!isNull(url)) {
+      const pattern = /=(w\d+)-(h\d+)/;
+      const match = url.match(pattern);
+
+      let finalurl = url;
+      if (match) {
+        const [, wPart, hPart] = match;
+        const newWH = `w${w}-h${h}`;
+        finalurl = url.replace(wPart + "-" + hPart, newWH);
+      } else {
+        finalurl = url;
+      }
+      return finalurl;
+    } else {
+      return url;
+    }
+  } catch (e) {
+    console.log(e);
+    return url;
+  }
+};

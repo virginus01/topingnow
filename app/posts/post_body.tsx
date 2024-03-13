@@ -9,6 +9,11 @@ import {
   isNull,
 } from "../utils/custom_helpers";
 import { topicImage } from "../utils/topic_image";
+import dynamic from "next/dynamic";
+
+const LazyImage = dynamic(() => import("./lazy_image"), {
+  loading: () => <p>Loading...</p>,
+});
 
 export default function PostBody({ post }) {
   const {
@@ -22,22 +27,10 @@ export default function PostBody({ post }) {
     external_image,
   } = post;
 
-  let imageValid = true;
-
   return (
-    <div className={` bg-white px-2 py-2 my-5 rounded-sm`}>
-      {post.proccessedImage && (
-        <Image
-          className="w-full rounded-sm object-cover"
-          src={post.proccessedImage}
-          alt={title}
-          style={{ width: "100%" }}
-          width={1920}
-          height={1080}
-          blurDataURL={base_images_url("beams-with.png")}
-          placeholder="blur"
-          loading="lazy"
-        />
+    <div className={`bg-white px-2 py-2 my-5 rounded-sm`}>
+      {!isNull(post.processedImage) && (
+        <LazyImage post={post} topicData={post} title={title} h={400} w={500} />
       )}
 
       <div className="mb-8">
