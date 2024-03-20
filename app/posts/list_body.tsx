@@ -145,6 +145,7 @@ export default function ListBody({ post, reviews }) {
                         <div className="flex flex-col justify-start items-start text-black">
                           {r.user_photo && (
                             <Image
+                              unoptimized
                               src={r.user_photo}
                               width={50}
                               height={50}
@@ -172,6 +173,7 @@ export default function ListBody({ post, reviews }) {
                             {from_review_images.map((image, index) => (
                               <div key={index} className="m-2">
                                 <Image
+                                  unoptimized
                                   src={image}
                                   alt={`${r.user_name}'s review on ${post.title} as ${post.topicData.title} index ${index}`}
                                   title={`${r.user_name}'s review on ${post.title} as ${post.topicData.title} index ${index}`}
