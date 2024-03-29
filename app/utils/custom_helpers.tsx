@@ -513,16 +513,18 @@ export async function checkImageValidity(imageUrl, maxRetries = 2) {
 export const modifyImageUrl = (url, w = 500, h = 500) => {
   try {
     if (!isNull(url)) {
-      const pattern = /=(w\d+)-(h\d+)/;
+      const pattern = /(?:&|\?)w=(\d+)&h=(\d+)/;
       const match = url.match(pattern);
 
       let finalurl = url;
       if (match) {
         const [, wPart, hPart] = match;
-        const newWH = `w${w}-h${h}`;
-        finalurl = url.replace(wPart + "-" + hPart, newWH);
+        const newWH = `w=${w}&h=${h}`;
+        finalurl = url.replace(`w=${wPart}&h=${hPart}`, newWH);
       } else {
-        finalurl = url;
+        // If the pattern is not found, add the resizing parameters to the URL
+        const separator = url.includes("?") ? "&" : "?";
+        finalurl = `${url}${separator}w=${w}&h=${h}`;
       }
       return finalurl;
     } else {

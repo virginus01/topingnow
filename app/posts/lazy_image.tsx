@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { base_images_url, modifyImageUrl } from "../utils/custom_helpers";
+import OptImage from "../utils/opt_image";
 
 export default function image({
   post,
@@ -10,11 +11,11 @@ export default function image({
   twh = "h-48",
 }) {
   const image = modifyImageUrl(post.processedImage);
+
   return (
     <>
       {post.processedImage && (
-        <Image
-          unoptimized
+        <OptImage
           src={image}
           alt={`${title}: ${topicData.title}`}
           title={`${title}: ${topicData.title}`}
