@@ -1,10 +1,15 @@
 version: 1
 frontend:
-  preBuild:
-    commands:
-      - npm install
-  build:
-    commands:
-      - npm run build
+  phases:
+    preBuild:
+      commands:
+        - npm install
+    build:
+      commands:
+        - npm run build
   artifacts:
     baseDirectory: .amplify-hosting
+    files:
+      - "**/*"
+  cache:
+    - node_modules/**/*
