@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+//import { Roboto } from "next/font/google";
 import "./globals.css";
 import { buildSchema } from "./seo/schema";
-import Head from "next/head";
-import Script from "next/script";
 import { ConstructMetadata } from "./seo/metadata";
 import {
   base_images_url,
@@ -11,12 +9,6 @@ import {
   generateBreadcrumb,
   getViewUrl,
 } from "./utils/custom_helpers";
-
-const inter = Roboto({
-  subsets: ["latin"],
-  display: "swap",
-  weight: "400",
-});
 
 export let result: any = {
   title: "Topingnow",
@@ -62,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className} prefix="og: https://ogp.me/ns#">
+    <html lang="en" prefix="og: https://ogp.me/ns#">
       <head>
         <script
           id="application"
