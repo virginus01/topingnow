@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import "../styles/global.css";
+import "./globals.css";
 import { buildSchema } from "./seo/schema";
 import Head from "next/head";
 import Script from "next/script";
