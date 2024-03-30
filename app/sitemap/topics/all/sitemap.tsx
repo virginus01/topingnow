@@ -20,7 +20,6 @@ export default async function sitemap({
     const posts = await getTopics("", id, SITEMAP_PER_PAGE);
     const index = [{ url: base_url("sitemap.xml"), changeFrequency: "hourly" }];
     const data = await topics_for_sitemap(id);
-
     return [...index, ...data];
   } catch (e) {
     return [];

@@ -198,13 +198,17 @@ export async function lists_for_sitemap(id: any) {
 
   if (id == 0) {
     posts = await getLists("", 1, SITEMAP_PER_PAGE);
-    for (let i = 0; i < posts.data.metadata.numPages; i++) {
-      sml.push({
-        url: construct_sitemap("lists", parseInt(`${i + 1}`)),
-        changeFrequency: "monthly",
-      });
+    if (posts && posts.data && posts.data.metadata) {
+      for (let i = 0; i < posts.data.metadata.numPages; i++) {
+        sml.push({
+          url: construct_sitemap("lists", parseInt(`${i + 1}`)),
+          changeFrequency: "monthly",
+        });
+      }
+      return [...sml];
+    } else {
+      return [];
     }
-    return [...sml];
   }
 
   posts = await getLists("", parseInt(id), SITEMAP_PER_PAGE);

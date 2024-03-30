@@ -224,14 +224,19 @@ export async function topics_for_sitemap(id: any) {
   if (id == 0) {
     posts = await getTopics("", 1, SITEMAP_PER_PAGE);
     const sml: any = [];
-    for (let i = 0; i < posts.data.metadata.numPages; i++) {
-      sml.push({
-        url: construct_sitemap("topics", parseInt(`${i + 1}`)),
-        changeFrequency: "weekly",
-      });
-    }
 
-    return [...sml];
+    if (posts && posts.data && posts.data.metadata) {
+      for (let i = 0; i < posts.data.metadata.numPages; i++) {
+        sml.push({
+          url: construct_sitemap("topics", parseInt(`${i + 1}`)),
+          changeFrequency: "weekly",
+        });
+      }
+
+      return [...sml];
+    } else {
+      return [];
+    }
   }
 
   posts = await getTopics("", parseInt(id), SITEMAP_PER_PAGE);
