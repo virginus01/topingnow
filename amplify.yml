@@ -3,12 +3,12 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install
+        - npm ci
     build:
       commands:
         - npm run build
   artifacts:
-    baseDirectory: .amplify-hosting
+    baseDirectory: .next/server
     files:
       - "**/*"
   cache:
