@@ -1,4 +1,11 @@
 version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - nvm use 18
+        - npm ci
+        - npx amplify pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
 frontend:
   phases:
     preBuild:
@@ -8,8 +15,9 @@ frontend:
       commands:
         - npm run build
   artifacts:
-    baseDirectory: .next/server
+    baseDirectory: .next
     files:
       - "**/*"
   cache:
-    - node_modules/**/*
+    paths:
+      - node_modules/**/*

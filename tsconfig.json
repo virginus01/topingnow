@@ -3,6 +3,7 @@
     "types": [
       "puppeteer"
     ],
+    "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
@@ -12,13 +13,13 @@
     "skipLibCheck": true,
     "strict": false,
     "noEmit": true,
-    "incremental": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
@@ -42,7 +43,8 @@
     "app/utils/mongodb.js",
     "app/controllers/route.tsx",
     "app/dashboard/topics/topics_import.tsx",
-    "app/dashboard/templates/template_import.js"
+    "app/dashboard/templates/template_import.js",
+    "tailwind.config.js"
   ],
   "exclude": [
     "node_modules"
