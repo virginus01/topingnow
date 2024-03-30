@@ -1,15 +1,10 @@
 version: 1
 frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm ci
-    build:
-      commands:
-        - npm run build
+  preBuild:
+    commands:
+      - npm install
+  build:
+    commands:
+      - npm run build
   artifacts:
-    baseDirectory: .next
-    files:
-      - "**/*"
-  cache:
-    - node_modules/**/*
+    baseDirectory: .amplify-hosting

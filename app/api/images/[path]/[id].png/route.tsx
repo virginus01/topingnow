@@ -7,7 +7,7 @@ import {
 } from "../../topic/topic_image_gen";
 import { ListImageGen } from "../../list/list_image_gen";
 
-export const runtime = "edge";
+//export const runtime = "edge";
 
 export async function GET(
   request: any,
