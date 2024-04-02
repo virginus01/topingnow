@@ -2,7 +2,7 @@ import { revalidate } from "@/app/page";
 import axios from "axios";
 import sharp from "sharp";
 
-export const runtime = "edge";
+//export const runtime = "edge";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
