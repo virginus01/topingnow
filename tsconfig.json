@@ -44,6 +44,7 @@
     "app/controllers/route.tsx",
     "app/dashboard/topics/topics_import.tsx",
     "app/dashboard/templates/template_import.js",
+    "tailwind.config.js"
   ],
   "exclude": [
     "node_modules"
