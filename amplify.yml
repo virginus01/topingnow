@@ -10,7 +10,6 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install tailwindcss
         - npm ci
     build:
       commands:
@@ -19,3 +18,6 @@ frontend:
     baseDirectory: .next
     files:
       - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
