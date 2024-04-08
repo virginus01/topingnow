@@ -69,6 +69,10 @@ export default function RootLayout({
             __html: JSON.stringify(schema.data),
           }}
         />
+        <meta
+          name="google-site-verification"
+          content="DUy4Z0u_kZJCKtWp1atvH5YdJgVdKckOhCofK28NZF8"
+        />
       </head>
       <body>{children}</body>
     </html>
