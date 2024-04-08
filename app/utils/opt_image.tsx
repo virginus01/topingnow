@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 import {
   base_images_url,
   base_url,
@@ -16,12 +17,13 @@ export default function OptImage({
   placeholder = "",
   loading = "",
 }) {
-  const image = base_url(`api/cdn?url=${src}`);
+  //const image = base_url(`api/cdn?url=${src}`);
+
   return (
     <>
       <Image
         unoptimized
-        src={image}
+        src={src}
         alt={alt}
         title={title}
         width={width}

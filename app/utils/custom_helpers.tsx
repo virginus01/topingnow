@@ -360,6 +360,7 @@ export function beforeUpdate(updateData, uData) {
       delete uData[key];
     }
   }
+
   delete uData._id;
 
   uData.updatedAt = new Date();
