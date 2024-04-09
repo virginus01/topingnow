@@ -153,7 +153,7 @@ export default function GmapBodyView({ post, topicData, isFull = false }) {
                       No. {position} in {topicData.title}
                     </div>
                   </div>
-                  {!isNull(ratingScore) ? (
+                  {!isNull(ratingScore) && ratingScore == "no" ? (
                     <div className="flex pl-3 ml-10">
                       <RatingStars ratingScore={ratingScore} />
                     </div>
