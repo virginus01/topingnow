@@ -162,7 +162,7 @@ export async function listMetaTags(data) {
 
   data.canonical = base_url(`${data.topicData.slug}/${data.slug}`);
   data.robots = {
-    index: countWords(length) >= 30 || data.type == "gmap" ? true : false,
+    index: countWords(length) >= 30 || data.type == "gmap" ? false : false,
     follow: true,
   };
   return data;
