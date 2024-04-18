@@ -2,12 +2,12 @@ User-agent: *
 Allow: /
 
 User-agent: Googlebot
-Disallow:
+Allow: /
 
 User-agent: AdsBot-Google
-Disallow:
+Allow: /
 
 User-agent: Googlebot-Image
-Disallow:
+Allow: /
 
 Allow: /api/og/*
