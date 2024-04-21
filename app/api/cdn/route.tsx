@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     if (originalImageBuffer.length > 1024 * 1024) {
       // Reduce image quality if size is above 1 MB
       const modifiedImageBuffer = await sharp(originalImageBuffer)
-        .jpeg({ quality: 50 })
+        .jpeg({ quality: 100 })
         .toBuffer();
 
       originalImageBuffer = modifiedImageBuffer;
